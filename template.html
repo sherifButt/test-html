@@ -22,11 +22,14 @@
       <div class="container">
         <nav>
           <ul>
-            <li><i class="fa fa-bath" aria-hidden="true"></i> <a href="https://test.loyalleads.co.uk"> AUTOmark</a></li>
+            <li>
+              <i class="fa fa-bath" aria-hidden="true"></i> <a href="https://test.loyalleads.co.uk"> AUTOmark</a>
+            </li>
           </ul>
 
           <ul>
             <li><a href="#services">Services</a></li>
+            
           </ul>
         </nav>
       </div>
@@ -34,10 +37,12 @@
 
     <main>
       <section class="hero">
-        <div class="product-image">
-          <img src="/img/umbrella.webp" alt="Marketing Company" width="100%" />
-        </div>
-        <div class="survey-box">
+        <!-- <div class="hook">
+          <p style="text-align: center">
+            <img src="/img/car.jpg" alt="Marketing Company" width="80%" />
+          </p>
+        </div> -->
+        <div>
           <survey params="survey: model"></survey>
         </div>
       </section>
@@ -66,6 +71,60 @@
         </div>
       </section>
 
+      <section id="about">
+        <div class="header">
+          <h2>About Us</h2>
+          <p>
+            Marketing Co. is a leading digital marketing agency with over 10 years of experience in helping businesses grow online. Our team of experts is dedicated to providing
+            customized marketing solutions that meet your unique needs.
+          </p>
+          <table>
+            <thead>
+              <tr>
+                <th scope="col">Planet</th>
+                <th scope="col">Diameter (km)</th>
+                <th scope="col">Distance to Sun (AU)</th>
+                <th scope="col">Orbit (days)</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <th scope="row">Mercury</th>
+                <td>4,880</td>
+                <td>0.39</td>
+                <td>88</td>
+              </tr>
+              <tr>
+                <th scope="row">Venus</th>
+                <td>12,104</td>
+                <td>0.72</td>
+                <td>225</td>
+              </tr>
+              <tr>
+                <th scope="row">Earth</th>
+                <td>12,742</td>
+                <td>1.00</td>
+                <td>365</td>
+              </tr>
+              <tr>
+                <th scope="row">Mars</th>
+                <td>6,779</td>
+                <td>1.52</td>
+                <td>687</td>
+              </tr>
+            </tbody>
+            <tfoot>
+              <tr>
+                <th scope="row">Average</th>
+                <td>9,126</td>
+                <td>0.91</td>
+                <td>341</td>
+              </tr>
+            </tfoot>
+          </table>
+        </div>
+      </section>
+
       <section id="faq">
         <div class="header">
           <h2>Frequently Asked Questions</h2>
@@ -91,6 +150,19 @@
     </main>
 
     <footer id="contact">
+      <h2>Contact Us</h2>
+      <form>
+        <label for="name">Name:</label>
+        <input type="text" id="name" name="name" required />
+
+        <label for="email">Email:</label>
+        <input type="email" id="email" name="email" required />
+
+        <label for="message">Message:</label>
+        <textarea id="message" name="message" required></textarea>
+
+        <button type="submit">Send Message</button>
+      </form>
       <p>&copy; 2024 Marketing Co. All rights reserved.</p>
     </footer>
   </body>

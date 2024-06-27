@@ -1,0 +1,663 @@
+:root {
+  --sjs-general-backcolor: rgba(255, 255, 255, 1);
+  --sjs-general-backcolor-dark: rgba(255, 216, 77, 1);
+  --sjs-general-backcolor-dim: rgba(255, 255, 255, 1);
+  --sjs-general-backcolor-dim-light: rgba(255, 216, 77, 1);
+  --sjs-general-backcolor-dim-dark: rgba(255, 216, 77, 1);
+  --sjs-general-forecolor: rgba(0, 0, 0, 1);
+  --sjs-general-forecolor-light: rgba(0, 0, 0, .7);
+  --sjs-general-dim-forecolor: rgba(0, 0, 0, 1);
+  --sjs-general-dim-forecolor-light: rgba(0, 0, 0, 1);
+  --sjs-primary-backcolor: rgba(0, 0, 0, 1);
+  --sjs-primary-backcolor-light: rgba(255, 216, 77, 1);
+  --sjs-primary-backcolor-dark: rgba(83, 83, 83, 1);
+  --sjs-primary-forecolor: rgba(255, 255, 255, 1);
+  --sjs-primary-forecolor-light: rgba(255, 255, 255, 0.25);
+  --sjs-base-unit: 8px;
+  --sjs-corner-radius: 4px;
+  --sjs-secondary-backcolor: rgba(255, 152, 20, 1);
+  --sjs-secondary-backcolor-light: rgba(255, 152, 20, 0.1);
+  --sjs-secondary-backcolor-semi-light: rgba(255, 152, 20, 0.25);
+  --sjs-secondary-forecolor: rgba(255, 255, 255, 1);
+  --sjs-secondary-forecolor-light: rgba(255, 255, 255, 0.25);
+  --sjs-shadow-small: 0px 0px 0px 2px rgba(0, 0, 0, 1);
+  --sjs-shadow-small-reset: 0px 0px 0px 0px rgba(0, 0, 0, 1);
+  --sjs-shadow-medium: 0px 0px 0px 2px rgba(0, 0, 0, 1);
+  --sjs-shadow-large: 0px 6px 0px 0px rgba(0, 0, 0, 1);
+  --sjs-shadow-inner: 0px 0px 0px 2px rgba(0, 0, 0, 1), 0px -2px 0px 2px rgba(0, 0, 0, 1);
+  --sjs-shadow-inner-reset: 0px 0px 0px 0px rgba(0, 0, 0, 1), 0px 0px 0px 0px rgba(0, 0, 0, 1);
+  --sjs-border-light: rgba(0, 0, 0, 0.2);
+  --sjs-border-default: rgba(0, 0, 0, 1);
+  --sjs-border-inside: rgba(0, 0, 0, 0.16);
+  --sjs-special-red: rgba(229, 10, 62, 1);
+  --sjs-special-red-light: rgba(229, 10, 62, 0.1);
+  --sjs-special-red-forecolor: rgba(255, 255, 255, 1);
+  --sjs-special-green: rgba(25, 179, 148, 1);
+  --sjs-special-green-light: rgba(25, 179, 148, 0.1);
+  --sjs-special-green-forecolor: rgba(255, 255, 255, 1);
+  --sjs-special-blue: rgba(67, 127, 217, 1);
+  --sjs-special-blue-light: rgba(67, 127, 217, 0.1);
+  --sjs-special-blue-forecolor: rgba(255, 255, 255, 1);
+  --sjs-special-yellow: rgba(255, 152, 20, 1);
+  --sjs-special-yellow-light: rgba(255, 152, 20, 0.1);
+  --sjs-special-yellow-forecolor: rgba(255, 255, 255, 1);
+  --sjs-article-font-xx-large-textDecoration: none;
+  --sjs-article-font-xx-large-fontWeight: 700;
+  --sjs-article-font-xx-large-fontStyle: normal;
+  --sjs-article-font-xx-large-fontStretch: normal;
+  --sjs-article-font-xx-large-letterSpacing: 0;
+  --sjs-article-font-xx-large-lineHeight: 64px;
+  --sjs-article-font-xx-large-paragraphIndent: 0px;
+  --sjs-article-font-xx-large-textCase: none;
+  --sjs-article-font-x-large-textDecoration: none;
+  --sjs-article-font-x-large-fontWeight: 700;
+  --sjs-article-font-x-large-fontStyle: normal;
+  --sjs-article-font-x-large-fontStretch: normal;
+  --sjs-article-font-x-large-letterSpacing: 0;
+  --sjs-article-font-x-large-lineHeight: 56px;
+  --sjs-article-font-x-large-paragraphIndent: 0px;
+  --sjs-article-font-x-large-textCase: none;
+  --sjs-article-font-large-textDecoration: none;
+  --sjs-article-font-large-fontWeight: 700;
+  --sjs-article-font-large-fontStyle: normal;
+  --sjs-article-font-large-fontStretch: normal;
+  --sjs-article-font-large-letterSpacing: 0;
+  --sjs-article-font-large-lineHeight: 40px;
+  --sjs-article-font-large-paragraphIndent: 0px;
+  --sjs-article-font-large-textCase: none;
+  --sjs-article-font-medium-textDecoration: none;
+  --sjs-article-font-medium-fontWeight: 700;
+  --sjs-article-font-medium-fontStyle: normal;
+  --sjs-article-font-medium-fontStretch: normal;
+  --sjs-article-font-medium-letterSpacing: 0;
+  --sjs-article-font-medium-lineHeight: 32px;
+  --sjs-article-font-medium-paragraphIndent: 0px;
+  --sjs-article-font-medium-textCase: none;
+  --sjs-article-font-default-textDecoration: none;
+  --sjs-article-font-default-fontWeight: 400;
+  --sjs-article-font-default-fontStyle: normal;
+  --sjs-article-font-default-fontStretch: normal;
+  --sjs-article-font-default-letterSpacing: 0;
+  --sjs-article-font-default-lineHeight: 28px;
+  --sjs-article-font-default-paragraphIndent: 0px;
+  --sjs-article-font-default-textCase: none;
+}
+
+/*for debugging TBR*/
+* {
+  /* outline: 1px solid red;
+  background-color: rgba(255, 0, 0, 0.05); */
+}
+
+body {
+  background-color: var(--sjs-general-backcolor);
+  color: var(--sjs-general-forecolor);
+  font-family: ReithSans,Helvetica,Roboto, sans-serif;
+  font-size: 1rem;
+  line-height: 1.5;
+  font-weight: 200;
+}
+p{
+    color: var(--sjs-general-forecolor-light);
+}
+
+hr {
+  border-color: var(--sjs-border-default);
+}
+
+button,
+input,
+select,
+textarea,
+.sd-selectbase__label {
+  border-radius: var(--sjs-corner-radius);
+}
+
+button,
+.sd-selectbase__label {
+  color: var(--sjs-primary-backcolor);
+  background-color: var(--sjs-primary-forecolor);
+  border: 2px solid var(--sjs-primary-backcolor);
+  padding: 0.9rem;
+  margin: 2rem 0;
+  display: block;
+  border-radius: var(--sjs-editorpanel-cornerRadius, var(--sjs-corner-radius, 4px));
+  text-align: left;
+  cursor: pointer;
+  transition: box-shadow var(--sjs-transition-duration, 150ms);
+  font-size: 1.1rem;
+  border-radius: 8px;
+}
+
+button:hover,
+.sd-selectbase__label:hover {
+  background-color: var(--sjs-primary-backcolor-light);
+  transition: 0.5s;
+  box-shadow: var(--sjs-shadow-large);
+}
+
+button:active,
+.sd-selectbase__label:active {
+  background-color: var(--sjs-primary-backcolor-dark);
+}
+
+button::selection{
+  background-color: var(--sjs-primary-backcolor);
+  color: var(--sjs-primary-forecolor);
+
+}
+
+input,
+select,
+textarea {
+  background-color: var(--sjs-general-backcolor-dark);
+  color: var(--sjs-general-forecolor);
+  border: 2px solid var(--sjs-border-default);
+  padding: 0.9rem;
+  margin: 0.5rem 0;
+  display: block;
+  width: 100%;
+  border: none;
+  border-radius: var(--sjs-editorpanel-cornerRadius, var(--sjs-corner-radius, 4px));
+  text-align: start;
+  transition: box-shadow var(--sjs-transition-duration, 150ms);
+  font-size: 1.1rem;
+}
+textarea {
+    box-shadow: var(--sjs-shadow-inner, inset 0px 1px 2px 0px rgba(0, 0, 0, 0.15)), 0 0 0 0px var(--sjs-primary-backcolor, var(--primary, #19b394));
+
+}
+
+input:focus,
+select:focus,
+textarea:focus {
+  /* border-color: var(--sjs-primary-backcolor); */
+  /* box-shadow: var(--sjs-shadow-medium); */
+}
+
+header,
+footer {
+  background-color: var(--sjs-general-backcolor-dim);
+  color: var(--sjs-general-forecolor);
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  color: var(--sjs-general-forecolor);
+}
+
+h1 {
+  font-size: 2.5rem;
+  font-weight: 600;
+  line-height: 1.3;
+}
+
+h2 {
+  font-size: 2rem;
+  font-weight: 500;
+  line-height: 1.3;
+}
+
+h3 {
+  font-size: 1.75rem;
+  font-weight: 400;
+  line-height: 1.3;
+}
+
+h4 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  line-height: 1.3;
+}
+
+h5 {
+  font-size: 1.25rem;
+  font-weight: 700;
+  line-height: 1.3;
+}
+
+h6 {
+  font-size: 1rem;
+  font-weight: 700;
+  line-height: 1.3;
+}
+
+a {
+  color: var(--sjs-primary-backcolor);
+}
+
+a:hover {
+  color: var(--sjs-primary-backcolor-light);
+}
+
+a:active {
+  color: var(--sjs-primary-backcolor-dark);
+}
+
+::selection {
+  background-color: var(--sjs-general-backcolor-dark);
+  color: var(--sjs-general-forecolor);
+}
+
+table {
+  border-collapse: collapse;
+  width: 100%;
+  margin: 2rem 0;
+  border-radius: 8px;
+  background-color: var(--sjs-general-backcolor-dark);
+  color: var(--sjs-general-forecolor);
+  border: 2px solid var(--sjs-border-default);
+  border: none;
+  border-radius: var(--sjs-editorpanel-cornerRadius, var(--sjs-corner-radius, 4px));
+  text-align: start;
+
+  box-shadow: var(--sjs-shadow-inner, inset 0px 1px 2px 0px rgba(0, 0, 0, 0.15)), 0 0 0 0px var(--sjs-primary-backcolor, var(--primary, #19b394));
+  font-size: 0.9rem;
+}
+
+th,
+td {
+  /* border: 1px solid var(--sjs-border-default); */
+  padding: 0.7rem;
+  text-align: center;
+}
+
+th {
+  background-color: var(--sjs-primary-backcolor);
+  color: var(--sjs-primary-forecolor);
+}
+
+tr:nth-child(even) {
+  background-color: var(--sjs-general-backcolor-dim);
+}
+
+tr:hover {
+  background-color: var(--sjs-general-backcolor-dim-light);
+}
+
+tr:active {
+  background-color: var(--sjs-general-backcolor-dim-dark);
+}
+
+nav {
+  background-color: var(--sjs-general-backcolor-dim);
+  color: var(--sjs-general-forecolor);
+  padding: 1rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+nav a {
+  color: var(--sjs-general-forecolor);
+  text-underline-offset: .7rem;
+  
+}
+
+nav a:hover {
+  color: var(--sjs-primary-backcolor);
+  
+  transition: 0.5s;
+
+}
+
+nav a:active {
+  color: var(--sjs-primary-backcolor-dark);
+}
+
+ul {
+  list-style-type: none;
+  padding: 0;
+}
+
+li {
+  padding: 0.5rem;
+}
+
+ol {
+  list-style-type: decimal;
+  padding: 0;
+}
+
+nav ul {
+  display: flex;
+  justify-content: space-between;
+}
+
+nav ul li {
+  padding: 1rem;
+}
+
+nav ul li a {
+  color: var(--sjs-general-forecolor);
+}
+
+nav ul li a:hover {
+  color: var(--sjs-primary-backcolor);
+}
+
+nav ul li a:active {
+  color: var(--sjs-primary-backcolor-dark);
+  
+}
+
+i {
+  color: var(--sjs-primary-backcolor);
+  transition: 0.5s;
+  padding: 1.5rem;
+  border-radius: 50%;
+  border: 1px solid var(--sjs-border-light);
+}
+
+i:hover {
+  background-color: var(--sjs-primary-backcolor-light);
+  transition: 0.5s;
+  box-shadow: var(--sjs-shadow-large);
+}
+
+nav i {
+  font-size: 1.2rem;
+  margin-right: 0.5rem;
+  padding: 1rem;
+}
+
+nav :first-of-type li {
+  font-size: 1rem;
+  margin-right: 1rem;
+  padding: 1rem;
+}
+
+nav :first-of-type li a {
+  color: var(--sjs-general-forecolor);
+  text-decoration: none !important;
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 1rem;
+}
+
+.grid {
+  display: flex;
+  flex-wrap: wrap; /* Allow wrapping of child elements to achieve multiple rows */
+  gap: 20px;
+  padding: 10px;
+}
+
+.grid > * {
+  flex: 1 1 calc(33.33% - 20px); /* Make each item take 1/3 of the container width minus the gap */
+  min-width: 370px; /* Maintain minimum width similar to the grid layout */
+  box-sizing: border-box; /* Ensure padding and gap don't affect the width calculation */
+}
+
+.grid3 {
+  display: flex;
+  gap: 20px;
+  padding: 10px;
+}
+
+.grid3 > :first-child {
+  flex: 1 1 33.33%; /* Make the first child take 1/3 of the container width */
+  box-sizing: border-box;
+}
+
+.grid3 > :last-child {
+  flex: 1 1 66.67%; /* Make the second child take 2/3 of the container width */
+  box-sizing: border-box;
+}
+
+
+.header {
+  margin: 40px 0;
+  padding: 10px;
+  text-align: center; 
+
+}
+
+.section {
+  margin: 60px 0; 
+  padding: 10px; 
+}
+
+.shadow-small {
+  box-shadow: var(--sjs-shadow-small);
+}
+
+.shadow-medium {
+  box-shadow: var(--sjs-shadow-medium);
+}
+
+.shadow-large {
+  box-shadow: var(--sjs-shadow-large);
+}
+
+.shadow-inner {
+  box-shadow: var(--sjs-shadow-inner);
+}
+
+.border-light {
+  border-color: var(--sjs-border-light);
+}
+
+.border-default {
+  border-color: var(--sjs-border-default);
+}
+
+.border-inside {
+  border-color: var(--sjs-border-inside);
+}
+
+.special-red {
+  color: var(--sjs-special-red-forecolor);
+  background-color: var(--sjs-special-red);
+}
+
+.special-green {
+  color: var(--sjs-special-green-forecolor);
+  background-color: var(--sjs-special-green);
+}
+
+.special-blue {
+  color: var(--sjs-special-blue-forecolor);
+  background-color: var(--sjs-special-blue);
+}
+
+.special-yellow {
+  color: var(--sjs-special-yellow-forecolor);
+  background-color: var(--sjs-special-yellow);
+}
+
+.article-font-xx-large {
+  text-decoration: var(--sjs-article-font-xx-large-textDecoration);
+  font-weight: var(--sjs-article-font-xx-large-fontWeight);
+  font-style: var(--sjs-article-font-xx-large-fontStyle);
+  font-stretch: var(--sjs-article-font-xx-large-fontStretch);
+  letter-spacing: var(--sjs-article-font-xx-large-letterSpacing);
+  line-height: var(--sjs-article-font-xx-large-lineHeight);
+  text-transform: var(--sjs-article-font-xx-large-textCase);
+}
+
+.article-font-x-large {
+  text-decoration: var(--sjs-article-font-x-large-textDecoration);
+  font-weight: var(--sjs-article-font-x-large-fontWeight);
+  font-style: var(--sjs-article-font-x-large-fontStyle);
+  font-stretch: var(--sjs-article-font-x-large-fontStretch);
+  letter-spacing: var(--sjs-article-font-x-large-letterSpacing);
+  line-height: var(--sjs-article-font-x-large-lineHeight);
+  text-transform: var(--sjs-article-font-x-large-textCase);
+}
+
+.article-font-large {
+  text-decoration: var(--sjs-article-font-large-textDecoration);
+  font-weight: var(--sjs-article-font-large-fontWeight);
+  font-style: var(--sjs-article-font-large-fontStyle);
+  font-stretch: var(--sjs-article-font-large-fontStretch);
+  letter-spacing: var(--sjs-article-font-large-letterSpacing);
+  line-height: var(--sjs-article-font-large-lineHeight);
+  text-transform: var(--sjs-article-font-large-textCase);
+}
+
+.article-font-medium {
+  text-decoration: var(--sjs-article-font-medium-textDecoration);
+  font-weight: var(--sjs-article-font-medium-fontWeight);
+  font-style: var(--sjs-article-font-medium-fontStyle);
+  font-stretch: var(--sjs-article-font-medium-fontStretch);
+  letter-spacing: var(--sjs-article-font-medium-letterSpacing);
+  line-height: var(--sjs-article-font-medium-lineHeight);
+  text-transform: var(--sjs-article-font-medium-textCase);
+}
+
+.article-font-default {
+  text-decoration: var(--sjs-article-font-default-textDecoration);
+  font-weight: var(--sjs-article-font-default-fontWeight);
+  font-style: var(--sjs-article-font-default-fontStyle);
+  font-stretch: var(--sjs-article-font-default-fontStretch);
+  letter-spacing: var(--sjs-article-font-default-letterSpacing);
+  line-height: var(--sjs-article-font-default-lineHeight);
+  text-transform: var(--sjs-article-font-default-textCase);
+}
+
+.sd-element--with-frame.sd-question--title-top {
+  box-shadow: none;
+  padding: 0;
+}
+
+.sd-root-modern .sd-container-modern__title, .sd-completedpage:before, .sd-completedpage:after, .sd-navigation__prev-btn {
+  display: none;
+}
+
+.sd-element__title .sv-string-viewer.sv-string-viewer--multiline {
+  font-size: 1.8rem;
+  font-weight: 700;
+  line-height: 1.3;
+}
+
+.sd-body__navigation .sd-btn {
+  padding: 12px 24px !important;
+}
+
+.sd-input {
+  font-size: 1.05rem;
+}
+
+/* Hide the default radio button */
+.sd-radio__control {
+  display: none;
+}
+
+/* Show the checkmark when the radio button is checked */
+.sd-radio__control:checked + .sd-item__decorator + .sd-item__control-label::after,
+.sd-radio__control:checked + .sd-item__control-label::after {
+  display: block;
+}
+
+/* Center the label text */
+.sd-item__control-label {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+}
+
+.sd-radio__decorator  {
+  display: none;
+}
+
+.sd-selectbase__label {
+  margin:.3rem;
+  display: flex;
+}
+
+.sd-item__control-label{
+  font-size: 1.1rem;
+}
+
+.sd-dropdown--empty div{
+  min-height: calc(1.8*(var(--sjs-internal-font-editorfont-size)));
+}
+
+
+/*--------*/
+
+/* Basic Reset */
+
+
+.hero {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  padding: 40px;
+}
+
+.survey-box {
+  flex: 1;
+  min-width: 300px;
+  max-width: 600px;
+}
+
+.survey-box h2 {
+  margin-bottom: 20px;
+}
+
+.survey-box label {
+  display: block;
+  margin-bottom: 5px;
+}
+
+.survey-box input,
+.survey-box textarea {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.survey-box button {
+  width: 100%;
+  padding: 10px;
+  background: #007BFF;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.survey-box button:hover {
+  background: #0056b3;
+}
+
+.product-image {
+  flex: 1;
+  min-width: 300px;
+  max-width: 400px;
+  margin: 10px;
+  text-align: center;
+}
+
+.product-image img {
+  max-width: 100%;
+}
+
+/* Media Queries */
+@media (max-width: 768px) {
+  .hero {
+      flex-direction: column;
+      padding: 0px;
+  }
+  .survey-box{
+      margin-top: -60px;
+  }
+  .sd-root-modern{
+    background-color: transparent;
+  }
+  .sd-body.sd-body--static .sd-body__navigation {
+    margin-top: -1.1rem;
+  }
+}
