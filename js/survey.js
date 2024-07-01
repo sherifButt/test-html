@@ -1,6 +1,6 @@
-import { surveyJson3 } from './surveyJson.js';
+import { surveyJson } from './surveyJson.js';
 
-const survey = new Survey.Model(surveyJson3);
+const survey = new Survey.Model(surveyJson);
 
 // const data = [
 //     {
@@ -15,7 +15,7 @@ async function sendSurveyResults(sender) {
     sender.completedHtml = '<div class="spinner" style="text-align:center;"><img src="img/spinner.gif" alt="Loading..." width="40px"></div>';
 
     try {
-        const response = await fetch('https://n8n.loyalleads.co.uk/webhook/3d3d3e6d-cf82-44a6-849b-7424116459b0', {
+        const response = await fetch('https://n8n.loyalleads.co.uk/webhook/5a7744ac-7e02-4d2d-b615-b91bf7757444', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -23,6 +23,7 @@ async function sendSurveyResults(sender) {
             body: resultAsString,
         });
         const data = await response.json();
+        console.log('Success:', data);
         const formattedMessage = data[0].output.split('\n\n').map((paragraph, index) => {
             return index === 0 ? `<strong>${paragraph}</strong>` : `<p>${paragraph}</p>`;
         }).join('');
