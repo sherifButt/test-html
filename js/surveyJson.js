@@ -834,7 +834,7 @@ export const surveyJson = {
                 {
                     "type": "radiogroup",
                     "name": "umrahPlanning",
-                    "title": "Planning to go to Umrah in the next 3 months?",
+                    "title": "Planning to go to 🕋 Umrah in the next 3 months?",
                     "description": "This will help us understand your travel plans better.",
                     "hideNumber": true,
                     "isRequired": true,
@@ -852,7 +852,7 @@ export const surveyJson = {
                 {
                     "type": "radiogroup",
                     "name": "hajjExperience",
-                    "title": "Have you performed Hajj before?",
+                    "title": "Have you performed 🕋 Hajj before?",
                     "hideNumber": true,
                     "isRequired": true,
                     "choices": [
@@ -870,7 +870,7 @@ export const surveyJson = {
                 {
                     "type": "radiogroup",
                     "name": "groupTravel",
-                    "title": "Will you be traveling with a group?",
+                    "title": "Will you be 🛫 traveling with a group?",
                     "hideNumber": true,
                     "isRequired": true,
                     "choices": [
@@ -888,7 +888,7 @@ export const surveyJson = {
                 {
                     "type": "radiogroup",
                     "name": "specialNeeds",
-                    "title": "Do you have any special needs or requirements?",
+                    "title": "Do you have any special needs ⚠️ or requirements?",
                     "hideNumber": true,
                     "isRequired": true,
                     "choices": [
@@ -939,7 +939,7 @@ export const surveyJson = {
                 {
                     "type": "radiogroup",
                     "name": "vaccinationStatus",
-                    "title": "Are you fully vaccinated against COVID-19?",
+                    "title": "Are you fully 💉 vaccinated against COVID-19?",
                     "hideNumber": true,
                     "isRequired": true,
                     "choices": [
@@ -959,7 +959,7 @@ export const surveyJson = {
                     "name": "passportNumber",
                     "title": "Passport Number",
                     "hideNumber": true,
-                    "description": "Please enter your passport number for verification purposes.",
+                    "description": "Please enter your 🛂 passport number for verification purposes.",
                     "isRequired": true,
                     "visibleIf": "{umrahPlanning} == 'Yes'",
                     "placeholder": "67844AD4U"
@@ -972,7 +972,7 @@ export const surveyJson = {
                 {
                     "type": "radiogroup",
                     "name": "contactOffers",
-                    "title": "Would you like us to contact you about Hajj and Umrah offers?",
+                    "title": "Would you like us to ☎️ contact you about Hajj and Umrah offers?",
                     "hideNumber": true,
                     "isRequired": true,
                     "choices": [
@@ -1066,5 +1066,6 @@ export const surveyJson = {
     ],
     "goNextPageAutomatic": true,
     "startSurveyText": "Start",
-    "maxTimeToFinish": 600
+    "maxTimeToFinish": 600,
+    
 }

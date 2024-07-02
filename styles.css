@@ -656,6 +656,10 @@ nav :first-of-type li a {
   max-width: 100%;
 }
 
+.sd-timer{
+  background: var(--sjs-general-backcolor-dark);
+}
+
 /* Media Queries */
 @media (max-width: 768px) {
 
@@ -693,7 +697,7 @@ nav :first-of-type li a {
     width: 35%;
     float: left;
    margin-left:10px;
-   margin-bottom: -30px;
+   margin-bottom: -10px;
    /* border-bottom: 1px solid #828282; */
   }
 
