@@ -16,6 +16,10 @@
     <script type="text/javascript" src="https://unpkg.com/survey-core/survey.core.min.js"></script>
     <script type="text/javascript" src="https://unpkg.com/survey-knockout-ui/survey-knockout-ui.min.js"></script>
     <script type="module" src="js/survey.js"></script>
+    <!-- FONT -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Gabarito:wght@400..900&display=swap" rel="stylesheet">
   </head>
   <body class="container">
     <header>
@@ -25,7 +29,7 @@
             <li><i class="fa fa-bath" aria-hidden="true"></i> <a href="https://test.loyalleads.co.uk"> AUTOmark</a></li>
           </ul>
 
-          <ul>
+          <ul class="screen">
             <li><a href="#services">Services</a></li>
           </ul>
         </nav>
@@ -34,8 +38,8 @@
 
     <main>
       <section class="hero">
-        <div class="product-image">
-          <img src="/img/umbrella.webp" alt="Marketing Company" width="100%" />
+        <div class="product-image ">
+          <img class="screen" src="/img/umbrella.webp" alt="Marketing Company" width="100%" />
         </div>
         <div class="survey-box">
           <survey params="survey: model"></survey>
@@ -68,7 +72,7 @@
 
       <section id="faq">
         <div class="header">
-          <h2>Frequently Asked Questions</h2>
+          <h2>F.A.Qs</h2>
         </div>
         <div class="grid2">
           <article>

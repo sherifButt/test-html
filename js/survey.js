@@ -15,7 +15,7 @@ async function sendSurveyResults(sender) {
     sender.completedHtml = '<div class="spinner" style="text-align:center;"><img src="img/spinner.gif" alt="Loading..." width="40px"></div>';
 
     try {
-        const response = await fetch('https://n8n.loyalleads.co.uk/webhook/5a7744ac-7e02-4d2d-b615-b91bf7757444', {
+        const response = await fetch('https://n8n.loyalleads.co.uk/webhook/a8b4aaca-3cfd-40e4-b361-687e9b0ea19e', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -24,8 +24,8 @@ async function sendSurveyResults(sender) {
         });
         const data = await response.json();
         console.log('Success:', data);
-        const formattedMessage = data[0].output.split('\n\n').map((paragraph, index) => {
-            return index === 0 ? `<strong>${paragraph}</strong>` : `<p>${paragraph}</p>`;
+        const formattedMessage = data.output.split('\n\n').map((paragraph, index) => {
+            return index === 0 ? `<p>${paragraph}</p>` : `<p>${paragraph}</p>`;
         }).join('');
 
         sender.completedHtml = `<article style="white-space: pre-line; text-align:left; ">${formattedMessage}</article>`;

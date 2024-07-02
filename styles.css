@@ -5,7 +5,7 @@
   --sjs-general-backcolor-dim-light: rgba(255, 216, 77, 1);
   --sjs-general-backcolor-dim-dark: rgba(255, 216, 77, 1);
   --sjs-general-forecolor: rgba(0, 0, 0, 1);
-  --sjs-general-forecolor-light: rgba(0, 0, 0, .7);
+  --sjs-general-forecolor-light: rgba(0, 0, 0, .35);
   --sjs-general-dim-forecolor: rgba(0, 0, 0, 1);
   --sjs-general-dim-forecolor-light: rgba(0, 0, 0, 1);
   --sjs-primary-backcolor: rgba(0, 0, 0, 1);
@@ -92,13 +92,14 @@
 body {
   background-color: var(--sjs-general-backcolor);
   color: var(--sjs-general-forecolor);
-  font-family: ReithSans,Helvetica,Roboto, sans-serif;
+  font-family: "Gabarito",ReithSans,Helvetica,Roboto, sans-serif;
   font-size: 1rem;
   line-height: 1.5;
   font-weight: 200;
 }
 p{
     color: var(--sjs-general-forecolor-light);
+    font-weight: var(--sjs-article-font-default-fontWeight) ;
 }
 
 hr {
@@ -191,13 +192,13 @@ h6 {
 }
 
 h1 {
-  font-size: 2.5rem;
+  font-size: 4.5rem;
   font-weight: 600;
   line-height: 1.3;
 }
 
 h2 {
-  font-size: 2rem;
+  font-size: 3rem;
   font-weight: 500;
   line-height: 1.3;
 }
@@ -532,7 +533,8 @@ nav :first-of-type li a {
 }
 
 .sd-element__title .sv-string-viewer.sv-string-viewer--multiline {
-  font-size: 1.8rem;
+  font-family: "Gabarito",ReithSans,Helvetica,Roboto, sans-serif;
+  font-size: 3rem;
   font-weight: 700;
   line-height: 1.3;
 }
@@ -592,7 +594,8 @@ nav :first-of-type li a {
   flex-wrap: wrap;
   align-items: center;
   justify-content: center;
-  padding: 40px;
+  padding: 20px;
+  height: 75vh;
 }
 
 .survey-box {
@@ -647,17 +650,61 @@ nav :first-of-type li a {
 
 /* Media Queries */
 @media (max-width: 768px) {
+
+  h1 {
+    font-size: 3.5rem;
+    font-weight: 600;
+    line-height: 1.3;
+  }
+  
+  h2 {
+    font-size: 2rem;
+    font-weight: 500;
+    line-height: 1.3;
+  }
+  
+  h3 {
+    font-size: 1.75rem;
+    font-weight: 400;
+    line-height: 1.3;
+  }
+  
+  h4 {
+    font-size: 1.3rem;
+    font-weight: 700;
+    line-height: 1.3;
+  }
+  
+  h5 {
+    font-size: 1.1rem;
+    font-weight: 700;
+    line-height: 1.3;
+  }
+  
+  h6 {
+    font-size: 1rem;
+    font-weight: 700;
+    line-height: 1.3;
+  }
+
   .hero {
       flex-direction: column;
       padding: 0px;
   }
-  .survey-box{
-      margin-top: -60px;
-  }
+ 
   .sd-root-modern{
     background-color: transparent;
   }
   .sd-body.sd-body--static .sd-body__navigation {
     margin-top: -1.1rem;
+  }
+
+  .sd-element__title .sv-string-viewer.sv-string-viewer--multiline {
+    line-height: 1.2em;
+    font-size: 2.5rem;
+  }
+
+  .screen{
+    display: none;
   }
 }
