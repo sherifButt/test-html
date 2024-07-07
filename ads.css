@@ -1,0 +1,121 @@
+@keyframes slideFromBottom {
+    from {
+        transform: translateY(100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+@keyframes slideFromLeft {
+    from {
+        transform: translateX(-100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+@keyframes slideFromTop {
+    from {
+        transform: translateY(-100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+@keyframes slideFromRight {
+    from {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+@keyframes zoomIn {
+    from {
+        transform: scale(0);
+        opacity: 0;
+    }
+    to {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+.hidden-element {
+    opacity: 0;
+}
+
+.slide-from-bottom {
+    animation: slideFromBottom 0.5s ease-out forwards;
+}
+
+.slide-from-left {
+    animation: slideFromLeft 0.5s ease-out forwards;
+}
+
+.slide-from-top {
+    animation: slideFromTop 0.5s ease-out forwards;
+}
+
+.slide-from-right {
+    animation: slideFromRight 0.5s ease-out forwards;
+}
+
+.zoom-in {
+    animation: zoomIn 0.5s ease-out forwards;
+}
+
+
+.ad-container {
+    position: relative; /* Ensure proper stacking context */
+    overflow: hidden;
+}
+
+.path-one, .path-two {
+    position: absolute;
+    bottom: 0;
+    z-index: 1; /* Ensure SVG paths are behind other elements */
+}
+
+.hidden-element {
+    opacity: 0;
+    z-index: 1; /* Ensure hidden elements have lower z-index */
+}
+
+.logo-icon {
+    z-index: 4; /* Ensure logo icon is above all other elements */
+}
+
+.image {
+    z-index: 99999; /* Ensure image is above SVG paths but below logo icon */
+}
+
+.headline,
+.text,
+.tags,
+.cta {
+    z-index: 3; /* Ensure text elements are above SVG paths but below logo icon */
+}
+
+.slide-from-bottom,
+.slide-from-left,
+.slide-from-top,
+.slide-from-right,
+.zoom-in {
+    z-index: 4; /* Ensure animation elements appear above everything else */
+    position: relative;
+}
+
+

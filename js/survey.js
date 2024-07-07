@@ -1,6 +1,6 @@
-import { surveyJson } from './surveyJson.js';
+import { surveyJson7 } from './surveyJson.js';
 
-const survey = new Survey.Model(surveyJson);
+const survey = new Survey.Model(surveyJson7);
 
 // const data = [
 //     {

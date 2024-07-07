@@ -1,3 +1,185 @@
+export const surveyJson7 = {
+    "title": "Energy Savings Inquiry",
+    "hideNumber": true,
+    "completedHtml": "<h4>Thank you for completing our survey! We will review your responses and contact you shortly with your personalized energy-saving guide.</h4>",
+    "pages": [
+        {
+            "name": "page1",
+            "elements": [
+                {
+                    "type": "radiogroup",
+                    "name": "savingsInterest",
+                    "title": "Want to save on energy bills in the next 3 months?",
+                    "description": "This helps us understand your immediate savings goals.",
+                    "hideNumber": true,
+                    "isRequired": true,
+                    "choices": ["Yes", "No"],
+                    "colCount": 2
+                }
+            ]
+        },
+        {
+            "name": "page2",
+            "elements": [
+                {
+                    "type": "radiogroup",
+                    "name": "homeOwnership",
+                    "title": "Are you a homeowner?",
+                    "description": "Knowing your ownership status helps us tailor the best solutions for you.",
+                    "hideNumber": true,
+                    "isRequired": true,
+                    "choices": ["Yes", "No"],
+                    "colCount": 2,
+                    "visibleIf": "{savingsInterest} == 'Yes'"
+                }
+            ]
+        },
+        {
+            "name": "page3",
+            "elements": [
+                {
+                    "type": "radiogroup",
+                    "name": "currentProvider",
+                    "title": "Do you currently have an energy provider?",
+                    "description": "This helps us understand your current situation.",
+                    "hideNumber": true,
+                    "isRequired": true,
+                    "choices": ["Yes", "No"],
+                    "colCount": 2,
+                    "visibleIf": "{homeOwnership} == 'Yes'"
+                }
+            ]
+        },
+        {
+            "name": "page4",
+            "elements": [
+                {
+                    "type": "radiogroup",
+                    "name": "greenEnergyInterest",
+                    "title": "Interested in switching to green energy?",
+                    "description": "Switching to green energy can save you money and help the environment.",
+                    "hideNumber": true,
+                    "isRequired": true,
+                    "choices": ["Yes", "No"],
+                    "colCount": 2,
+                    "visibleIf": "{currentProvider} == 'Yes'"
+                }
+            ]
+        },
+        {
+            "name": "page5",
+            "elements": [
+                {
+                    "type": "radiogroup",
+                    "name": "monthlyBill",
+                    "title": "Is your monthly energy bill over $100?",
+                    "description": "Knowing your bill amount helps us find the best savings for you.",
+                    "hideNumber": true,
+                    "isRequired": true,
+                    "choices": ["Yes", "No"],
+                    "colCount": 2,
+                    "visibleIf": "{greenEnergyInterest} == 'Yes'"
+                }
+            ]
+        },
+        {
+            "name": "page6",
+            "elements": [
+                {
+                    "type": "radiogroup",
+                    "name": "energyUsage",
+                    "title": "How many kWh do you use per month?",
+                    "description": "Your energy usage helps us tailor our recommendations.",
+                    "hideNumber": true,
+                    "choices": ["<300 kWh", "300-600 kWh", ">600 kWh"],
+                    "colCount": 3,
+                    "visibleIf": "{monthlyBill} == 'Yes'"
+                }
+            ]
+        },
+        {
+            "name": "page7",
+            "elements": [
+                {
+                    "type": "radiogroup",
+                    "name": "energyPlan",
+                    "title": "What type of energy plan do you currently have?",
+                    "description": "Understanding your current plan helps us offer a better solution.",
+                    "hideNumber": true,
+                    "choices": ["Fixed rate", "Variable rate", "Prepaid", "Not sure"],
+                    "colCount": 2,
+                    "visibleIf": "{energyUsage} != ''"
+                }
+            ]
+        },
+        {
+            "name": "page8",
+            "elements": [
+                {
+                    "type": "radiogroup",
+                    "name": "mainConcern",
+                    "title": "What is your main concern with your current provider?",
+                    "description": "This helps us address your primary needs.",
+                    "hideNumber": true,
+                    "choices": ["Cost", "Reliability", "Environmental impact", "Customer service"],
+                    "colCount": 2,
+                    "visibleIf": "{energyPlan} != ''"
+                }
+            ]
+        },
+        {
+            "name": "page9",
+            "elements": [
+                {
+                    "type": "text",
+                    "name": "name",
+                    "title": "Name",
+                    "description": "Please provide your full name.",
+                    "hideNumber": true,
+                    "isRequired": true,
+                    "visibleIf": "{mainConcern} != ''"
+                }
+            ]
+        },
+        {
+            "name": "page10",
+            "elements": [
+                {
+                    "type": "text",
+                    "name": "email",
+                    "title": "Email",
+                    "description": "We will send you the offers to this email. Please ensure it is correct.",
+                    "hideNumber": true,
+                    "inputType": "email",
+                    "isRequired": true,
+                    "visibleIf": "{mainConcern} != ''",
+                    "placeholder": "youremail@domain.com"
+                }
+            ]
+        },
+        {
+            "name": "page11",
+            "elements": [
+                {
+                    "type": "text",
+                    "name": "phone",
+                    "title": "Phone Number",
+                    "description": "Please provide your phone number for further communication.",
+                    "hideNumber": true,
+                    "inputType": "tel",
+                    "isRequired": true,
+                    "visibleIf": "{mainConcern} != ''",
+                    "placeholder": "07563542681"
+                }
+            ]
+        }
+    ],
+    "goNextPageAutomatic": true,
+    "startSurveyText": "Start",
+    "maxTimeToFinish": 600
+}
+
+  
 export const surveyJson6 = {
     "pages": [
      {
@@ -1042,30 +1224,11 @@ export const surveyJson = {
                     "placeholder": "Please write something.."
                 }
             ]
-        },
-        // {
-        //     "name": "page14",
-        //     "elements": [
-        //         {
-        //             "type": "html",
-        //             "name": "gdprConsent",
-        //             "html": "<span><i class=\"fa fa-bath scale:110\" aria-hidden=\"true\"></i></span><p><strong>GDPR Consent:</strong> By completing this survey, you consent to the collection and processing of your personal data in accordance with our Privacy Policy. Your data will be used solely for the purpose of improving our services and will not be shared with third parties without your explicit consent.</p>"
-        //         }
-        //     ]
-        // },
-        // {
-        //     "name": "page15",
-        //     "elements": [
-        //         {
-        //             "type": "html",
-        //             "name": "emailSecurity",
-        //             "html": "<p><strong>Email Security:</strong> Please note that while we take all reasonable precautions to protect your data, email communications may not be completely secure. We recommend not including sensitive information in your emails to us.</p>"
-        //         }
-        //     ]
-        // }
+        }
     ],
     "goNextPageAutomatic": true,
     "startSurveyText": "Start",
     "maxTimeToFinish": 600,
+    "firstPageIsStarted": false
     
 }
