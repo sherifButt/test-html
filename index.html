@@ -7,7 +7,12 @@
     <title>Marketing Company</title>
     <!-- <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.amber.min.css" /> -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
-    <!-- <script src="https://cdn.tailwindcss.com"></script> -->
+    <!-- <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        prefix: 'tw-',
+      }
+    </script> -->
     <script type="text/javascript" src="https://unpkg.com/knockout/build/output/knockout-latest.js"></script>
 
     <link href="https://unpkg.com/survey-jquery/defaultV2.min.css" type="text/css" rel="stylesheet" />
@@ -17,16 +22,18 @@
     <script type="text/javascript" src="https://unpkg.com/survey-knockout-ui/survey-knockout-ui.min.js"></script>
     <script type="module" src="js/survey.js"></script>
     <!-- FONT -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Gabarito:wght@400..900&display=swap" rel="stylesheet">
+    <!-- <link rel="preconnect" href="https://fonts.googleapis.com"> -->
+    <!-- <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin> -->
+    <!-- <link href="https://fonts.googleapis.com/css2?family=Gabarito:wght@400..900&display=swap" rel="stylesheet"> -->
   </head>
-  <body class="container">
-    <header>
-      <div class="container">
+  <body style="position: relative">
+    <header class="container">
+      <div>
         <nav>
           <ul>
-            <li><ii class="fa fa-box" aria-hidden="true"></ii> <a href="https://octopus.energy"> <span style="font-weight:700;">Octopus</span> Energy</a></li>
+            <li>
+              <i class="fa fa-box" aria-hidden="true"></i> <a href="https://octopus.energy"> <span style="font-weight: 700">octopus</span>energy</a>
+            </li>
           </ul>
           <ul class="screen">
             <li><a href="#services">Services</a></li>
@@ -35,12 +42,18 @@
       </div>
     </header>
 
-    <main>
+    <main class="container">
       <section class="hero">
         <div class="product-image">
-          <img src="/img/energy_savings.jpg" alt="Save on Energy Bills" width="100%" />
+          <img src="/img/energy_savings_3.webp" alt="Save on Energy Bills" width="100%" />
         </div>
-        <div class="survey-box">
+        <div class="survey-box" style="position: relative">
+          <svg viewBox="20 0 180 180" xmlns="http://www.w3.org/2000/svg" class="blob" style="position: absolute">
+            <path
+              d="M52.1,-15.7C61.3,11.5,58.4,43.9,40,58C21.6,72,-12.2,67.8,-32,51.6C-51.8,35.5,-57.4,7.5,-49.7,-17.5C-42.1,-42.6,-21,-64.7,0.2,-64.7C21.4,-64.8,42.8,-42.8,52.1,-15.7Z"
+              transform="translate(100 100)"
+            />
+          </svg>
           <survey params="survey: model"></survey>
         </div>
       </section>
@@ -80,6 +93,16 @@
           </details>
           <hr />
           <details>
+            <summary>How can I save on energy bills?</summary>
+            <p>By switching to Octopus Energy, you can take advantage of lower rates and energy-saving tips.</p>
+          </details>
+          <hr />
+          <details>
+            <summary>How can I save on energy bills?</summary>
+            <p>By switching to Octopus Energy, you can take advantage of lower rates and energy-saving tips.</p>
+          </details>
+          <hr />
+          <details>
             <summary>Am I eligible for solar panel grants?</summary>
             <p>Complete our survey to find out if you qualify for government grants on solar panels.</p>
           </details>
@@ -87,9 +110,16 @@
       </section>
     </main>
 
-    <footer id="contact">
+    <footer class="container" id="contact">
       <p>&copy; 2024 Octopus Energy. All rights reserved.</p>
     </footer>
+    <section id="decoration" >
+      <svg xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none" viewBox="0 0 1440 320" class="footer-wave">
+        <path
+          fill-opacity="1"
+          d="M0,288L48,272C96,256,192,224,288,197.3C384,171,480,149,576,165.3C672,181,768,235,864,250.7C960,267,1056,245,1152,250.7C1248,256,1344,288,1392,304L1440,320L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"
+        ></path>
+      </svg>
+    </section>
   </body>
-
 </html>

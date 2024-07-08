@@ -167,6 +167,14 @@ function updateAds() {
             setTimeout(() => image?.classList.replace('hidden-element', 'slide-from-bottom'), 1500);
         }
 
+        if(size === '160x600' || size === '728x90' || size ==='300x250' || size === '480x120') {
+            cta.innerText = '>';
+            cta.style.padding = '5px 12px';
+            cta.style.borderRadius = '100%';
+        }
+            
+        
+
         // Remove animation classes after animation ends to enable re-animation if needed
         setTimeout(() => {
             pathOne?.classList.remove('slide-from-bottom');
@@ -323,10 +331,12 @@ function toggleCtaStyle() {
     const cta = document.getElementById(`cta-${size}`);
     if (cta.innerText === '>') {
         cta.innerText = ads[currentIndex].cta;
-        cta.style.padding = '8px 16px';
+        cta.style.padding = '5px 12px';
+        cta.style.borderRadius = '4px';
     } else {
         cta.innerText = '>';
-        cta.style.padding = '8px 12px';
+        cta.style.padding = '5px 12px';
+        cta.style.borderRadius = '100%';
     }
 }
 
@@ -361,7 +371,8 @@ function downloadAllBannersAsZip() {
         { size: '300x250', dimensions: '300x250' },
         { size: '300x250-text', dimensions: '300x250' },
         { size: '728x90', dimensions: '728x90' },
-        { size: '1200x628', dimensions: '1200x628' }
+        { size: '1200x628', dimensions: '1200x628' },
+        { size: '1200x628-2', dimensions: '1200x628' }
     ];
     
     const zip = new JSZip();

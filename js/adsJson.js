@@ -23,7 +23,7 @@ const ads = [
     },
     {
         "logo": {
-            "icon": "img/umbrella.jpg",
+            "icon": "img/umbrella.png",
             "firstWord": "Car",
             "secondWord": "Insurance"
         },

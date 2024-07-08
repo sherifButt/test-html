@@ -5,7 +5,7 @@
   --sjs-general-backcolor-dim-light: rgba(255, 216, 77, 1);
   --sjs-general-backcolor-dim-dark: rgba(255, 216, 77, 1);
   --sjs-general-forecolor: rgba(0, 0, 0, 1);
-  --sjs-general-forecolor-light: rgba(0, 0, 0, .35);
+  --sjs-general-forecolor-light: rgba(0, 0, 0, 0.449);
   --sjs-general-dim-forecolor: rgba(0, 0, 0, 1);
   --sjs-general-dim-forecolor-light: rgba(0, 0, 0, 1);
   --sjs-primary-backcolor: rgba(0, 0, 0, 1);
@@ -95,6 +95,7 @@ body {
   font-size: 1rem;
   line-height: 1.5;
   font-weight: 200;
+  margin: 0;
 }
 p{
     color: var(--sjs-general-forecolor-light);
@@ -177,8 +178,8 @@ textarea:focus {
 
 header,
 footer {
-  background-color: var(--sjs-general-backcolor-dim);
   color: var(--sjs-general-forecolor);
+  
 }
 
 h1,
@@ -284,7 +285,7 @@ tr:active {
 }
 
 nav {
-  background-color: var(--sjs-general-backcolor-dim);
+  /* background-color: var(--sjs-general-backcolor-dim); */
   color: var(--sjs-general-forecolor);
   /* padding: 1rem; */
   display: flex;
@@ -527,7 +528,7 @@ nav :first-of-type li a {
 
 .sd-element--with-frame.sd-question--title-top {
   box-shadow: none;
-  padding: 0;
+  padding-left: 0px;
 }
 
 .sd-root-modern .sd-container-modern__title, .sd-completedpage:before, .sd-completedpage:after, .sd-navigation__prev-btn {
@@ -547,6 +548,8 @@ nav :first-of-type li a {
 
 .sd-body__navigation .sd-btn {
   padding: 12px 24px !important;
+  
+  
 }
 
 .sd-input {
@@ -701,7 +704,7 @@ nav :first-of-type li a {
 
   .hero {
     height: auto;
-      /* flex-direction: column; */
+      /* flex-direction: row; */
       padding: 0px;
   }
  
@@ -723,6 +726,10 @@ nav :first-of-type li a {
 
   .screen{
     display: none;
+  }
+
+  .blob{
+    top:-10px !important;
   }
 }
 
@@ -817,6 +824,22 @@ nav :first-of-type li a {
   position: absolute;
   bottom: 0;
   z-index: 1; /* Ensure SVG paths are behind other elements */
+  fill: var(--sjs-general-backcolor-dark);
+}
+
+.blob{
+  position: absolute;
+  fill: var(--sjs-general-backcolor-dark);
+  z-index: -1;
+  top:-150px;
+}
+
+.footer-wave{
+
+  position: absolute;
+  fill: var(--sjs-general-backcolor-dark);
+  z-index: -1;
+
 }
 
 .hidden-element {
