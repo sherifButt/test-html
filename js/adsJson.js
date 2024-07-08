@@ -1,9 +1,9 @@
 const ads = [
     {
         "logo": {
-            "icon": "fa-car",
-            "firstWord": "CAR",
-            "secondWord": "insurance"
+            "icon": "fa-brands fa-octopus-deploy",
+            "firstWord": "octopus",
+            "secondWord": "energy"
         },
         "headline": "Cheaper Energy This Summer",
         "text": ["Take our quick survey to see if you can save on energy costs with Octopus Energy this summer. Complete the survey and get a free guide with energy-saving tips!", "Take our quick survey to see if you can save on energy costs with Octopus Energy this summer.", "Take our quick survey to see if you can save on energy costs."],
@@ -12,9 +12,9 @@ const ads = [
     },
     {
         "logo": {
-            "icon": "fa-umbrella",
-            "firstWord": "LIFE",
-            "secondWord": "insurance"
+            "icon": "fa-brands fa-octopus-deploy",
+            "firstWord": "octopus",
+            "secondWord": "energy"
         },
         "headline": "Solar Panel Grants",
         "text": ["Discover if you’re eligible for solar panel grants and save on your energy bills. Fill out our survey and get a guide on maximizing your energy savings.", "Discover if you’re eligible for solar panel grants and save on your energy bills."],
@@ -23,9 +23,9 @@ const ads = [
     },
     {
         "logo": {
-            "icon": "img/umbrella.png",
-            "firstWord": "Car",
-            "secondWord": "Insurance"
+            "icon": "fa-brands fa-octopus-deploy",
+            "firstWord": "octopus",
+            "secondWord": "energy"
         },
         "headline": "Save on Energy Bills",
         "text": ["Complete our survey to see if your area qualifies for cheaper energy rates with Octopus Energy. Get a free energy-saving guide just for participating!", "Complete our survey to see if your area qualifies for cheaper energy rates with Octopus Energy."],

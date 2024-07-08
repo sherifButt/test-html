@@ -818,6 +818,7 @@ nav :first-of-type li a {
 .ad-container {
   position: relative; /* Ensure proper stacking context */
   overflow: hidden;
+  background-color: var(--sjs-general-backcolor);
 }
 
 .path-one, .path-two {
@@ -872,3 +873,7 @@ nav :first-of-type li a {
 }
 
 
+.highlight {
+  color: red;
+  font-weight: bold;
+}
