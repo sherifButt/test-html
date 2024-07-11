@@ -14,8 +14,8 @@
     <script defer src="js/ads.js"></script>
     <link rel="stylesheet" href="styles.css" />
   </head>
-  <body class="p-10 flex relative bg-gray-100">
-    <div class="w-1/4 fixed overflow-scroll">
+  <body class="p-10 flex bg-gray-100">
+    <div class="w-1/4 fixed">
       <div class="flex justify-center mb-4">
         <select id="bannerSelect" class="px-2 py-2 border-2 border-gray-400 rounded" onchange="highlightSelectedBanner()">
           <option value="480x120">480x120</option>
@@ -27,155 +27,21 @@
           <option value="1200x628-2">1200x628-2</option>
         </select>
       </div>
-
-      <div class="flex flex-col justify-center mb-4">
-        <div class="flex justify-between mb-4">
-          <button class="px-2 py-1 rounded" onclick="previousAd()"><i class="fas fa-arrow-left"></i> Text</button>
-          <button class="px-2 py-1 rounded ml-2" onclick="nextAd()"><i class="fas fa-arrow-right float-end"></i> Text</button>
-          <button class="px-2 py-1 rounded ml-2" onclick="previousImage()"><i class="fas fa-arrow-left"></i> Image</button>
-          <button class="px-2 py-1 rounded ml-2" onclick="nextImage()"><i class="fas fa-arrow-right float-end"></i> Image</button>
-        </div>
-
-        <div class="flex justify-between">
-          <button class="px-2 py-1 rounded bg-green-300" onclick="updateAds()"><i class="fas fa-play"></i></button>
-          <button class="px-2 py-1 rounded" onclick="downloadAllBannersAsZip()"><i class="fas fa-download"></i> ZIP</button>
-        </div>
+      <div class="flex justify-center mb-4">
+        <button class="px-2 py-1 rounded" onclick="previousAd()"><i class="fas fa-arrow-left"></i> Text</button>
+        <button class="px-2 py-1 rounded ml-2" onclick="nextAd()"><i class="fas fa-arrow-right float-end"></i> Text</button>
+        <button class="px-2 py-1 rounded ml-2" onclick="previousImage()"><i class="fas fa-arrow-left"></i> Image</button>
+        <button class="px-2 py-1 rounded ml-2" onclick="nextImage()"><i class="fas fa-arrow-right float-end"></i> Image</button>
       </div>
-
       <hr />
 
-      <details>
-        <summary><span class="font-bold">Size</span></summary>
-        <div class="flex flex-col gap-2 mb-4 w-48">
-          <div class="flex items-center gap-2 justify-between">
-            <label for="title-size"><span class="text-sm">Title </span></label>
-            <input type="number" id="title-size" class="w-16 p-1" value="1.5" step="0.1" onchange="updateTitleSize()" />
-          </div>
-          <div class="flex items-center gap-2 justify-between">
-            <label for="body-size"><span class="text-sm">Body</span></label>
-            <input type="number" id="body-size" class="w-16 p-1" value="1" step="0.1" onchange="updateBodySize()" />
-          </div>
-          <div class="flex items-center gap-2 justify-between">
-            <label for="image-size"><span class="text-sm">Image (%)</span></label>
-            <input type="number" id="image-size" class="w-16 p-1" value="25" step="1" onchange="updateImageSize()" />
-          </div>
-        </div>
-      </details>
-
-      <hr />
-
-      <details>
-        <summary><span class="font-bold">Layout</span></summary>
-        <div class="flex flex-wrap gap-2 my-4">
-          <button class="px-2 py-1 rounded" onclick="toggleCtaStyle()">Toggle CTA</button>
-          <button class="px-2 py-1 rounded" onclick="toggleLogoLayout()"><i class="fas fa-exchange-alt"></i> Logo Layout</button>
-          <button class="px-2 py-1 rounded" onclick="rotateLogo()"><i class="fas fa-undo"></i>Logo Rotate</button>
-          <button class="px-2 py-1 rounded" onclick="switchPosition()"><i class="fas fa-arrows-alt-h"></i> Switch</button>
-          <button class="px-2 py-1 rounded ml-2" onclick="toggleTextLength()"><i class="fas fa-arrows-alt-h"></i> Text Length</button>
-        </div>
-      </details>
-
-      <hr />
-
-      <details>
-        <summary><span class="font-bold">Download/Upload</span></summary>
-        <div class="flex flex-col gap-2 w-48 my-4">
-          <div class="flex justify-between items-center">
-            <span class="text-sm">Settings</span>
-            <div class="flex">
-              <a class="px-2 py-1 rounded ml-2 cursor-pointer" onclick="downloadSettings()"><i class="fas fa-download"></i></a>
-              <a class="px-2 py-1 rounded ml-2 cursor-pointer" onclick="uploadSettings()"><i class="fas fa-upload"></i></a>
-            </div>
-          </div>
-          <div class="flex justify-between items-center">
-            <span class="text-sm">Copy</span>
-            <div class="flex">
-              <a class="px-2 py-1 rounded ml-2 cursor-pointer" onclick="downloadAds()"><i class="fas fa-download"></i></a>
-              <a class="px-2 py-1 rounded ml-2 cursor-pointer" onclick="uploadAds()"><i class="fas fa-upload"></i></a>
-            </div>
-          </div>
-          <div class="flex justify-between items-center">
-            <span class="text-sm">Images</span>
-            <div class="flex">
-              <a class="px-2 py-1 rounded ml-2 cursor-pointer" onclick="downloadImages()"><i class="fas fa-download"></i></a>
-              <a class="px-2 py-1 rounded ml-2 cursor-pointer" onclick="uploadImages()"><i class="fas fa-upload"></i></a>
-            </div>
-          </div>
-        </div>
-      </details>
-
-      <hr />
-
-      <details>
-        <summary><span class="font-bold">Visibility</span></summary>
-        <div class="flex flex-col gap-2 my-4">
-          <label class="flex items-center mr-2"
-            ><span class="text-sm w-full">Logo & Icon</span>
-            <input type="checkbox" id="toggle-logo-icon" onchange="toggleElement('logo-icon')" />
-          </label>
-          <label class="flex items-center mr-2"
-            ><span class="text-sm w-full">Svg Wave</span>
-            <input type="checkbox" id="toggle-svg-wave" onchange="toggleElement('svg-wave')" />
-          </label>
-          <label class="flex items-center mr-2"
-            ><span class="text-sm w-full">Image</span>
-            <input type="checkbox" id="toggle-image" onchange="toggleElement('image')" />
-          </label>
-          <label class="flex items-center mr-2"
-            ><span class="text-sm w-full">Title</span>
-            <input type="checkbox" id="toggle-headline" onchange="toggleElement('headline')" />
-          </label>
-          <label class="flex items-center mr-2"
-            ><span class="text-sm w-full">Body</span>
-            <input type="checkbox" id="toggle-text" onchange="toggleElement('text')" />
-          </label>
-          <label class="flex items-center mr-2"
-            ><span class="text-sm w-full">Tags</span>
-            <input type="checkbox" id="toggle-tags" onchange="toggleElement('tags')" />
-          </label>
-          <label class="flex items-center mr-2"
-            ><span class="text-sm w-full">CTA</span>
-            <input type="checkbox" id="toggle-cta" onchange="toggleElement('cta')" />
-          </label>
-          <label class="flex items-center mr-2"
-            ><span class="text-sm w-full">Set Image as Background</span>
-            <input type="checkbox" id="toggle-background" onchange="toggleBackground()" />
-          </label>
-        </div>
-      </details>
-
-      <hr />
-
-      <details>
-        <summary><span class="font-bold">Opacity</span></summary>
-        <div class="flex flex-col gap-2 w-full my-4">
-          <div class="flex justify-between">
-            <label for="opacity" class="w-full text-sm">Image Opacity:</label>
-            <input class="w-full" type="range" id="opacity" min="0" max="1" step="0.1" value="1" onchange="setOpacity()" />
-          </div>
-          <div class="flex justify-between">
-            <label for="svg-one-opacity" class="w-full text-sm">SVG Wave Path One Opacity:</label>
-            <input class="w-full" type="range" id="svg-one-opacity" min="0" max="1" step="0.1" value="1" oninput="setSvgOpacity('one')" />
-          </div>
-          <div class="flex justify-between">
-            <label for="svg-two-opacity" class="w-full text-sm">SVG Wave Path Two Opacity:</label>
-            <input class="w-full" type="range" id="svg-two-opacity" min="0" max="1" step="0.1" value="1" oninput="setSvgOpacity('two')" />
-          </div>
-        </div>
-      </details>
-
-      <hr />
-
-      <details>
-        <summary><span class="font-bold">Image URLs</span></summary>
-        <div id="imageUrlsContainer"></div>
-        <button id="addMoreImagesButton" class="px-2">Add More</button>
-        <button id="saveImagesButton" class="px-2">Save</button>
-      </details>
+      <div class="flex justify-center mt-4 mb-4 flex-wrap gap-2">
+        <button class="px-2 py-1 rounded" onclick="downloadAllBannersAsZip()"><i class="fas fa-download"></i> Download All Banners as ZIP</button>
+      </div>
     </div>
 
-    <div class="w-3/4 ml-52 md:ml-72 lg:ml-96">
-      <div class="grid grid-cols-1 md:grid-cols-1 lg:grid-cols-2 gap-6">
+    <div id="adsContainer" class="w-3/4 ml-52 md:ml-72 lg:ml-96">
+      <div id="subAdsContainer" class="grid grid-cols-1 md:grid-cols-1 lg:grid-cols-2 gap-6">
         <!-- 480x120 -->
         <div class="flex flex-col items-center" onclick="selectBanner('480x120')">
           <div class="bg-yellow-400bg-yellow-400 font-bold px-4 py-1 mb-2">480x120</div>
@@ -208,8 +74,8 @@
             <div id="logo-icon-480x120" class="text-sm mr-4 flex flex-row gap-1">
               <i class="fa fa-box" aria-hidden="true"></i><a href="https://octopus.energy"> <span style="font-weight: 700">Octopus</span> Energy</a>
             </div>
-            <img id="image-480x120" src="img/energy_savings_2.png" alt="Ad Image" class="w-1/4 z-50 relative top-0" />
-            <div class="w-2/3 ml-4 relative z-50">
+            <img id="image-480x120" src="img/energy_savings_2.png" alt="Ad Image" class="w-1/4 z-10 relative top-0" />
+            <div class="w-2/3 ml-4 relative z-10">
               <h2 class="text-lg font-bold" id="headline-480x120">Sunglasses Deals Up to 50% Off</h2>
               <div class="flex justify-between items-center">
                 <p class="hidden text-sm" id="text-480x120">From Aviator Shades to Retro sunglasses. Check out our new collection</p>
@@ -248,7 +114,7 @@
                 ></path>
               </svg>
             </div>
-            <div class="flex items-start z-50 relative">
+            <div class="flex items-start z-10 relative">
               <div id="logo-title-300x250" class="flex flex-col gap-2">
                 <div id="logo-icon-300x250" class="text-sm mr-4 flex flex-row gap-1">
                   <i class="fa fa-box" aria-hidden="true"></i> <a href="https://octopus.energy"> <span style="font-weight: 700">Octopus</span> Energy</a>
@@ -257,7 +123,7 @@
               </div>
               <img id="image-300x250" src="img/energy_savings_2.png" alt="Ad Image" class="w-1/2" />
             </div>
-            <div class="z-50 relative">
+            <div class="z-10 relative">
               <p class="text-sm -mt-4" id="text-300x250">Discover the latest collection of Men's sunglasses. Summer Sale Up to 50% Off</p>
               <div class="flex justify-between items-center">
                 <p class="text-sm" id="tags-300x250">#EnergySavings #SwitchAndSave</p>
@@ -315,7 +181,7 @@
             <div id="logo-icon-300x250-text" class="text-sm mb-4">
               <i class="fa fa-box" aria-hidden="true"></i> <a href="https://octopus.energy"> <span style="font-weight: 700">Octopus</span>Energy</a>
             </div>
-            <img id="image-300x250-text" src="img/energy_savings_2.png" alt="Ad Image" />
+            <img id="image-300x250-text" src="img/energy_savings_2.png" alt="Ad Image" class="hidden" />
             <div>
               <h2 class="text-xl font-bold mb-2" id="headline-300x250-text">Sunglasses Deals Up to 50% Off</h2>
               <p class="text-sm" id="text-300x250-text">Discover the latest collection of Men's sunglasses. Summer Sale Up to 50% Off</p>
@@ -357,13 +223,13 @@
               ></path>
             </svg>
           </div>
-          <div id="logo-icon-728x90" class="text-sm mr-4 flex flex-row gap-1 z-50">
+          <div id="logo-icon-728x90" class="text-sm mr-4 flex flex-row gap-1 z-10">
             <i class="fa fa-box" aria-hidden="true"></i><a href="https://octopus.energy"> <span style="font-weight: 700">Octopus</span> Energy</a>
           </div>
-          <img id="image-728x90" src="img/energy_savings_2.png" alt="Ad Image" class="w-24 z-50 relative" />
-          <div class="flex justify-between w-2/3 ml-4 z-50 relative items-center">
+          <img id="image-728x90" src="img/energy_savings_2.png" alt="Ad Image" class="w-24 z-10 relative" />
+          <div class="flex justify-between w-2/3 ml-4 z-10 relative items-center">
             <h2 class="text-lg font-bold" id="headline-728x90">Sunglasses Deals Up to 50% Off</h2>
-            <p class="hidden text-sm px-4" id="text-728x90">Discover the latest collection of Men's sunglasses. Summer Sale Up to 50% Off</p>
+            <p class=" text-sm px-4" id="text-728x90">Discover the latest collection of Men's sunglasses. Summer Sale Up to 50% Off</p>
             <p class="text-sm hidden" id="tags-728x90">#EnergySavings #SwitchAndSave</p>
             <button class="text-white px-4 py-2 mt-2 rounded-full" id="cta-728x90">SHOP NOW</button>
           </div>
@@ -375,7 +241,7 @@
         <div class="bg-yellow-400 font-bold px-4 py-1 mb-2">1200x628 Facebook Ad</div>
         <div
           id="ad-container-1200x628"
-          class="ad-container ring-1 ring-gray-300 relative p-4 flex flex-row justify-between items-center overflow-hidden"
+          class="ad-container ring-1 ring-gray-300 relative p-4 flex flex-row justify-between items-center overflow-hidden w-96" 
           style="width: 1200px; height: 628px"
         >
           <div class="absolute -bottom-3 left-0 w-full h-3/4">
@@ -455,6 +321,52 @@
             <button class="text-white px-4 py-2 mt-2 rounded" id="cta-1200x628-2">Shop now</button>
           </div>
         </div>
+      </div>
+    </div>
+    <div class="drawer fixed inset-y-0 right-0 transform translate-x-full w-96 bg-white shadow-lg transition-transform duration-300 ease-in-out z-50">
+      <div class="p-4">
+        <div class="flex justify-between items-center mb-4">
+          <h2 class="text-xl font-bold">Settings</h2>
+          <button onclick="closeDrawer()" class="text-red-500"><i class="fas fa-times"></i></button>
+        </div>
+        <hr />
+        <div class="flex justify-center mt-4 mb-4 flex-wrap gap-2">
+          <button class="px-2 py-1 rounded" onclick="resizeImage('increase')"><i class="fas fa-plus"></i> Img</button>
+          <button class="px-2 py-1 rounded" onclick="resizeImage('decrease')"><i class="fas fa-minus"></i> Img</button>
+          <button class="px-2 py-1 rounded" onclick="resizeTitle('increase')"><i class="fas fa-plus"></i> Title</button>
+          <button class="px-2 py-1 rounded" onclick="resizeTitle('decrease')"><i class="fas fa-minus"></i> Title</button>
+          <button class="px-2 py-1 rounded" onclick="resizeBody('increase')"><i class="fas fa-plus"></i> Body</button>
+          <button class="px-2 py-1 rounded" onclick="resizeBody('decrease')"><i class="fas fa-minus"></i> Body</button>
+          <button class="px-2 py-1 rounded" onclick="toggleCtaStyle()">Toggle CTA</button>
+          <button class="px-2 py-1 rounded" onclick="toggleLogoLayout()"><i class="fas fa-exchange-alt"></i> Logo Layout</button>
+          <button class="px-2 py-1 rounded" onclick="rotateLogo()"><i class="fas fa-undo"></i>Logo Rotate</button>
+          <button class="px-2 py-1 rounded" onclick="switchPosition()"><i class="fas fa-arrows-alt-h"></i> Switch</button>
+          <button class="px-2 py-1 rounded ml-2" onclick="toggleTextLength()"><i class="fas fa-arrows-alt-h"></i> Text Length</button>
+        </div>
+
+        <hr />
+        <div class="flex flex-col mt-4 mb-4">
+          <label for="opacity" class="mr-2">Image Opacity:</label>
+          <input class="w-full" type="range" id="opacity" min="0" max="1" step="0.1" value="1" onchange="setOpacity()" />
+          <label for="svg-one-opacity" class="mr-2">SVG Wave Path One Opacity:</label>
+          <input class="w-full" type="range" id="svg-one-opacity" min="0" max="1" step="0.1" value="1" oninput="setSvgOpacity('one')" />
+          <label for="svg-two-opacity" class="mr-2">SVG Wave Path Two Opacity:</label>
+          <input class="w-full" type="range" id="svg-two-opacity" min="0" max="1" step="0.1" value="1" oninput="setSvgOpacity('two')" />
+        </div>
+        <hr />
+        <div class="flex mb-4 flex-wrap gap-2 mt-4">
+          <label class="mr-2"><input type="checkbox" id="toggle-logo-icon" onchange="toggleElement('logo-icon')" checked /> Logo & Icon</label>
+          <label class="mr-2"><input type="checkbox" id="toggle-image" onchange="toggleElement('image')" checked /> Image</label>
+          <label class="mr-2"><input type="checkbox" id="toggle-headline" onchange="toggleElement('headline')" checked /> Title</label>
+          <label class="mr-2"><input type="checkbox" id="toggle-text" onchange="toggleElement('text')" checked /> Body</label>
+          <label class="mr-2"><input type="checkbox" id="toggle-tags" onchange="toggleElement('tags')" checked /> Tags</label>
+          <label class="mr-2"><input type="checkbox" id="toggle-cta" onchange="toggleElement('cta')" checked /> CTA</label>
+          <label class="mr-2"><input type="checkbox" id="toggle-svg" onchange="toggleElement('svg')" checked /> Svg Wave</label>
+          <label class="mr-2"><input type="checkbox" id="toggle-background" onchange="toggleBackground()" /> Set Image as Background</label>
+        </div>
+        <div id="imageUrlsContainer"></div>
+        <button id="addMoreImagesButton">Add More</button>
+        <button id="saveImagesButton">Save</button>
       </div>
     </div>
   </body>

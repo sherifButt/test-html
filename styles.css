@@ -133,14 +133,18 @@ button,
 button:hover,
 .sd-selectbase__label:hover {
   background-color: var(--sjs-primary-backcolor-light) !important;
-  transition: 0.5s !important;
+  transition: 0.25s !important;
   box-shadow: var(--sjs-shadow-large) !important;
+  transform: translateY(-5px);
 }
 
 button:active,
 .sd-selectbase__label:active {
   background-color: var(--sjs-primary-backcolor-dark);
+  transform: translateY(0px);
+    box-shadow: var(--sjs-shadow-small-reset) !important;
 }
+
 
 button::selection{
   background-color: var(--sjs-primary-backcolor);
@@ -153,7 +157,7 @@ select,
 textarea {
   background-color: var(--sjs-general-backcolor-dark);
   color: var(--sjs-general-forecolor);
-  border: 2px solid var(--sjs-border-default);
+  border: 1px solid var(--sjs-border-default) !important;
   padding: 0.9rem;
   margin: 0.5rem 0;
   display: block;
@@ -729,7 +733,7 @@ nav :first-of-type li a {
   }
 
   .blob{
-    top:-50px !important;
+    top:-60px !important;
   }
 }
 
