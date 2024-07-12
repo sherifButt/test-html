@@ -35,6 +35,7 @@ const ads = [
 ];
 
 const images = [
+    "img/woman.png",
     "img/energy_savings_3.webp",
     "img/car.png",
     "img/car3.png",

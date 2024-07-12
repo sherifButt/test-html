@@ -15,8 +15,8 @@
     <link rel="stylesheet" href="styles.css" />
   </head>
   <body class="p-10 flex relative bg-gray-100">
-    <div class="w-1/4 fixed overflow-scroll">
-      <div class="flex justify-center mb-4">
+    <div class="w-1/4 fixed h-full max-h-screen overflow-y-auto scroll-auto snap-y ">
+      <div class="flex justify-center mb-4 snap-center">
         <select id="bannerSelect" class="px-2 py-2 border-2 border-gray-400 rounded" onchange="highlightSelectedBanner()">
           <option value="480x120">480x120</option>
           <option value="300x250">300x250</option>
@@ -28,7 +28,7 @@
         </select>
       </div>
 
-      <div class="flex flex-col justify-center mb-4">
+      <div class="flex flex-col justify-center mb-4 snap-center">
         <div class="flex justify-between mb-4">
           <button class="px-2 py-1 rounded" onclick="previousAd()"><i class="fas fa-arrow-left"></i> Text</button>
           <button class="px-2 py-1 rounded ml-2" onclick="nextAd()"><i class="fas fa-arrow-right float-end"></i> Text</button>
@@ -44,7 +44,7 @@
 
       <hr />
 
-      <details>
+      <details class=" snap-center">
         <summary><span class="font-bold">Size</span></summary>
         <div class="flex flex-col gap-2 mb-4 w-48">
           <div class="flex items-center gap-2 justify-between">
@@ -64,7 +64,7 @@
 
       <hr />
 
-      <details>
+      <details class=" snap-center">
         <summary><span class="font-bold">Layout</span></summary>
         <div class="flex flex-wrap gap-2 my-4">
           <button class="px-2 py-1 rounded" onclick="toggleCtaStyle()">Toggle CTA</button>
@@ -77,7 +77,7 @@
 
       <hr />
 
-      <details>
+      <details class=" snap-center">
         <summary><span class="font-bold">Download/Upload</span></summary>
         <div class="flex flex-col gap-2 w-48 my-4">
           <div class="flex justify-between items-center">
@@ -106,7 +106,7 @@
 
       <hr />
 
-      <details>
+      <details class="snap-center">
         <summary><span class="font-bold">Visibility</span></summary>
         <div class="flex flex-col gap-2 my-4">
           <label class="flex items-center mr-2"
@@ -146,7 +146,7 @@
 
       <hr />
 
-      <details>
+      <details class="snap-center">
         <summary><span class="font-bold">Opacity</span></summary>
         <div class="flex flex-col gap-2 w-full my-4">
           <div class="flex justify-between">
@@ -166,7 +166,7 @@
 
       <hr />
 
-      <details>
+      <details class="snap-center">
         <summary><span class="font-bold">Image URLs</span></summary>
         <div id="imageUrlsContainer"></div>
         <button id="addMoreImagesButton" class="px-2">Add More</button>
@@ -174,8 +174,8 @@
       </details>
     </div>
 
-    <div class="w-3/4 ml-52 md:ml-72 lg:ml-96">
-      <div class="grid grid-cols-1 md:grid-cols-1 lg:grid-cols-2 gap-6">
+    <div class="w-3/4 ml-52 md:ml-72 lg:ml-96 ">
+      <div class="grid grid-cols-1 md:grid-cols-1 lg:grid-cols-2 gap-6 ">
         <!-- 480x120 -->
         <div class="flex flex-col items-center" onclick="selectBanner('480x120')">
           <div class="bg-yellow-400bg-yellow-400 font-bold px-4 py-1 mb-2">480x120</div>
