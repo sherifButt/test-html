@@ -14,15 +14,15 @@
   --sjs-primary-forecolor: rgb(229 231 228);
   --sjs-primary-forecolor-light: rgba(255, 255, 255, 0.25);
   --sjs-base-unit: 8px;
-  --sjs-corner-radius: 4px;
+  --sjs-corner-radius: 8px;
   --sjs-secondary-backcolor: rgba(255, 152, 20, 1);
   --sjs-secondary-backcolor-light: rgba(255, 152, 20, 0.1);
   --sjs-secondary-backcolor-semi-light: rgba(255, 152, 20, 0.25);
   --sjs-secondary-forecolor: rgba(255, 255, 255, 1);
   --sjs-secondary-forecolor-light: rgba(255, 255, 255, 0.25);
-  --sjs-shadow-small: 0px 0px 0px 2px rgba(0, 0, 0, 1);
+  --sjs-shadow-small: 0px 2px 0px 0px rgba(0, 0, 0, 1);
   --sjs-shadow-small-reset: 0px 0px 0px 0px rgba(0, 0, 0, 1);
-  --sjs-shadow-medium: 0px 0px 0px 2px rgba(0, 0, 0, 1);
+  --sjs-shadow-medium: 0px 4px 0px 0px rgba(0, 0, 0, 1);
   --sjs-shadow-large: 0px 6px 0px 0px rgba(0, 0, 0, 1);
   --sjs-shadow-inner: 0px 0px 0px 2px rgba(0, 0, 0, 1), 0px -2px 0px 2px rgba(0, 0, 0, 1);
   --sjs-shadow-inner-reset: 0px 0px 0px 0px rgba(0, 0, 0, 1), 0px 0px 0px 0px rgba(0, 0, 0, 1);
@@ -104,6 +104,9 @@ p{
 
 hr {
   border-color: var(--sjs-border-default);
+  margin: 20px 0px;
+  width: 5%;
+  border-width:2px
 }
 
 button,
@@ -114,20 +117,24 @@ textarea,
   border-radius: var(--sjs-corner-radius);
 }
 
+.ads-button{
+  background-color: var(--sjs-general-backcolor-dark) !important;
+}
+
 button,
 .sd-selectbase__label {
   color: var(--sjs-primary-backcolor) !important;
   background-color: var(--sjs-primary-forecolor) !important;
   border: 2px solid var(--sjs-primary-backcolor) !important;
   padding: 0.8rem;
-  margin: 1.5rem 0;
+  margin: 0.25rem 0;
   display: inline-block; 
   border-radius: var(--sjs-editorpanel-cornerRadius, var(--sjs-corner-radius, 4px));
   text-align: left;
   cursor: pointer;
   transition: box-shadow var(--sjs-transition-duration, 150ms);
   font-size: 1.1rem;
-  border-radius: 8px;
+  box-shadow: var(--sjs-shadow-medium) !important;
 }
 
 button:hover,
@@ -135,12 +142,13 @@ button:hover,
   background-color: var(--sjs-primary-backcolor-light) !important;
   transition: 0.25s !important;
   box-shadow: var(--sjs-shadow-large) !important;
-  transform: translateY(-5px);
+  transform: translateY(-3px);
 }
 
 button:active,
 .sd-selectbase__label:active {
   background-color: var(--sjs-primary-backcolor-dark);
+  transition: 0.25s !important;
   transform: translateY(0px);
     box-shadow: var(--sjs-shadow-small-reset) !important;
 }
@@ -186,6 +194,10 @@ footer {
   
 }
 
+.ads-title {
+  font-family: "Oswald" !important;
+}
+
 h1,
 h2,
 h3,
@@ -205,6 +217,7 @@ h2 {
   font-size: 3rem;
   font-weight: 700;
   line-height: 1.3;
+  
 }
 
 h3 {
@@ -252,14 +265,12 @@ table {
   border-collapse: collapse;
   width: 100%;
   margin: 2rem 0;
-  border-radius: 8px;
   background-color: var(--sjs-general-backcolor-dark);
   color: var(--sjs-general-forecolor);
   border: 2px solid var(--sjs-border-default);
   border: none;
   border-radius: var(--sjs-editorpanel-cornerRadius, var(--sjs-corner-radius, 4px));
   text-align: start;
-
   box-shadow: var(--sjs-shadow-inner, inset 0px 1px 2px 0px rgba(0, 0, 0, 0.15)), 0 0 0 0px var(--sjs-primary-backcolor, var(--primary, #19b394));
   font-size: 0.9rem;
 }
@@ -430,6 +441,36 @@ nav :first-of-type li a {
 .section {
   margin: 60px 0; 
   padding: 10px; 
+}
+
+.tips {
+  /* background-color:  var(--sjs-primary-forecolor);   */
+  padding: 20px;
+  margin: 20px 0;
+  border-left: 10px solid var(--sjs-general-backcolor-dark);
+  border-radius: var(--sjs-corner-radius);
+  /* box-shadow: var( --sjs-shadow-large); */
+  /* margin-left: 80px */
+  
+}
+
+.blog-entry {
+  display: flex;
+  margin-bottom: 20px;
+}
+.blog-entry img {
+  width: 250px;
+  height:   250px;
+  margin-right: 40px;
+  
+}
+.blog-entry-content {
+  flex: 1;
+}
+.blog-entry-meta {
+  font-size: 0.9em;
+  color: #777;
+  margin-bottom: 10px;
 }
 
 .shadow-small {
@@ -844,7 +885,8 @@ nav :first-of-type li a {
   position: absolute;
   fill: var(--sjs-general-backcolor-dark);
   z-index: -1;
-
+  stroke: var(--sjs-general-forecolor);
+  stroke-width: 3px;
 }
 
 .hidden-element {

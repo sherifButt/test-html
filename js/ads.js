@@ -96,10 +96,6 @@ function updateSliderValues(size) {
     }
 }
 
-
-
-
-
 function saveSettings() {
     localStorage.setItem('bannerSettings', JSON.stringify(storedBannerSettings));
     localStorage.setItem('ads', JSON.stringify(storedAds));
@@ -168,7 +164,6 @@ function downloadSettings() {
     downloadAnchorNode.remove();
 }
 
-
 function uploadSettings() {
     const input = document.createElement('input');
     input.type = 'file';
@@ -192,8 +187,6 @@ function uploadSettings() {
     }
     input.click();
 }
-
-
 
 function toggleLogoLayout() {
     const size = getSelectedBanner();
@@ -283,6 +276,32 @@ function updateLogo(size) {
     `;
 }
 
+// Functions to control image z-index
+function increaseImageZIndex() {
+    const size = getSelectedBanner();
+    const image = document.getElementById(`image-${size}`);
+    let zIndex = parseInt(window.getComputedStyle(image).zIndex, 10);
+    zIndex = isNaN(zIndex) ? 10 : zIndex + 10;
+    image.style.zIndex = zIndex;
+
+    const settings = storedBannerSettings.find(setting => setting.size === size).settings.layout;
+    settings.imageZIndex = zIndex;
+    saveSettings();
+}
+
+function decreaseImageZIndex() {
+    const size = getSelectedBanner();
+    const image = document.getElementById(`image-${size}`);
+    let zIndex = parseInt(window.getComputedStyle(image).zIndex, 10);
+    zIndex = isNaN(zIndex) ? 10 : Math.max(1, zIndex - 10);
+    image.style.zIndex = zIndex;
+
+    const settings = storedBannerSettings.find(setting => setting.size === size).settings.layout;
+    settings.imageZIndex = zIndex;
+    saveSettings();
+}
+
+
 function updateAds() {
     const sizes = ["480x120", "300x250", "160x600", "300x250-text", "728x90", "1200x628", "1200x628-2"];
     sizes.forEach(size => {
@@ -295,6 +314,7 @@ function updateAds() {
         const image = document.getElementById(`image-${size}`);
         const logoIcon = document.getElementById(`logo-icon-${size}`);
         const settings = storedBannerSettings.find(setting => setting.size === size).settings;
+        
 
         if (headline) headline.innerText = storedAds[currentIndex].headline;
         const adTextArray = storedAds[currentIndex].text;
@@ -324,6 +344,10 @@ function updateAds() {
         if (logoIcon) {
             logoIcon.style.transform = `rotate(${settings.layout.logoRotation}deg)`;
         }
+
+        // Apply z-index setting
+        if (image) image.style.zIndex = settings.layout.imageZIndex || 30;
+        
 
         // Initially hide all elements
         if (pathOne) pathOne.classList.add('hidden-element');
@@ -388,6 +412,7 @@ function updateTitleSize() {
     const headline = document.getElementById(`headline-${size}`);
     if (headline) {
         headline.style.fontSize = titleSize;
+        headline.style.lineHeight = titleSize;
     }
     const settings = storedBannerSettings.find(setting => setting.size === size).settings.layout;
     settings.titleSize = titleSize;

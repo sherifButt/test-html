@@ -35,6 +35,9 @@ const ads = [
 ];
 
 const images = [
+    "img/leads.png",
+    "img/leads2.png",
+    "img/tree.png",
     "img/woman.png",
     "img/energy_savings_3.webp",
     "img/car.png",
@@ -52,22 +55,23 @@ const bannerSettings = [
                 "image": true,
                 "headline": true,
                 "text": false,
-                "tags": false,
+                "tags": true,
                 "cta": true,
                 "svgWave": true
             },
             "layout": {
                 "logoLayout": "flex-row",
                 "ctaStyle": "default",
-                "imageOpacity": 1,
-                "svgOneOpacity": 0.53,
-                "svgTwoOpacity": 1,
+                "imageOpacity": "1",
+                "svgOneOpacity": "1",
+                "svgTwoOpacity": "1",
                 "logoRotation": 0,
                 "backgroundImage": false,
-                "imageSize": "25%",
-                "titleSize": "1.5rem",
+                "imageSize": "27%",
+                "titleSize": "1.2rem",
                 "bodySize": "1rem",
                 "switchPosition": false,
+                "imageZIndex": 29,
                 "textLength": 0
             }
         }
@@ -88,15 +92,16 @@ const bannerSettings = [
                 "logoLayout": "flex-col",
                 "ctaStyle": "default",
                 "imageOpacity": 1,
-                "svgOneOpacity": 0.53,
-                "svgTwoOpacity": 1,
+                "svgOneOpacity": "1",
+                "svgTwoOpacity": "1",
                 "logoRotation": 0,
                 "backgroundImage": false,
-                "imageSize": "50%",
-                "titleSize": "1.25rem",
+                "imageSize": "53%",
+                "titleSize": "1.4rem",
                 "bodySize": "1rem",
                 "switchPosition": true,
-                "textLength": 2 || 0
+                "imageZIndex": 9,
+                "textLength": 2
             }
         }
     },
@@ -116,14 +121,15 @@ const bannerSettings = [
                 "logoLayout": "flex-row",
                 "ctaStyle": "circle",
                 "imageOpacity": 1,
-                "svgOneOpacity": 0.53,
+                "svgOneOpacity": "1",
                 "svgTwoOpacity": 1,
                 "logoRotation": 0,
                 "backgroundImage": false,
                 "imageSize": "100%",
-                "titleSize": "1.5rem",
-                "bodySize": "1rem",
+                "titleSize": "1.6rem",
+                "bodySize": "0.9rem",
                 "switchPosition": false,
+                "imageZIndex": 9,
                 "textLength": 0
             }
         }
@@ -136,7 +142,7 @@ const bannerSettings = [
                 "image": false,
                 "headline": true,
                 "text": true,
-                "tags": true,
+                "tags": false,
                 "cta": true,
                 "svgWave": false
             },
@@ -144,14 +150,15 @@ const bannerSettings = [
                 "logoLayout": "flex-row",
                 "ctaStyle": "default",
                 "imageOpacity": 1,
-                "svgOneOpacity": 0,
-                "svgTwoOpacity": 0,
+                "svgOneOpacity": "1",
+                "svgTwoOpacity": "1",
                 "logoRotation": 0,
                 "backgroundImage": false,
                 "imageSize": "0%",
-                "titleSize": "1.5rem",
-                "bodySize": "1rem",
+                "titleSize": "1.3rem",
+                "bodySize": "0.9rem",
                 "switchPosition": false,
+                "imageZIndex": 30,
                 "textLength": 0
             }
         }
@@ -172,14 +179,15 @@ const bannerSettings = [
                 "logoLayout": "flex-row",
                 "ctaStyle": "circle",
                 "imageOpacity": 1,
-                "svgOneOpacity": 0.53,
+                "svgOneOpacity": "1",
                 "svgTwoOpacity": 1,
                 "logoRotation": 0,
                 "backgroundImage": false,
-                "imageSize": "33%",
-                "titleSize": "1.25rem",
+                "imageSize": "15%",
+                "titleSize": "1.2rem",
                 "bodySize": "1rem",
                 "switchPosition": false,
+                "imageZIndex": 30,
                 "textLength": 0
             }
         }
@@ -191,7 +199,7 @@ const bannerSettings = [
                 "logoIcon": true,
                 "image": true,
                 "headline": true,
-                "text": true,
+                "text": false,
                 "tags": true,
                 "cta": true,
                 "svgWave": true
@@ -204,10 +212,11 @@ const bannerSettings = [
                 "svgTwoOpacity": 1,
                 "logoRotation": 0,
                 "backgroundImage": false,
-                "imageSize": "33%",
-                "titleSize": "2rem",
+                "imageSize": "43%",
+                "titleSize": "2.9rem",
                 "bodySize": "1.25rem",
                 "switchPosition": false,
+                "imageZIndex": 16,
                 "textLength": 0
             }
         }
@@ -236,6 +245,7 @@ const bannerSettings = [
                 "titleSize": "2rem",
                 "bodySize": "1.25rem",
                 "switchPosition": false,
+                "imageZIndex": 30,
                 "textLength": 0
             }
         }
