@@ -36,7 +36,7 @@ const ads = [
 
 const images = [
     "img/leads.png",
-    "img/leads2.png",
+    "img/leads3.png",
     "img/tree.png",
     "img/woman.png",
     "img/energy_savings_3.webp",

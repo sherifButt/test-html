@@ -443,7 +443,7 @@ nav :first-of-type li a {
 
 .blog-entry {
   display: flex;
-  margin-bottom: 20px;
+  margin: 40px 0;
 }
 .blog-entry img {
   width: 250px;
@@ -457,6 +457,21 @@ nav :first-of-type li a {
   font-size: 0.9em;
   color: #777;
   margin-bottom: 10px;
+}
+
+.blog-post img {
+  width: 40%;
+  height: auto;
+  margin-bottom: 20px;
+}
+
+.toc {
+  flex: 1;
+}
+
+.content-wrapper {
+  display: flex;
+  gap: 20px;
 }
 
 .shadow-small {
@@ -726,14 +741,21 @@ nav :first-of-type li a {
     /* border-bottom: 1px solid #828282; */
   }
   .blog-entry {
-    display:flex;
+    display: flex;
     flex-direction: column;
   }
   .blog-entry img {
     width: 35%;
     height: auto;
     margin-right: 0;
-    
+  }
+
+  .blog-post img {
+    width: 100%;
+  } 
+  
+.content-wrapper {
+    flex-direction: column;
   }
 
   .hero {
