@@ -10,11 +10,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Gabarito:wght@400..900&family=Oswald:wght@200..700&family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap"
-      rel="stylesheet"
-    />
-    <script defer src="cache/images.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Gabarito:wght@400..900&family=Oswald:wght@200..700&family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap" rel="stylesheet">
     <script defer src="js/adsJson.js"></script>
     <script defer src="js/ads.js"></script>
     <link rel="stylesheet" href="styles.css" />
@@ -48,72 +44,7 @@
       </div>
 
       <hr />
-      <details open class="snap-center">
-        <summary><span class="font-bold">Elements</span></summary>
-        <div id="elements-list" class="my-4 flex flex-wrap justify-center"></div>
-        <div id="element-controls" class="flex flex-col items-center gap-2 my-4 p-4">
-          <!-- D-pad for movement -->
-          <div class="flex flex-row justify-between items-center w-full">
-            <div class="grid grid-cols-3 gap-2 mb-4">
-              <div></div>
-              <button onclick="moveElement('up')" class="px-3 py-2 bg-gray-300 rounded-t-lg hover:bg-gray-400"><i class="fas fa-caret-up"></i></button>
-              <div></div>
-              <button onclick="moveElement('left')" class="px-3 py-2 bg-gray-300 rounded-l-lg hover:bg-gray-400"><i class="fas fa-caret-left"></i></button>
-              <div class="bg-gray-300 rounded-full"></div>
-              <button onclick="moveElement('right')" class="px-3 py-2 bg-gray-300 rounded-r-lg hover:bg-gray-400"><i class="fas fa-caret-right"></i></button>
-              <div></div>
-              <button onclick="moveElement('down')" class="px-3 py-2 bg-gray-300 rounded-b-lg hover:bg-gray-400"><i class="fas fa-caret-down"></i></button>
-              <div></div>
-            </div>
-            <div class="flex gap-2">
-              <button onclick="rotateElement('left')" class="px-3 py-2 bg-blue-500 text-white rounded-full hover:bg-blue-600"><i class="fas fa-undo"></i></button>
-              <button onclick="rotateElement('right')" class="px-3 py-2 bg-blue-500 text-white rounded-full hover:bg-blue-600"><i class="fas fa-redo"></i></button>
-            </div>
-          </div>
-
-         
-
-          <!-- Rotation and mirror controls -->
-          <div class="flex justify-between w-full mb-4 items-center">
-            <!-- Size controls -->
-            <div class="flex justify-center gap-4 mb-4">
-              <button onclick="resizeElement('down')" class="px-3 py-2 bg-green-500 text-white rounded-full hover:bg-green-600"><i class="fas fa-search-minus"></i></button>
-              <button onclick="resizeElement('up')" class="px-3 py-2 bg-green-500 text-white rounded-full hover:bg-green-600"><i class="fas fa-search-plus"></i></button>
-            </div>
-
-            <!-- Z Index -->
-            <div class="flex justify-center gap-4 mb-4">
-              <button onclick="changeZIndex('down')" class="px-3 py-2 bg-yellow-500 text-white rounded-full hover:bg-yellow-600"><i class="fas fa-layer-group"></i> -</button>
-              <button onclick="changeZIndex('up')" class="px-3 py-2 bg-yellow-500 text-white rounded-full hover:bg-yellow-600"><i class="fas fa-layer-group"></i> +</button>
-            </div>
-
-            <button onclick="mirrorElement()" class="px-3 py-2 bg-purple-500 text-white rounded-full hover:bg-purple-600"><i class="fas fa-exchange-alt fa-rotate-90"></i></button>
-          </div>
-
-           <!-- Color controls -->
-           <div class="flex  gap-2 my-4 justify-between w-full">
-            <div class="flex items-center justify-between">
-              <label for="element-color" class="text-sm">Element Color:</label>
-              <input class="m-2" type="color" id="element-color" onchange="changeElementColor(this.value)">
-            </div>
-            <div class="flex items-center justify-between">
-              <label for="background-color" class="text-sm">Background Color:</label>
-              <input class="m-2" type="color" id="background-color" onchange="changeBackgroundColor(this.value)">
-            </div>
-            <button onclick="resetColors()" class="px-2 py-1 bg-red-500 text-white rounded">Reset Colors</button>
-          </div>
-
-          <!-- Opacity slider -->
-          <div class="w-full mb-4">
-            <label for="element-opacity" class="block text-sm font-medium text-gray-700 mb-1">Opacity</label>
-            <input type="range" id="element-opacity" name="element-opacity" min="0" max="1" step="0.1" value="1" class="w-full" onchange="changeElementOpacity(this.value)" />
-          </div>
-
-          <!-- Reset button -->
-          <button onclick="resetElement()" class="px-4 py-2 bg-red-500 text-white rounded-full hover:bg-red-600">Reset</button>
-        </div>
-      </details>
-      <hr />
+      
 
       <details class="snap-center">
         <summary><span class="font-bold">Size</span></summary>
@@ -277,6 +208,7 @@
                   class="path-one"
                   id="path-one-480x120"
                 ></path>
+                
               </svg>
             </div>
             <div class="absolute -bottom-3 left-0 w-full h-full z-20">
@@ -322,6 +254,7 @@
                   style="transition-property: all; transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1); transition-duration: 300ms; transition-delay: 150ms"
                   id="path-one-300x250"
                 ></path>
+                
               </svg>
             </div>
             <div class="absolute -bottom-14 left-0 w-full h-full z-20">
@@ -338,7 +271,7 @@
                 ></path>
               </svg>
             </div>
-            <div class="flex items-start relative">
+            <div class="flex items-start  relative">
               <div id="logo-title-300x250" class="flex flex-col gap-2">
                 <div id="logo-icon-300x250" class="text-sm mr-4 flex flex-row gap-1">
                   <i class="fa fa-box" aria-hidden="true"></i> <a href="https://octopus.energy"> <span style="font-weight: 700">Octopus</span> Energy</a>
@@ -373,6 +306,7 @@
                   style="transition-property: all; transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1); transition-duration: 300ms; transition-delay: 150ms"
                   id="path-one-160x600"
                 ></path>
+                
               </svg>
             </div>
             <div class="absolute -bottom-40 left-0 w-full h-full z-20">
@@ -393,7 +327,7 @@
               <i class="fa fa-box" aria-hidden="true"></i> <a href="https://octopus.energy"> <span style="font-weight: 700">Octopus</span>Energy</a>
             </div>
             <img id="image-160x600" src="img/energy_savings.jpg" alt="Ad Image" class="w-full mb-4 absolute right-0 top-10" />
-            <div class="relative z-20">
+            <div class="relative z-20 ">
               <h2 class="ads-title text-xl font-bold mb-2" id="headline-160x600">Sunglasses Deals Up to 50% Off</h2>
               <p class="text-sm" id="text-160x600">Discover the latest collection of Men's sunglasses. Summer Sale Up to 50% Off</p>
               <p class="text-sm" id="tags-160x600">#EnergySavings #SwitchAndSave</p>
@@ -503,7 +437,7 @@
           </div>
           <img id="image-1200x628" src="img/energy_savings_2.png" alt="Ad Image" class="w-1/3 relative ml-20" />
           <div class="flex flex-col gap-2 w-1/2 ml-4 items-start z-10 relative">
-            <h2 id="headline-1200x628" class="ads-title font-bold">Sunglasses Deals Up to 50% Off</h2>
+            <h2 id="headline-1200x628" class="ads-title font-bold" >Sunglasses Deals Up to 50% Off</h2>
             <p class="hidden" id="text-1200x628">From Aviator Shades to Retro sunglasses. Check out our new collection</p>
             <p class="text-sm" id="tags-1200x628">#EnergySavings #SwitchAndSave</p>
             <button class="ads-button px-4 py-2 mt-2 rounded" id="cta-1200x628">Shop now</button>
@@ -518,7 +452,7 @@
           class="ad-container ring-1 ring-gray-300 relative p-4 flex flex-row justify-between items-center overflow-hidden"
           style="width: 1200px; height: 628px"
         >
-          <div class="absolute -bottom-3 left-0 w-full h-3/4 z-10">
+        <div class="absolute -bottom-3 left-0 w-full h-3/4 z-10">
             <svg width="100%" height="100%" id="svg-1200x628" viewBox="0 0 1440 523" xmlns="http://www.w3.org/2000/svg">
               <path
                 d="M 0,533 C 0,533 0,177 0,177 C 111.64285714285714,171.32142857142856 223.28571428571428,165.64285714285714 336,151 C 448.7142857142857,136.35714285714286 562.4999999999999,112.74999999999997 674,134 C 785.5000000000001,155.25000000000003 894.7142857142858,221.3571428571429 1022,236 C 1149.2857142857142,250.6428571428571 1294.642857142857,213.82142857142856 1440,177 C 1440,177 1440,533 1440,533 Z"
@@ -544,7 +478,7 @@
               ></path>
             </svg>
           </div>
-
+         
           <div id="logo-icon-1200x628-2" class="text-sm mr-4 flex flex-row gap-1 z-30">
             <i class="fa fa-box" aria-hidden="true"></i><a href="https://octopus.energy"> <span style="font-weight: 700">Octopus</span> Energy</a>
           </div>

@@ -34,18 +34,6 @@ const ads = [
     }
 ];
 
-const images = [
-    "img/leads.png",
-    "img/leads3.png",
-    "img/tree.png",
-    "img/woman.png",
-    "img/energy_savings_3.webp",
-    "img/car.png",
-    "img/car3.png",
-    "img/energy_savings_3.png",
-    "img/google-ads-responsive-ad-example.png.webp",
-    "img/umbrella.png"];
-
 const bannerSettings = [
     {
         "size": "480x120",
