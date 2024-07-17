@@ -1,0 +1,266 @@
+- README.md
+- Robots.txt
+ads.html:
+  title: "Responsive Ad Layout"
+  - description
+  - keywords
+  - author
+  - readingTime
+  images: ["img/energy_savings_2.png","img/energy_savings_2.png","img/energy_savings.jpg","img/energy_savings_2.png","img/energy_savings_2.png","img/energy_savings_2.png","img/energy_savings_2.png"]
+  internalLinks: ["https://octopus.energy","https://octopus.energy","https://octopus.energy","https://octopus.energy","https://octopus.energy","https://octopus.energy","https://octopus.energy"]
+  externalLinks: ["https://octopus.energy","https://octopus.energy","https://octopus.energy","https://octopus.energy","https://octopus.energy","https://octopus.energy","https://octopus.energy"]
+ads4.html:
+  title: "Responsive Ad Layout"
+  - description
+  - keywords
+  - author
+  - readingTime
+  images: ["img/energy_savings_2.png","img/energy_savings_2.png","img/energy_savings.jpg","img/energy_savings_2.png","img/energy_savings_2.png","img/energy_savings_2.png","img/energy_savings_2.png"]
+  internalLinks: ["https://octopus.energy","https://octopus.energy","https://octopus.energy","https://octopus.energy","https://octopus.energy","https://octopus.energy","https://octopus.energy"]
+  externalLinks: ["https://octopus.energy","https://octopus.energy","https://octopus.energy","https://octopus.energy","https://octopus.energy","https://octopus.energy","https://octopus.energy"]
+- analyze-website.js
+blog:
+  business:
+    01-why-businesses-hesitate-to-implement-lead-generation.html:
+      title: "Why Businesses Hesitate to Implement Lead Generation"
+      description: "Explore the common reasons why businesses hesitate to integrate lead generation into their sales pipeline, including misconceptions, challenges, and potential solutions."
+      keywords: ["lead generation","sales pipeline","business growth","lead generation challenges","implementing lead generation","lead generation costs"]
+      author: "Marketing Company"
+      readingTime: "8 minutes"
+      images: ["/img/leads10.webp","/img/banner_300x250.jpg"]
+      internalLinks: ["/index/","/blog/business/","/blog/","https://www.jbedigital.com.au/understanding-lead-generation","https://firstsales.io/mastering-lead-generation-guide","https://shanebarker.com/blog/lead-generation-guide","https://www.bikebear.com.my/understanding-lead-generation","https://www.mediummultimedia.com/understanding-lead-generation","/blog/default/01-benefits-of-lead-generation.html","/blog/default/02-lead-generation-ai-biggest-nightmare.html","/blog/default/03-scale-your-business-with-lead-generation.html","/blog/default/09-why-businesses-hesitate-to-implement-lead-generation.html"]
+      externalLinks: ["https://www.jbedigital.com.au/understanding-lead-generation","https://firstsales.io/mastering-lead-generation-guide","https://shanebarker.com/blog/lead-generation-guide","https://www.bikebear.com.my/understanding-lead-generation","https://www.mediummultimedia.com/understanding-lead-generation"]
+    index.html:
+      title: "business - Blog"
+      - description
+      - keywords
+      - author
+      - readingTime
+      images: ["/img/leads10.webp","/img/leads10.webp"]
+      internalLinks: ["https://octopus.energy","/blog/","/blog","/blog","/blog/business/01-why-businesses-hesitate-to-implement-lead-generation.html","/blog/business/01-why-businesses-hesitate-to-implement-lead-generation.html","/blog/business","/blog/business/01-why-businesses-hesitate-to-implement-lead-generation.html","/blog/business/marketing/01-why-businesses-hesitate-to-implement-lead-generation.html","/blog/business/marketing/01-why-businesses-hesitate-to-implement-lead-generation.html","/blog/business/marketing","/blog/business/marketing/01-why-businesses-hesitate-to-implement-lead-generation.html"]
+      externalLinks: ["https://octopus.energy"]
+    - leads4.png
+    marketing:
+      01-why-businesses-hesitate-to-implement-lead-generation.html:
+        title: "Why Businesses Hesitate to Implement Lead Generation"
+        description: "Explore the common reasons why businesses hesitate to integrate lead generation into their sales pipeline, including misconceptions, challenges, and potential solutions."
+        keywords: ["lead generation","sales pipeline","business growth","lead generation challenges","implementing lead generation","lead generation costs"]
+        author: "Marketing Company"
+        readingTime: "8 minutes"
+        images: ["/img/leads10.webp","/img/banner_300x250.jpg"]
+        internalLinks: ["/index.html","/blog/","/blog/business/marketing/","https://www.jbedigital.com.au/understanding-lead-generation","https://firstsales.io/mastering-lead-generation-guide","https://shanebarker.com/blog/lead-generation-guide","https://www.bikebear.com.my/understanding-lead-generation","https://www.mediummultimedia.com/understanding-lead-generation","/blog/default/01-benefits-of-lead-generation.html","/blog/default/02-lead-generation-ai-biggest-nightmare.html","/blog/default/03-scale-your-business-with-lead-generation.html","/blog/default/09-why-businesses-hesitate-to-implement-lead-generation.html"]
+        externalLinks: ["https://www.jbedigital.com.au/understanding-lead-generation","https://firstsales.io/mastering-lead-generation-guide","https://shanebarker.com/blog/lead-generation-guide","https://www.bikebear.com.my/understanding-lead-generation","https://www.mediummultimedia.com/understanding-lead-generation"]
+      index.html:
+        title: "marketing - Blog"
+        - description
+        - keywords
+        - author
+        - readingTime
+        images: ["/img/leads10.webp"]
+        internalLinks: ["https://octopus.energy","/blog/","/blog/business","/blog","/blog/business","/blog/business/marketing/01-why-businesses-hesitate-to-implement-lead-generation.html","/blog/business/marketing/01-why-businesses-hesitate-to-implement-lead-generation.html","/blog/business/marketing","/blog/business/marketing/01-why-businesses-hesitate-to-implement-lead-generation.html"]
+        externalLinks: ["https://octopus.energy"]
+      - info.json
+      - leads5.png
+    sales:
+      - car3.jpg
+  default:
+    01-benefits-of-lead-generation.html:
+      title: "The Benefits of Lead Generation"
+      description: "Discover how effective lead generation strategies can transform your business and boost your sales pipeline."
+      keywords: ["lead generation","marketing","business growth","sales pipeline","brand awareness"]
+      author: "Marketing Company"
+      readingTime: "8 minutes"
+      images: ["/img/leads.png","/img/banner_300x250.jpg"]
+      internalLinks: ["/index.html","/blog/","/blog/","/blog/default/02-lead-generation-ai-biggest-nightmare.html"]
+      externalLinks: []
+    02-lead-generation-ai-biggest-nightmare.html:
+      title: "Lead Generation: AI's Biggest Nightmare"
+      description: "Lead generation is the lifeblood of any business, driving growth and revenue. With the advent of AI, the landscape of lead generation has transformed, promising greater efficiency and precision. However, AI's involvement in lead generation is not without its challenges. This article delves into the difficulties AI faces in lead generation, exploring the technical, ethical, and operational hurdles and offering potential solutions."
+      keywords: ["lead generation","AI","artificial intelligence","marketing","business growth","sales pipeline"]
+      author: "Marketing Company"
+      readingTime: "8 minutes"
+      images: ["/img/leads5.png","/img/banner_300x250.jpg"]
+      internalLinks: ["/index.html","/blog/","/blog/","/blog/default/01-benefits-of-lead-generation.html","/blog/default/03-scale-your-business-with-lead-generation.html"]
+      externalLinks: []
+    03-scale-your-business-with-lead-generation.html:
+      title: "Scale Your Business with Lead Generation"
+      description: "Lead generation is a crucial component of any successful marketing strategy. By identifying and attracting potential customers, businesses can drive growth and increase revenue. In this blog post, we’ll explore how lead generation can boost your sales with minimum effort."
+      keywords: ["lead generation","marketing","business growth","sales pipeline","brand awareness"]
+      author: "Marketing Company"
+      readingTime: "8 minutes"
+      images: ["/img/leads3.png","/img/banner_300x250.jpg"]
+      internalLinks: ["/index.html","/blog/","/blog/","/blog/default/02-lead-generation-ai-biggest-nightmare.html","/blog/default/04-the-benefits-of-lead-generation.html"]
+      externalLinks: []
+    04-the-benefits-of-lead-generation.html:
+      title: "The Benefits of Lead Generation"
+      description: "Discover how effective lead generation strategies can transform your business and boost your sales pipeline."
+      keywords: ["lead generation","marketing","business growth","sales pipeline","brand awareness"]
+      author: "Marketing Company"
+      readingTime: "8 minutes"
+      images: ["/img/leads4.png"]
+      internalLinks: ["https://octopus.energy","/blog/","/blog/","/blog/default/03-scale-your-business-with-lead-generation.html","/blog/default/05-how-lead-generation-can-exponentially-scale-your-business.html"]
+      externalLinks: ["https://octopus.energy"]
+    05-how-lead-generation-can-exponentially-scale-your-business.html:
+      title: "How Lead Generation Can Exponentially Scale Your Business"
+      description: "Discover how effective lead generation strategies can significantly scale your business by increasing brand awareness, improving conversion rates, and enhancing your sales pipeline."
+      - keywords
+      author: "Marketing Company"
+      readingTime: "8 minutes"
+      images: ["/img/leads6.png"]
+      internalLinks: ["/index.html","/blog/","/blog/","/blog/default/04-the-benefits-of-lead-generation.html","/blog/default/06-how-lead-generation-can-transform-your-success.html"]
+      externalLinks: []
+    06-how-lead-generation-can-transform-your-success.html:
+      title: "How Lead Generation Can Transform Your Success"
+      description: "Explore the profound impact of lead generation on business growth, offering detailed insights and practical strategies for maximizing its potential."
+      keywords: ["lead generation","marketing","business growth","sales pipeline","brand awareness"]
+      author: "Marketing Company"
+      readingTime: "8 minutes"
+      images: ["/img/leads7.webp","/img/leads8.webp"]
+      internalLinks: ["/index.html","/blog/","/blog/","/blog/default/05-how-lead-generation-can-exponentially-scale-your-business.html","/blog/default/07-how-much-can-lead-generation-scale-up-your-business.html"]
+      externalLinks: []
+    07-how-much-can-lead-generation-scale-up-your-business.html:
+      title: "How Much Can Lead Generation Scale Up Your Business?"
+      description: "Explore the impact of lead generation on business growth and discover effective strategies to maximize its potential."
+      keywords: ["lead generation","business growth","marketing strategy"]
+      author: "Marketing Company"
+      readingTime: "8 minutes"
+      images: ["https://placehold.co/1024x1024","/img/banner_300x250.jpg"]
+      internalLinks: ["/index.html","/blog/","/blog/","https://www.leadgenera.com/why-lead-generation-is-important","https://www.aquarius.com/lead-generation-importance","https://www.jotform.com/blog/lead-generation-strategies","https://www.leadsatscale.com/importance-of-lead-generation","https://www.jotform.com/blog/lead-generation-strategies","https://www.leadgenera.com/why-lead-generation-is-important","https://www.aquarius.com/lead-generation-importance","https://www.leadsatscale.com/importance-of-lead-generation","https://www.leadsatscale.com/importance-of-lead-generation","https://www.leadgenera.com/why-lead-generation-is-important","https://www.jotform.com/blog/lead-generation-strategies","https://www.jotform.com/blog/lead-generation-strategies","https://www.leadgenera.com/why-lead-generation-is-important","https://www.aquarius.com/lead-generation-importance","https://www.jotform.com/blog/lead-generation-strategies","https://www.aquarius.com/lead-generation-importance","https://www.aquarius.com/lead-generation-importance","https://www.leadgenera.com","https://www.jotform.com","/blog/default/01-benefits-of-lead-generation.html","/blog/default/02-lead-generation-ai-biggest-nightmare.html","/blog/default/03-scale-your-business-with-lead-generation.html","/blog/default/06-how-lead-generation-can-transform-your-success.html","/blog/default/08-why-businesses-hesitate-to-implement-lead-generation-in-their-sales-pipeline.html"]
+      externalLinks: ["https://www.leadgenera.com/why-lead-generation-is-important","https://www.aquarius.com/lead-generation-importance","https://www.jotform.com/blog/lead-generation-strategies","https://www.leadsatscale.com/importance-of-lead-generation","https://www.jotform.com/blog/lead-generation-strategies","https://www.leadgenera.com/why-lead-generation-is-important","https://www.aquarius.com/lead-generation-importance","https://www.leadsatscale.com/importance-of-lead-generation","https://www.leadsatscale.com/importance-of-lead-generation","https://www.leadgenera.com/why-lead-generation-is-important","https://www.jotform.com/blog/lead-generation-strategies","https://www.jotform.com/blog/lead-generation-strategies","https://www.leadgenera.com/why-lead-generation-is-important","https://www.aquarius.com/lead-generation-importance","https://www.jotform.com/blog/lead-generation-strategies","https://www.aquarius.com/lead-generation-importance","https://www.aquarius.com/lead-generation-importance","https://www.leadgenera.com","https://www.jotform.com"]
+    08-why-businesses-hesitate-to-implement-lead-generation-in-their-sales-pipeline.html:
+      title: "Why Businesses Hesitate to Implement Lead Generation in Their Sales Pipeline"
+      description: "Explore the common reasons why businesses hesitate to integrate lead generation into their sales pipeline, including misconceptions, challenges, and potential solutions."
+      keywords: ["lead generation","sales pipeline","business growth","lead generation challenges","implementing lead generation","lead generation costs"]
+      author: "Marketing Company"
+      readingTime: "8 minutes"
+      images: ["/img/leads9.webp","/img/banner_300x250.jpg"]
+      internalLinks: ["/index.html","/blog/","/blog/","https://blog.hubspot.com/marketing/lead-generation-cost","https://www.forbes.com/sites/forbesbusinesscouncil/2021/08/02/overcoming-technical-barriers-in-lead-generation","https://www.forbes.com/sites/forbesbusinesscouncil/2021/08/02/overcoming-technical-barriers-in-lead-generation","https://www.demandgenreport.com/resources/reports/the-roi-of-lead-generation","https://hbr.org/2020/11/managing-change-in-lead-generation-processes","https://www.demandgenreport.com/resources/reports/the-roi-of-lead-generation","https://blog.marketo.com/2022/03/how-xyz-company-improved-sales-with-lead-generation.html","/blog/default/01-benefits-of-lead-generation.html","/blog/default/02-lead-generation-ai-biggest-nightmare.html","/blog/default/03-scale-your-business-with-lead-generation.html","/blog/default/07-how-much-can-lead-generation-scale-up-your-business.html","/blog/default/09-why-businesses-hesitate-to-implement-lead-generation.html"]
+      externalLinks: ["https://blog.hubspot.com/marketing/lead-generation-cost","https://www.forbes.com/sites/forbesbusinesscouncil/2021/08/02/overcoming-technical-barriers-in-lead-generation","https://www.forbes.com/sites/forbesbusinesscouncil/2021/08/02/overcoming-technical-barriers-in-lead-generation","https://www.demandgenreport.com/resources/reports/the-roi-of-lead-generation","https://hbr.org/2020/11/managing-change-in-lead-generation-processes","https://www.demandgenreport.com/resources/reports/the-roi-of-lead-generation","https://blog.marketo.com/2022/03/how-xyz-company-improved-sales-with-lead-generation.html"]
+    09-why-businesses-hesitate-to-implement-lead-generation.html:
+      title: "Why Businesses Hesitate to Implement Lead Generation"
+      description: "Explore the common reasons why businesses hesitate to integrate lead generation into their sales pipeline, including misconceptions, challenges, and potential solutions."
+      keywords: ["lead generation","sales pipeline","business growth","lead generation challenges","implementing lead generation","lead generation costs"]
+      author: "Marketing Company"
+      readingTime: "8 minutes"
+      images: ["/img/leads9.webp","/img/banner_300x250.jpg"]
+      internalLinks: ["/index.html","/blog/","/blog/","https://marketing.expertinsights.com/what-is-lead-generation-a-comprehensive-guide","https://firstsales.io/mastering-lead-generation-a-comprehensive-guide","https://shanebarker.com/blog/lead-generation-guide/","https://www.zigaflow.com/resources/fundamentals-of-lead-generation-guide","https://www.intelemark.com/secrets-of-lead-generation-comprehensive-guide","https://firstsales.io/mastering-lead-generation-a-comprehensive-guide","https://www.intelemark.com/secrets-of-lead-generation-comprehensive-guide","https://shanebarker.com/blog/lead-generation-guide/","https://www.zigaflow.com/resources/fundamentals-of-lead-generation-guide","https://firstsales.io/mastering-lead-generation-a-comprehensive-guide","https://www.intelemark.com/secrets-of-lead-generation-comprehensive-guide","https://shanebarker.com/blog/lead-generation-guide/","https://www.zigaflow.com/resources/fundamentals-of-lead-generation-guide","/blog/default/01-benefits-of-lead-generation.html","/blog/default/02-lead-generation-ai-biggest-nightmare.html","/blog/default/03-scale-your-business-with-lead-generation.html","/blog/default/08-why-businesses-hesitate-to-implement-lead-generation-in-their-sales-pipeline.html","/blog/default/"]
+      externalLinks: ["https://marketing.expertinsights.com/what-is-lead-generation-a-comprehensive-guide","https://firstsales.io/mastering-lead-generation-a-comprehensive-guide","https://shanebarker.com/blog/lead-generation-guide/","https://www.zigaflow.com/resources/fundamentals-of-lead-generation-guide","https://www.intelemark.com/secrets-of-lead-generation-comprehensive-guide","https://firstsales.io/mastering-lead-generation-a-comprehensive-guide","https://www.intelemark.com/secrets-of-lead-generation-comprehensive-guide","https://shanebarker.com/blog/lead-generation-guide/","https://www.zigaflow.com/resources/fundamentals-of-lead-generation-guide","https://firstsales.io/mastering-lead-generation-a-comprehensive-guide","https://www.intelemark.com/secrets-of-lead-generation-comprehensive-guide","https://shanebarker.com/blog/lead-generation-guide/","https://www.zigaflow.com/resources/fundamentals-of-lead-generation-guide"]
+    index.html:
+      title: "default - Blog"
+      - description
+      - keywords
+      - author
+      - readingTime
+      images: ["/img/leads.png","/img/leads5.png","/img/leads3.png","/img/leads4.png","/img/leads6.png","/img/leads7.webp","https://placehold.co/1024x1024","/img/leads9.webp","/img/leads9.webp"]
+      internalLinks: ["https://octopus.energy","/blog/","/blog","/blog","/blog/default/01-benefits-of-lead-generation.html","/blog/default/01-benefits-of-lead-generation.html","/blog/default","/blog/default/01-benefits-of-lead-generation.html","/blog/default/02-lead-generation-ai-biggest-nightmare.html","/blog/default/02-lead-generation-ai-biggest-nightmare.html","/blog/default","/blog/default/02-lead-generation-ai-biggest-nightmare.html","/blog/default/03-scale-your-business-with-lead-generation.html","/blog/default/03-scale-your-business-with-lead-generation.html","/blog/default","/blog/default/03-scale-your-business-with-lead-generation.html","/blog/default/04-the-benefits-of-lead-generation.html","/blog/default/04-the-benefits-of-lead-generation.html","/blog/default","/blog/default/04-the-benefits-of-lead-generation.html","/blog/default/05-how-lead-generation-can-exponentially-scale-your-business.html","/blog/default/05-how-lead-generation-can-exponentially-scale-your-business.html","/blog/default","/blog/default/05-how-lead-generation-can-exponentially-scale-your-business.html","/blog/default/06-how-lead-generation-can-transform-your-success.html","/blog/default/06-how-lead-generation-can-transform-your-success.html","/blog/default","/blog/default/06-how-lead-generation-can-transform-your-success.html","/blog/default/07-how-much-can-lead-generation-scale-up-your-business.html","/blog/default/07-how-much-can-lead-generation-scale-up-your-business.html","/blog/default","/blog/default/07-how-much-can-lead-generation-scale-up-your-business.html","/blog/default/08-why-businesses-hesitate-to-implement-lead-generation-in-their-sales-pipeline.html","/blog/default/08-why-businesses-hesitate-to-implement-lead-generation-in-their-sales-pipeline.html","/blog/default","/blog/default/08-why-businesses-hesitate-to-implement-lead-generation-in-their-sales-pipeline.html","/blog/default/09-why-businesses-hesitate-to-implement-lead-generation.html","/blog/default/09-why-businesses-hesitate-to-implement-lead-generation.html","/blog/default","/blog/default/09-why-businesses-hesitate-to-implement-lead-generation.html"]
+      externalLinks: ["https://octopus.energy"]
+    - leads3.png
+  finance:
+    accounting:
+      - umbrella.webp
+    - tree2.png
+  index.html:
+    title: "Blog - Marketing Company"
+    - description
+    - keywords
+    - author
+    - readingTime
+    images: ["/blog/business/leads4.png","/blog/business/marketing/leads5.png","/blog/default/leads3.png"]
+    internalLinks: ["https://octopus.energy","/blog/business","/blog/business/marketing","/blog/default"]
+    externalLinks: ["https://octopus.energy"]
+  - leads8.webp
+blog.html:
+  title: "Marketing Company - Blog"
+  - description
+  - keywords
+  - author
+  - readingTime
+  images: ["/img/leads10.webp","/img/leads10.webp","/img/leads.png","/img/leads5.png","/img/leads3.png","/img/leads4.png","/img/leads6.png","/img/leads7.webp","https://placehold.co/1024x1024","/img/leads9.webp","/img/leads9.webp"]
+  internalLinks: ["https://octopus.energy","/blog/","/blog/business/01-why-businesses-hesitate-to-implement-lead-generation.html","/blog/business/01-why-businesses-hesitate-to-implement-lead-generation.html","/blog/business/01-why-businesses-hesitate-to-implement-lead-generation.html","/blog/business/marketing/01-why-businesses-hesitate-to-implement-lead-generation.html","/blog/business/marketing/01-why-businesses-hesitate-to-implement-lead-generation.html","/blog/business/marketing/01-why-businesses-hesitate-to-implement-lead-generation.html","/blog/default/01-benefits-of-lead-generation.html","/blog/default/01-benefits-of-lead-generation.html","/blog/default/01-benefits-of-lead-generation.html","/blog/default/02-lead-generation-ai-biggest-nightmare.html","/blog/default/02-lead-generation-ai-biggest-nightmare.html","/blog/default/02-lead-generation-ai-biggest-nightmare.html","/blog/default/03-scale-your-business-with-lead-generation.html","/blog/default/03-scale-your-business-with-lead-generation.html","/blog/default/03-scale-your-business-with-lead-generation.html","/blog/default/04-the-benefits-of-lead-generation.html","/blog/default/04-the-benefits-of-lead-generation.html","/blog/default/04-the-benefits-of-lead-generation.html","/blog/default/05-how-lead-generation-can-exponentially-scale-your-business.html","/blog/default/05-how-lead-generation-can-exponentially-scale-your-business.html","/blog/default/05-how-lead-generation-can-exponentially-scale-your-business.html","/blog/default/06-how-lead-generation-can-transform-your-success.html","/blog/default/06-how-lead-generation-can-transform-your-success.html","/blog/default/06-how-lead-generation-can-transform-your-success.html","/blog/default/07-how-much-can-lead-generation-scale-up-your-business.html","/blog/default/07-how-much-can-lead-generation-scale-up-your-business.html","/blog/default/07-how-much-can-lead-generation-scale-up-your-business.html","/blog/default/08-why-businesses-hesitate-to-implement-lead-generation-in-their-sales-pipeline.html","/blog/default/08-why-businesses-hesitate-to-implement-lead-generation-in-their-sales-pipeline.html","/blog/default/08-why-businesses-hesitate-to-implement-lead-generation-in-their-sales-pipeline.html","/blog/default/09-why-businesses-hesitate-to-implement-lead-generation.html","/blog/default/09-why-businesses-hesitate-to-implement-lead-generation.html","/blog/default/09-why-businesses-hesitate-to-implement-lead-generation.html"]
+  externalLinks: ["https://octopus.energy"]
+blogs.html:
+  title: "Blog - Marketing Company"
+  - description
+  - keywords
+  - author
+  - readingTime
+  images: ["/img/leads.png","/img/leads5.png","/img/leads4.png","/img/leads3.png","/img/leads2.png","/img/leads6.png"]
+  internalLinks: ["https://octopus.energy"]
+  externalLinks: ["https://octopus.energy"]
+cache:
+  - blogs.js
+  - cats.js
+  - images.js
+- favicon.ico
+img:
+  - 18ct-yellow-gold-and-floating-diamond-solitaire-ring-810-1-p.png
+  - banner_300x250.jpg
+  - banner_300x250_2.jpg
+  - car.jpg
+  - car.png
+  - car3.jpg
+  - car3.png
+  - energy_savings.jpg
+  - energy_savings_2.afphoto
+  - energy_savings_2.jpg
+  - energy_savings_2.png
+  - energy_savings_3.png
+  - energy_savings_3.webp
+  - google-ads-responsive-ad-example.png.webp
+  - leads.png
+  - leads10.webp
+  - leads2.png
+  - leads3.png
+  - leads4.png
+  - leads5.png
+  - leads6.png
+  - leads7.webp
+  - leads8.webp
+  - leads9.webp
+  - spinner.gif
+  - tree.png
+  - tree2.png
+  - tree3.png
+  - umbrella.jpg
+  - umbrella.png
+  - umbrella.webp
+  - woman.png
+index.html:
+  title: "Marketing Company"
+  - description
+  - keywords
+  - author
+  - readingTime
+  images: ["/img/tree3.png"]
+  internalLinks: ["https://octopus.energy"]
+  externalLinks: ["https://octopus.energy"]
+js:
+  - ads.js
+  - ads4.js
+  - adsJson.js
+  - blog-search.js
+  - convertToMySQLTimestamp.js
+  - survey.js
+  - surveyJson.js
+  - video.js
+  - videoJson.js
+lead-generation.html:
+  title: "Marketing Company"
+  - description
+  - keywords
+  - author
+  - readingTime
+  images: ["/img/marketing.jpg"]
+  internalLinks: ["https://octopus.energy"]
+  externalLinks: ["https://octopus.energy"]
+- sitemap.xml
+- styles.css
+video.html:
+  title: "Dynamic Slides"
+  - description
+  - keywords
+  - author
+  - readingTime
+  images: []
+  internalLinks: []
+  externalLinks: []

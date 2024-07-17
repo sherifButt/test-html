@@ -830,6 +830,7 @@ nav :first-of-type li a {
 
 /* Media Queries */
 @media (max-width: 768px) {
+  
   h1 {
     font-size: 3.5rem;
   }
@@ -909,7 +910,16 @@ nav :first-of-type li a {
   }
 
   .search-bar {
-    width: 100%;
+    width: 88%;
+  }
+
+  #searchResults{
+    width: 89%;
+    top:360px;
+  }
+
+  #decoration{
+    display: none;
   }
 }
 

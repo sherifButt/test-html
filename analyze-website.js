@@ -33,32 +33,40 @@ let extendedFolderStructure = {};
 let htmlFileCount = 0;
 
 async function analyzeWebsite() {
-    try {
+    const args = process.argv.slice(2);
+
+    if (args.includes('-help') || args.includes('-h') || args.includes('-?')) {
+        displayHelp();
+    }
+
+    const shouldScan = args.includes('-scan');
+    const shouldGenerate = args.includes('-generate') || args.includes('-g');
+
+    if (!shouldScan && !shouldGenerate) {
+        console.error('Please provide a valid option. Use -help -h -? for more information.');
+        process.exit(1);
+    }
+
+    if (shouldScan) {
         console.log('Starting website analysis...');
         console.log(`Root directory: ${rootDir}`);
 
-        if (shouldScan) {
-            console.log('Scanning folders to generate blogs.js, images.js, and cats.js...');
-            await createOutputDirectory();
-            await createCacheDirectory();
-            console.log('Processing directory...');
-            await processDirectory(rootDir);
-            console.log(`Total HTML files found: ${htmlFileCount}`);
-            if (htmlFileCount === 0) {
-                console.warn('No HTML files were found in the directory structure.');
-            }
-            if (!detectedDomain) {
-                console.warn('Warning: Could not detect domain. Using a placeholder.');
-                detectedDomain = 'https://example.com/';
-            }
-            console.log(`Detected domain: ${detectedDomain}`);
-            await generateImagesJsFile();
-            await generateBlogsJsFile();
-            await generateCatsJsFile();
-        } else {
-            console.log('Skipping folder scanning and using existing blogs.js, images.js, and cats.js...');
-        }
+        const rootFiles = await fs.readdir(rootDir);
+        console.log('Files in root directory:', rootFiles);
 
+        await createOutputDirectory();
+        await createCacheDirectory();
+        console.log('Processing directory...');
+        await processDirectory(rootDir);
+        console.log(`Total HTML files found: ${htmlFileCount}`);
+        if (htmlFileCount === 0) {
+            console.warn('No HTML files were found in the directory structure.');
+        }
+        if (!detectedDomain) {
+            console.warn('Warning: Could not detect domain. Using a placeholder.');
+            detectedDomain = 'https://example.com/';
+        }
+        console.log(`Detected domain: ${detectedDomain}`);
         const previousResults = await loadPreviousResults();
 
         await Promise.all([
@@ -68,7 +76,8 @@ async function analyzeWebsite() {
             generateYAMLStructure(),
             generateExtendedYAMLStructure(),
             saveCurrentResults(),
-            generateBlogHtml(),
+            generateImagesJsFile(),
+            generateBlogsJsFile(),
             generateBlogsIndexHtml()
         ]);
 
@@ -82,14 +91,26 @@ async function analyzeWebsite() {
         - ${extendedStructureFile}
         - ${imagesJsFile}
         - ${blogsJsFile}
-        - ${catsJsFile}
         - ${blogTestFile}`);
-
-        process.exit(0);
-    } catch (error) {
-        console.error('Error during analysis:', error);
-        process.exit(1);
+    } else if (shouldGenerate) {
+        console.log('Skipping folder scanning and using existing blogs.js, images.js, and cats.js...');
+        await generateBlogsIndexHtml();
     }
+
+    process.exit(0);
+}
+
+
+function displayHelp() {
+    console.log(`
+Usage: node analyze-website.js [options]
+
+Options:
+  -help          Display this help message.
+  -scan          Scan the folders and create blogs.js and images.js.
+  -generate      Generate the HTML files without scanning the folders.
+    `);
+    process.exit(0);
 }
 
 
@@ -166,8 +187,77 @@ async function extractHtmlMetadata(filePath) {
 }
 
 async function createOutputDirectory() {
+    // only crate the output directory if it doesn't already exist
     try {
+        // Ensure output directory exists
         await fs.mkdir(outputDir, { recursive: true });
+
+        // Ensure index.html file exists
+        try {
+            await fs.access(reportFile);
+        } catch (error) {
+            if (error.code === 'ENOENT') {
+                await fs.writeFile(reportFile, '');
+            } else {
+                throw error;
+            }
+        }
+
+        // Ensure link_check_site_map.txt file exists
+        try {
+            await fs.access(siteMapFile);
+        } catch (error) {
+            if (error.code === 'ENOENT') {
+                await fs.writeFile(siteMapFile, '');
+            } else {
+                throw error;
+            }
+        }
+
+        // Ensure sitemap.xml file exists
+        try {
+            await fs.access(xmlSitemapFile);
+        } catch (error) {
+            if (error.code === 'ENOENT') {
+                await fs.writeFile(xmlSitemapFile, '');
+            } else {
+                throw error;
+            }
+        }
+
+        // Ensure link_check_history.json file exists
+        try {
+            await fs.access(historyFile);
+        } catch (error) {
+            if (error.code === 'ENOENT') {
+                await fs.writeFile(historyFile, '');
+            } else {
+                throw error;
+            }
+        }
+
+        // Ensure link_check_structure.yaml file exists
+        try {
+            await fs.access(structureFile);
+        } catch (error) {
+            if (error.code === 'ENOENT') {
+                await fs.writeFile(structureFile, '');
+            } else {
+                throw error;
+            }
+        }
+
+        // Ensure link_check_extended_structure.yaml file exists
+        try {
+            await fs.access(extendedStructureFile);
+        } catch (error) {
+            if (error.code === 'ENOENT') {
+                await fs.writeFile(extendedStructureFile, '');
+            } else {
+                throw error;
+            }
+        }
+
     } catch (error) {
         console.error('Error creating output directory:', error);
     }
@@ -300,16 +390,16 @@ async function generateHTMLReport(previousResults) {
     content += `
       </ul>
       <footer>
-      <section id="decoration" style="position: relative; margin-top: 200px">
-        <p style="position: relative; bottom: 30px; left: 20%">&copy; 2024 Octopus Energy. All rights reserved.</p>
-        <svg xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none" viewBox="2 -2 1440 320" class="footer-wave" style="bottom: -20">
+      <p style="text-align: right;">&copy; 2024 Octopus Energy. All rights reserved.</p>
+      </footer>
+      <section id="decoration" style="position: relative; margin-top: 100px;">
+        <svg xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none" viewBox="2 -2 1440 320" class="footer-wave" style="  bottom:-20;">
           <path
             fill-opacity="1"
             d="M0,288L48,272C96,256,192,224,288,197.3C384,171,480,149,576,165.3C672,181,768,235,864,250.7C960,267,1056,245,1152,250.7C1248,256,1344,288,1392,304L1440,320L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"
           ></path>
         </svg>
       </section>
-    </footer>
   </body>
   </html>
     `;
@@ -637,16 +727,16 @@ async function generateBlogHtml() {
       </section>
     </main>
     <footer>
-    </footer>
-    <section id="decoration" style="position: relative; margin-top: 200px">
-      <p style="position: relative; bottom: 10px; left: 20%; width:250px;">&copy; 2024 Octopus Energy. All rights reserved.</p>
-      <svg xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none" viewBox="2 -2 1440 320" class="footer-wave" style="bottom: -20">
-        <path
-          fill-opacity="1"
-          d="M0,288L48,272C96,256,192,224,288,197.3C384,171,480,149,576,165.3C672,181,768,235,864,250.7C960,267,1056,245,1152,250.7C1248,256,1344,288,1392,304L1440,320L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"
-        ></path>
-      </svg>
-    </section>
+    <p style="text-align: right;">&copy; 2024 Octopus Energy. All rights reserved.</p>
+      </footer>
+      <section id="decoration" style="position: relative; margin-top: 100px;">
+        <svg xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none" viewBox="2 -2 1440 320" class="footer-wave" style="  bottom:-20;">
+          <path
+            fill-opacity="1"
+            d="M0,288L48,272C96,256,192,224,288,197.3C384,171,480,149,576,165.3C672,181,768,235,864,250.7C960,267,1056,245,1152,250.7C1248,256,1344,288,1392,304L1440,320L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"
+          ></path>
+        </svg>
+      </section>
   </body>
 </html>
     `;
@@ -769,16 +859,16 @@ async function generateCategoriesIndexHtml(relativeDir, directoryName, blogEntri
     </main>
     <footer>
       
-    </footer>
-    <section id="decoration" style="position: relative; margin-top: 200px">
-      <p style="position: relative; bottom: 10px; left: 20%; width:250px;">&copy; 2024 Octopus Energy. All rights reserved.</p>
-      <svg xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none" viewBox="2 -2 1440 320" class="footer-wave" style="bottom: -20">
-        <path
-          fill-opacity="1"
-          d="M0,288L48,272C96,256,192,224,288,197.3C384,171,480,149,576,165.3C672,181,768,235,864,250.7C960,267,1056,245,1152,250.7C1248,256,1344,288,1392,304L1440,320L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"
-        ></path>
-      </svg>
-    </section>
+    <p style="text-align: right;">&copy; 2024 Octopus Energy. All rights reserved.</p>
+      </footer>
+      <section id="decoration" style="position: relative; margin-top: 100px;">
+        <svg xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none" viewBox="2 -2 1440 320" class="footer-wave" style="  bottom:-20;">
+          <path
+            fill-opacity="1"
+            d="M0,288L48,272C96,256,192,224,288,197.3C384,171,480,149,576,165.3C672,181,768,235,864,250.7C960,267,1056,245,1152,250.7C1248,256,1344,288,1392,304L1440,320L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"
+          ></path>
+        </svg>
+      </section>
   </body>
 </html>
     `;
@@ -842,6 +932,18 @@ async function generateBlogsIndexHtml() {
     const catsJsContent = await fs.readFile(catsJsFile, 'utf-8');
     const cats = JSON.parse(catsJsContent.replace('const cats = ', '').replace(';', ''));
 
+    const categoriesHtml = cats
+        .filter(cat => cat.blogs.length > 0) // only show categories with blog posts
+        .map(cat => `
+        <article style="display:flex;flex-direction:column; align-items:center;text-align: center;">
+        <a href="${cat.url}" style="display:flex; align-items:center; gap: 15px;">
+         
+        <img class="cat-img"  src="${cat.image}" width="100" alt="${cat.title}" />
+          <button style="color: gray; text-transform:uppercase;">${cat.blogs.length} <span style="font-size:.8rem;text-transform:lowercase;">posts in</span> ${cat.title}</button>
+        </a>
+        </article>
+      `).join('')
+
     const content = `
 <!DOCTYPE html>
 <html lang="en">
@@ -893,27 +995,15 @@ async function generateBlogsIndexHtml() {
       <h3 style="text-align: center;">CATEGORIES</h3>
       </div>
         <div class="grid">
-          ${
-        // only show categories with blog posts
-        cats
-            .filter(cat => cat.blogs.length > 0)
-            .map(cat => `
-            <article style="display:flex;flex-direction:column; align-items:center;text-align: center;">
-            <a href="${cat.url}" style="display:flex; align-items:center; gap: 15px;">
-             
-            <img class="cat-img"  src="${cat.image}" width="100" alt="${cat.title}" />
-              <button style="color: gray; text-transform:uppercase;">${cat.blogs.length} <span style="font-size:.8rem;text-transform:lowercase;">posts in</span> ${cat.title}</button>
-            </a>
-            </article>
-          `).join('')}
+          ${categoriesHtml}
         </div>
       </section>
     </main>
 
     <footer class="container" id="contact">
+      <p style="text-align: right;">&copy; 2024 Octopus Energy. All rights reserved.</p>
       </footer>
       <section id="decoration" style="position: relative; margin-top: 100px;">
-        <p style="position: relative ; bottom:30px; left: 25%; width:250px;">&copy; 2024 Octopus Energy. All rights reserved.</p>
         <svg xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none" viewBox="2 -2 1440 320" class="footer-wave" style="  bottom:-20;">
           <path
             fill-opacity="1"

@@ -1,0 +1,90 @@
+- README.md
+- Robots.txt
+- ads.html
+- ads4.html
+- analyze-website.js
+blog:
+  business:
+    - 01-why-businesses-hesitate-to-implement-lead-generation.html
+    - index.html
+    - leads4.png
+    marketing:
+      - 01-why-businesses-hesitate-to-implement-lead-generation.html
+      - index.html
+      - info.json
+      - leads5.png
+    sales:
+      - car3.jpg
+  default:
+    - 01-benefits-of-lead-generation.html
+    - 02-lead-generation-ai-biggest-nightmare.html
+    - 03-scale-your-business-with-lead-generation.html
+    - 04-the-benefits-of-lead-generation.html
+    - 05-how-lead-generation-can-exponentially-scale-your-business.html
+    - 06-how-lead-generation-can-transform-your-success.html
+    - 07-how-much-can-lead-generation-scale-up-your-business.html
+    - 08-why-businesses-hesitate-to-implement-lead-generation-in-their-sales-pipeline.html
+    - 09-why-businesses-hesitate-to-implement-lead-generation.html
+    - index.html
+    - leads3.png
+  finance:
+    accounting:
+      - umbrella.webp
+    - tree2.png
+  - index.html
+  - leads8.webp
+- blog.html
+- blogs.html
+cache:
+  - blogs.js
+  - cats.js
+  - images.js
+- favicon.ico
+img:
+  - 18ct-yellow-gold-and-floating-diamond-solitaire-ring-810-1-p.png
+  - banner_300x250.jpg
+  - banner_300x250_2.jpg
+  - car.jpg
+  - car.png
+  - car3.jpg
+  - car3.png
+  - energy_savings.jpg
+  - energy_savings_2.afphoto
+  - energy_savings_2.jpg
+  - energy_savings_2.png
+  - energy_savings_3.png
+  - energy_savings_3.webp
+  - google-ads-responsive-ad-example.png.webp
+  - leads.png
+  - leads10.webp
+  - leads2.png
+  - leads3.png
+  - leads4.png
+  - leads5.png
+  - leads6.png
+  - leads7.webp
+  - leads8.webp
+  - leads9.webp
+  - spinner.gif
+  - tree.png
+  - tree2.png
+  - tree3.png
+  - umbrella.jpg
+  - umbrella.png
+  - umbrella.webp
+  - woman.png
+- index.html
+js:
+  - ads.js
+  - ads4.js
+  - adsJson.js
+  - blog-search.js
+  - convertToMySQLTimestamp.js
+  - survey.js
+  - surveyJson.js
+  - video.js
+  - videoJson.js
+- lead-generation.html
+- sitemap.xml
+- styles.css
+- video.html
