@@ -25,6 +25,12 @@
     <priority>0.5</priority>
   </url>
   <url>
+    <loc>https://www.example.com/blog/business/marketing/01-why-businesses-hesitate-to-implement-lead-generation-ar</loc>
+    <lastmod>2024-07-17</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
     <loc>https://www.example.com/blog/business/marketing/01-why-businesses-hesitate-to-implement-lead-generation</loc>
     <lastmod>2024-07-17</lastmod>
     <changefreq>weekly</changefreq>
@@ -122,6 +128,42 @@
   </url>
   <url>
     <loc>https://www.example.com/lead-generation</loc>
+    <lastmod>2024-07-17</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https://www.example.com/test/blog/business/01-why-businesses-hesitate-to-implement-lead-generation</loc>
+    <lastmod>2024-07-17</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https://www.example.com/test/blog/business/index</loc>
+    <lastmod>2024-07-17</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https://www.example.com/test/blog/business/marketing/01-why-businesses-hesitate-to-implement-lead-generation-ar</loc>
+    <lastmod>2024-07-17</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https://www.example.com/test/blog/business/marketing/01-why-businesses-hesitate-to-implement-lead-generation</loc>
+    <lastmod>2024-07-17</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https://www.example.com/test/blog/business/marketing/index</loc>
+    <lastmod>2024-07-17</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https://www.example.com/test/index</loc>
     <lastmod>2024-07-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>

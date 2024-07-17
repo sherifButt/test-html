@@ -2,6 +2,8 @@
 - Robots.txt
 - ads.html
 - ads4.html
+- ai-update.js
+- ai-update.sh
 - analyze-website.js
 blog:
   business:
@@ -9,6 +11,7 @@ blog:
     - index.html
     - leads4.png
     marketing:
+      - 01-why-businesses-hesitate-to-implement-lead-generation-ar.html
       - 01-why-businesses-hesitate-to-implement-lead-generation.html
       - index.html
       - info.json
@@ -57,6 +60,7 @@ img:
   - google-ads-responsive-ad-example.png.webp
   - leads.png
   - leads10.webp
+  - leads11.webp
   - leads2.png
   - leads3.png
   - leads4.png
@@ -69,6 +73,7 @@ img:
   - tree.png
   - tree2.png
   - tree3.png
+  - tree4.webp
   - umbrella.jpg
   - umbrella.png
   - umbrella.webp
@@ -86,5 +91,21 @@ js:
   - videoJson.js
 - lead-generation.html
 - sitemap.xml
+- styles-rtl.css
 - styles.css
+test:
+  blog:
+    business:
+      - 01-why-businesses-hesitate-to-implement-lead-generation.html
+      - index.html
+      - leads4.png
+      marketing:
+        - 01-why-businesses-hesitate-to-implement-lead-generation-ar.html
+        - 01-why-businesses-hesitate-to-implement-lead-generation.html
+        - index.html
+        - info.json
+        - leads5.png
+      sales:
+        - car3.jpg
+  - index.html
 - video.html

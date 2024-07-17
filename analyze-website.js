@@ -39,8 +39,8 @@ async function analyzeWebsite() {
         displayHelp();
     }
 
-    const shouldScan = args.includes('-scan');
-    const shouldGenerate = args.includes('-generate') || args.includes('-g');
+    const shouldScan = args.includes('-scan') || args.includes('-s'); // Scan the folders and create blogs.js and images.js
+    const shouldGenerate = args.includes('-generate') || args.includes('-g'); // Generate the HTML files without scanning the folders
 
     if (!shouldScan && !shouldGenerate) {
         console.error('Please provide a valid option. Use -help -h -? for more information.');
@@ -78,6 +78,7 @@ async function analyzeWebsite() {
             saveCurrentResults(),
             generateImagesJsFile(),
             generateBlogsJsFile(),
+            generateCatsJsFile(),
             generateBlogsIndexHtml()
         ]);
 
@@ -172,14 +173,23 @@ async function extractHtmlMetadata(filePath) {
     const externalLinkMatches = [...content.matchAll(/<a\s+[^>]*href="(https?:\/\/[^"]*)"/gi)];
 
     const metadata = {
+        url: "/"+path.relative(rootDir, filePath),
         title: titleMatch ? titleMatch[1] : null,
         description: descriptionMatch ? descriptionMatch[1] : null,
         keywords: keywordsMatch ? keywordsMatch[1].split(',').map(keyword => keyword.trim()) : null,
+        cat: path.basename(path.dirname(filePath)),
         author: authorMatch ? authorMatch[1] : null,
         readingTime: readingTimeMatch ? readingTimeMatch[1] : null,
-        images: imageMatches ? imageMatches.map(match => match[1]) : null,
-        internalLinks: internalLinkMatches ? internalLinkMatches.map(match => match[1]) : null,
-        externalLinks: externalLinkMatches ? externalLinkMatches.map(match => match[1]) : null
+        images: imageMatches ? 
+        // Remove duplicates
+        [...new Set(imageMatches.map(match => match[1]))] : null,
+        internalLinks: internalLinkMatches ? 
+        // Remove duplicates
+        [...new Set(internalLinkMatches.map(match => match[1]))] : null,
+        externalLinks: externalLinkMatches ? 
+        // Remove duplicates
+        [...new Set(externalLinkMatches.map(match => match[1]))] : null,
+        
     };
 
     console.log(`Extracted metadata:`, metadata);
@@ -842,9 +852,9 @@ async function generateCategoriesIndexHtml(relativeDir, directoryName, blogEntri
     <main class="container">
       <section id="blog-list">
         <div class="header" style="text-transform: uppercase;">
-          <a href="${'/' + relativeDir.split('/').slice(0, -1).join('/') || '· /'}" class="previous-article">
+          <!--<a href="${'/' + relativeDir.split('/').slice(0, -1).join('/') || '· /'}" class="previous-article">
             <button><i class="fa fa-arrow-left" aria-hidden="true"></i></button>
-        </a>
+        </a>-->
         <div style="display: flex; align-items: center; gap: 20px;justify-content: center;">
             <p>${
         // directories before the current one
@@ -951,7 +961,12 @@ async function generateBlogsIndexHtml() {
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="color-scheme" content="light dark" />
-    <title>Blog - Marketing Company</title>
+    <title>Blog</title>
+    <meta name="description" content="Explore our latest articles and insights on marketing, lead generation, and business growth." />
+    <meta name="keywords" content="marketing, lead generation, business growth, articles, insights" />
+    <meta name="category" content="${
+        cats.map(cat => cat.title).join(', ')
+    }" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
     <link
       href="https://fonts.googleapis.com/css2?family=Gabarito:wght@400..900&family=Oswald:wght@200..700&family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap"

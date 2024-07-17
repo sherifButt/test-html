@@ -10,8 +10,8 @@
   --sjs-general-dim-forecolor-light: rgba(0, 0, 0, 1);
   --sjs-primary-backcolor: rgba(0, 0, 0, 1);
   --sjs-primary-backcolor-light: rgba(255, 216, 77, 1);
-  --sjs-primary-backcolor-dark: rgba(116, 116, 116, 1);
-  --sjs-primary-forecolor: rgb(229, 231, 228,1);
+  --sjs-primary-backcolor-dark: rgba(83, 83, 83, 1);
+  --sjs-primary-forecolor: rgb(229 231 228);
   --sjs-primary-forecolor-light: rgba(255, 255, 255, 0.25);
   --sjs-base-unit: 8px;
   --sjs-corner-radius: 8px;
@@ -46,7 +46,6 @@
   --sjs-article-font-xx-large-fontStyle: normal;
   --sjs-article-font-xx-large-fontStretch: normal;
   --sjs-article-font-xx-large-letterSpacing: 0;
-  --sjs-article-font-xx-large-lineHeight: 3.5rem;
   --sjs-article-font-xx-large-paragraphIndent: 0px;
   --sjs-article-font-xx-large-textCase: none;
   --sjs-article-font-x-large-textDecoration: none;
@@ -54,7 +53,7 @@
   --sjs-article-font-x-large-fontStyle: normal;
   --sjs-article-font-x-large-fontStretch: normal;
   --sjs-article-font-x-large-letterSpacing: 0;
-  --sjs-article-font-x-large-lineHeight: 3rem;
+  --sjs-article-font-x-large-lineHeight: 56px;
   --sjs-article-font-x-large-paragraphIndent: 0px;
   --sjs-article-font-x-large-textCase: none;
   --sjs-article-font-large-textDecoration: none;
@@ -62,7 +61,7 @@
   --sjs-article-font-large-fontStyle: normal;
   --sjs-article-font-large-fontStretch: normal;
   --sjs-article-font-large-letterSpacing: 0;
-  --sjs-article-font-large-lineHeight: 2rem;
+  --sjs-article-font-large-lineHeight: 40px;
   --sjs-article-font-large-paragraphIndent: 0px;
   --sjs-article-font-large-textCase: none;
   --sjs-article-font-medium-textDecoration: none;
@@ -70,7 +69,7 @@
   --sjs-article-font-medium-fontStyle: normal;
   --sjs-article-font-medium-fontStretch: normal;
   --sjs-article-font-medium-letterSpacing: 0;
-  --sjs-article-font-medium-lineHeight: 1.5rem;
+  --sjs-article-font-medium-lineHeight: 32px;
   --sjs-article-font-medium-paragraphIndent: 0px;
   --sjs-article-font-medium-textCase: none;
   --sjs-article-font-default-textDecoration: none;
@@ -78,31 +77,28 @@
   --sjs-article-font-default-fontStyle: normal;
   --sjs-article-font-default-fontStretch: normal;
   --sjs-article-font-default-letterSpacing: 0;
-  --sjs-article-font-default-lineHeight: 1.25;
+  --sjs-article-font-default-lineHeight: 28px;
   --sjs-article-font-default-paragraphIndent: 0px;
   --sjs-article-font-default-textCase: none;
 }
 
+/*for debugging TBR*/
+* {
+  /* outline: 1px solid red;
+  background-color: rgba(255, 0, 0, 0.05); */
+}
 
 [dir=ltr] {
-  --icon-direction: 1;
-  
+    --icon-direction: 1;
 }
 
 [dir=rtl] {
-  --icon-direction: -1;
-  --sjs-article-font-xx-large-fontWeight: 300;
-  --sjs-article-font-x-large-fontWeight: 300;
-  --sjs-article-font-large-fontWeight: 300;
-  --sjs-article-font-medium-fontWeight: 400;
-  --sjs-article-font-default-fontWeight: 400;
+    --icon-direction: -1;
 }
-
 main {
   display: flex;
   flex-direction: column;
   min-height: 81vh;
-  animation: fadeIn .8s ease 1 backwards;
 }
 
 html {
@@ -111,13 +107,12 @@ html {
 
 body {
   background-color: var(--sjs-general-backcolor);
-  font-family: "Tajawal","Inter", Roboto, serif;
+  font-family: "Noto Naskh Arabic","Inter", Roboto, serif;
   font-size: 1.1rem;
   line-height: 1.5;
   font-weight: var(--sjs-article-font-default-fontWeight);
   margin: 0;
-  color: var(--sjs-primary-backcolor-dark);
-  
+  color: var(--sjs-general-forecolor-light);
 }
 
 strong {
@@ -138,8 +133,6 @@ select,
 textarea,
 .sd-selectbase__label {
   border-radius: var(--sjs-corner-radius);
-  font-family:  "Tajawal","Inter", Roboto, sans-serif;
-  
 }
 
 .ads-button {
@@ -223,7 +216,7 @@ footer {
 }
 
 .ads-title {
-  font-family: "Tajawal","Oswald", sans-serif !important;
+  font-family: "Oswald", sans-serif !important;
 }
 
 h1,
@@ -233,36 +226,36 @@ h4,
 h5,
 h6 {
   color: var(--sjs-general-forecolor);
-  font-family: "Tajawal","Gabarito", ReithSans, Helvetica, Roboto, sans-serif;
+  font-family: "Cairo Play","Gabarito", ReithSans, Helvetica, Roboto, sans-serif;
 }
 
 h1 {
-  font-size: var(--sjs-article-font-xx-large-lineHeight);
-  font-weight: var(--sjs-article-font-xx-large-fontWeight);
+  font-size: 4.5rem;
+  font-weight: 700;
   line-height: 1.3;
 }
 
 h2 {
-  font-size: var(--sjs-article-font-x-large-lineHeight);
-  font-weight: var(--sjs-article-font-x-large-fontWeight);
+  font-size: 3rem;
+  font-weight: 700;
   line-height: 1.3;
 }
 
 h3 {
-  font-size: var(--sjs-article-font-large-lineHeight);
-  font-weight: var(--sjs-article-font-large-fontWeight);
+  font-size: 2rem;
+  font-weight: 700;
   line-height: 1.3;
 }
 
 h4 {
-  font-size: var(--sjs-article-font-medium-lineHeight);
-  font-weight: var(--sjs-article-font-medium-fontWeight);
+  font-size: 1.5rem;
+  font-weight: 700;
   line-height: 1.3;
 }
 
 h5 {
-  font-size: var(--sjs-article-font-default-lineHeight);
-  font-weight: var(--sjs-article-font-default-fontWeight);
+  font-size: 1.25rem;
+  font-weight: 700;
   line-height: 1.3;
 }
 
@@ -346,6 +339,7 @@ td {
 
 th {
   color: var(--sjs-general-forecolor);
+  /* font-size: 1.1rem; */
   text-align: start;
 }
 
@@ -353,9 +347,18 @@ tr:nth-child(even) {
   background-color: var(--sjs-general-backcolor-dim);
 }
 
+/* tr:hover {
+  background-color: var(--sjs-primary-forecolor);
+}
+
+tr:active {
+  background-color: var(--sjs-general-backcolor-dim-dark);
+} */
 
 nav {
+  /* background-color: var(--sjs-general-backcolor-dim); */
   color: var(--sjs-general-forecolor);
+  /* padding: 1rem; */
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -409,10 +412,6 @@ nav ul li a:hover {
 
 nav ul li a:active {
   color: var(--sjs-primary-backcolor-dark);
-}
-
-i,.material-symbols-outlined {
-  transform: scaleX(var(--icon-direction));
 }
 
 article i {
@@ -587,7 +586,7 @@ nav :first-of-type li a {
   font-size: 0.9rem;
   text-decoration: none !important;
   position: absolute;
-  top: 334px;
+  top: 380px;
   left:18px;
   z-index: 999;
   ;
@@ -928,31 +927,12 @@ nav :first-of-type li a {
     top:360px;
   }
 
-  #searchResults img {
-    display: none;
-  }
-
-  #searchResults a {
-    overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  }
-
   #decoration{
     display: none;
   }
 }
 
 /* ads animation */
-
-@keyframes fadeIn {
-  0% {
-      opacity: 0;
-  }
-  100% {
-      opacity: 1;
-  }
-}
 
 @keyframes slideFromBottom {
   from {

@@ -57,10 +57,42 @@ Links:
   - /blog/business/01-why-businesses-hesitate-to-implement-lead-generation.html
   - /blog/business
   - /blog/business/01-why-businesses-hesitate-to-implement-lead-generation.html
+  - /blog/business/marketing/01-why-businesses-hesitate-to-implement-lead-generation-ar.html
+  - /blog/business/marketing/01-why-businesses-hesitate-to-implement-lead-generation-ar.html
+  - /blog/business/marketing
+  - /blog/business/marketing/01-why-businesses-hesitate-to-implement-lead-generation-ar.html
   - /blog/business/marketing/01-why-businesses-hesitate-to-implement-lead-generation.html
   - /blog/business/marketing/01-why-businesses-hesitate-to-implement-lead-generation.html
   - /blog/business/marketing
   - /blog/business/marketing/01-why-businesses-hesitate-to-implement-lead-generation.html
+
+File: blog/business/marketing/01-why-businesses-hesitate-to-implement-lead-generation-ar.html
+Links:
+  - /index.html
+  - #services
+  - /blog.html
+  - /blog.html
+  - #introduction
+  - #common-misconceptions
+  - #challenges-and-barriers
+  - #financial-considerations
+  - #cultural-and-organizational-resistance
+  - #potential-solutions
+  - #case-studies
+  - #conclusion
+  - #add
+  - https://blog.hubspot.com/marketing/lead-generation-cost
+  - https://www.forbes.com/sites/forbesbusinesscouncil/2021/08/02/overcoming-technical-barriers-in-lead-generation
+  - https://www.forbes.com/sites/forbesbusinesscouncil/2021/08/02/overcoming-technical-barriers-in-lead-generation
+  - https://www.demandgenreport.com/resources/reports/the-roi-of-lead-generation
+  - https://hbr.org/2020/11/managing-change-in-lead-generation-processes
+  - https://www.demandgenreport.com/resources/reports/the-roi-of-lead-generation
+  - https://blog.marketo.com/2022/03/how-xyz-company-improved-sales-with-lead-generation.html
+  - /blog/01-benefits-of-lead-generation.html
+  - /blog/02-lead-generation-ai-biggest-nightmare.html
+  - /blog/03-scale-your-business-with-lead-generation.html
+  - /blog/02-lead-generation-ai-biggest-nightmare.html
+  - /blog/04-the-benefits-of-lead-generation.html
 
 File: blog/business/marketing/01-why-businesses-hesitate-to-implement-lead-generation.html
 Links:
@@ -98,6 +130,10 @@ Links:
   - /blog/business
   - /blog
   - /blog/business
+  - /blog/business/marketing/01-why-businesses-hesitate-to-implement-lead-generation-ar.html
+  - /blog/business/marketing/01-why-businesses-hesitate-to-implement-lead-generation-ar.html
+  - /blog/business/marketing
+  - /blog/business/marketing/01-why-businesses-hesitate-to-implement-lead-generation-ar.html
   - /blog/business/marketing/01-why-businesses-hesitate-to-implement-lead-generation.html
   - /blog/business/marketing/01-why-businesses-hesitate-to-implement-lead-generation.html
   - /blog/business/marketing
@@ -355,9 +391,56 @@ File: blog/index.html
 Links:
   - https://octopus.energy
   - #services
+  - /blog/
+  - /
+  - /blog/business/01-why-businesses-hesitate-to-implement-lead-generation.html
+  - /blog/business/01-why-businesses-hesitate-to-implement-lead-generation.html
   - /blog/business
+  - /blog/business/01-why-businesses-hesitate-to-implement-lead-generation.html
+  - /blog/business/marketing/01-why-businesses-hesitate-to-implement-lead-generation-ar.html
+  - /blog/business/marketing/01-why-businesses-hesitate-to-implement-lead-generation-ar.html
   - /blog/business/marketing
+  - /blog/business/marketing/01-why-businesses-hesitate-to-implement-lead-generation-ar.html
+  - /blog/business/marketing/01-why-businesses-hesitate-to-implement-lead-generation.html
+  - /blog/business/marketing/01-why-businesses-hesitate-to-implement-lead-generation.html
+  - /blog/business/marketing
+  - /blog/business/marketing/01-why-businesses-hesitate-to-implement-lead-generation.html
+  - /blog/default/01-benefits-of-lead-generation.html
+  - /blog/default/01-benefits-of-lead-generation.html
   - /blog/default
+  - /blog/default/01-benefits-of-lead-generation.html
+  - /blog/default/02-lead-generation-ai-biggest-nightmare.html
+  - /blog/default/02-lead-generation-ai-biggest-nightmare.html
+  - /blog/default
+  - /blog/default/02-lead-generation-ai-biggest-nightmare.html
+  - /blog/default/03-scale-your-business-with-lead-generation.html
+  - /blog/default/03-scale-your-business-with-lead-generation.html
+  - /blog/default
+  - /blog/default/03-scale-your-business-with-lead-generation.html
+  - /blog/default/04-the-benefits-of-lead-generation.html
+  - /blog/default/04-the-benefits-of-lead-generation.html
+  - /blog/default
+  - /blog/default/04-the-benefits-of-lead-generation.html
+  - /blog/default/05-how-lead-generation-can-exponentially-scale-your-business.html
+  - /blog/default/05-how-lead-generation-can-exponentially-scale-your-business.html
+  - /blog/default
+  - /blog/default/05-how-lead-generation-can-exponentially-scale-your-business.html
+  - /blog/default/06-how-lead-generation-can-transform-your-success.html
+  - /blog/default/06-how-lead-generation-can-transform-your-success.html
+  - /blog/default
+  - /blog/default/06-how-lead-generation-can-transform-your-success.html
+  - /blog/default/07-how-much-can-lead-generation-scale-up-your-business.html
+  - /blog/default/07-how-much-can-lead-generation-scale-up-your-business.html
+  - /blog/default
+  - /blog/default/07-how-much-can-lead-generation-scale-up-your-business.html
+  - /blog/default/08-why-businesses-hesitate-to-implement-lead-generation-in-their-sales-pipeline.html
+  - /blog/default/08-why-businesses-hesitate-to-implement-lead-generation-in-their-sales-pipeline.html
+  - /blog/default
+  - /blog/default/08-why-businesses-hesitate-to-implement-lead-generation-in-their-sales-pipeline.html
+  - /blog/default/09-why-businesses-hesitate-to-implement-lead-generation.html
+  - /blog/default/09-why-businesses-hesitate-to-implement-lead-generation.html
+  - /blog/default
+  - /blog/default/09-why-businesses-hesitate-to-implement-lead-generation.html
 
 File: blog.html
 Links:
@@ -412,6 +495,127 @@ File: lead-generation.html
 Links:
   - https://octopus.energy
   - #services
+
+File: test/blog/business/01-why-businesses-hesitate-to-implement-lead-generation.html
+Links:
+  - /index/
+  - #services
+  - /blog/business/
+  - /blog/
+  - #introduction
+  - #common-misconceptions
+  - #cost-concerns
+  - #resource-allocation
+  - #technological-challenges
+  - #quality-vs-quantity
+  - #market-saturation
+  - #regulatory-and-ethical-concerns
+  - #case-studies
+  - #actionable-insights
+  - #conclusion
+  - #add
+  - https://www.jbedigital.com.au/understanding-lead-generation
+  - https://firstsales.io/mastering-lead-generation-guide
+  - https://shanebarker.com/blog/lead-generation-guide
+  - https://www.bikebear.com.my/understanding-lead-generation
+  - https://www.mediummultimedia.com/understanding-lead-generation
+  - /blog/default/01-benefits-of-lead-generation.html
+  - /blog/default/02-lead-generation-ai-biggest-nightmare.html
+  - /blog/default/03-scale-your-business-with-lead-generation.html
+  - /blog/default/09-why-businesses-hesitate-to-implement-lead-generation.html
+
+File: test/blog/business/index.html
+Links:
+  - https://octopus.energy
+  - #services
+  - /blog/
+  - /blog
+  - /blog
+  - /blog/business/01-why-businesses-hesitate-to-implement-lead-generation.html
+  - /blog/business/01-why-businesses-hesitate-to-implement-lead-generation.html
+  - /blog/business
+  - /blog/business/01-why-businesses-hesitate-to-implement-lead-generation.html
+  - /blog/business/marketing/01-why-businesses-hesitate-to-implement-lead-generation.html
+  - /blog/business/marketing/01-why-businesses-hesitate-to-implement-lead-generation.html
+  - /blog/business/marketing
+  - /blog/business/marketing/01-why-businesses-hesitate-to-implement-lead-generation.html
+
+File: test/blog/business/marketing/01-why-businesses-hesitate-to-implement-lead-generation-ar.html
+Links:
+  - /index.html
+  - #services
+  - /blog.html
+  - /blog.html
+  - #introduction
+  - #common-misconceptions
+  - #challenges-and-barriers
+  - #financial-considerations
+  - #cultural-and-organizational-resistance
+  - #potential-solutions
+  - #case-studies
+  - #conclusion
+  - #add
+  - https://blog.hubspot.com/marketing/lead-generation-cost
+  - https://www.forbes.com/sites/forbesbusinesscouncil/2021/08/02/overcoming-technical-barriers-in-lead-generation
+  - https://www.forbes.com/sites/forbesbusinesscouncil/2021/08/02/overcoming-technical-barriers-in-lead-generation
+  - https://www.demandgenreport.com/resources/reports/the-roi-of-lead-generation
+  - https://hbr.org/2020/11/managing-change-in-lead-generation-processes
+  - https://www.demandgenreport.com/resources/reports/the-roi-of-lead-generation
+  - https://blog.marketo.com/2022/03/how-xyz-company-improved-sales-with-lead-generation.html
+  - /blog/01-benefits-of-lead-generation.html
+  - /blog/02-lead-generation-ai-biggest-nightmare.html
+  - /blog/03-scale-your-business-with-lead-generation.html
+  - /blog/02-lead-generation-ai-biggest-nightmare.html
+  - /blog/04-the-benefits-of-lead-generation.html
+
+File: test/blog/business/marketing/01-why-businesses-hesitate-to-implement-lead-generation.html
+Links:
+  - /index.html
+  - #services
+  - /blog/
+  - /blog/business/marketing/
+  - #introduction
+  - #common-misconceptions
+  - #cost-concerns
+  - #resource-allocation
+  - #technological-challenges
+  - #quality-vs-quantity
+  - #market-saturation
+  - #regulatory-and-ethical-concerns
+  - #case-studies
+  - #actionable-insights
+  - #conclusion
+  - #add
+  - https://www.jbedigital.com.au/understanding-lead-generation
+  - https://firstsales.io/mastering-lead-generation-guide
+  - https://shanebarker.com/blog/lead-generation-guide
+  - https://www.bikebear.com.my/understanding-lead-generation
+  - https://www.mediummultimedia.com/understanding-lead-generation
+  - /blog/default/01-benefits-of-lead-generation.html
+  - /blog/default/02-lead-generation-ai-biggest-nightmare.html
+  - /blog/default/03-scale-your-business-with-lead-generation.html
+  - /blog/default/09-why-businesses-hesitate-to-implement-lead-generation.html
+
+File: test/blog/business/marketing/index.html
+Links:
+  - https://octopus.energy
+  - #services
+  - /blog/
+  - /blog/business
+  - /blog
+  - /blog/business
+  - /blog/business/marketing/01-why-businesses-hesitate-to-implement-lead-generation.html
+  - /blog/business/marketing/01-why-businesses-hesitate-to-implement-lead-generation.html
+  - /blog/business/marketing
+  - /blog/business/marketing/01-why-businesses-hesitate-to-implement-lead-generation.html
+
+File: test/index.html
+Links:
+  - https://octopus.energy
+  - #services
+  - /blog/business
+  - /blog/business/marketing
+  - /blog/default
 
 File: video.html
 Links:

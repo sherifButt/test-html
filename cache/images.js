@@ -8,6 +8,7 @@ const images = [
     "/img/google-ads-responsive-ad-example.png.webp",
     "/img/leads.png",
     "/img/leads10.webp",
+    "/img/leads11.webp",
     "/img/leads2.png",
     "/img/leads3.png",
     "/img/leads4.png",
@@ -19,6 +20,7 @@ const images = [
     "/img/tree.png",
     "/img/tree2.png",
     "/img/tree3.png",
+    "/img/tree4.webp",
     "/img/umbrella.png",
     "/img/umbrella.webp",
     "/img/woman.png"

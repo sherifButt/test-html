@@ -1,9 +1,9 @@
 {
-  "timestamp": "2024-07-17T05:43:31.574Z",
-  "brokenLinksCount": 216,
+  "timestamp": "2024-07-17T17:48:07.786Z",
+  "brokenLinksCount": 351,
   "brokenLinksSummary": {
-    "Internal": 161,
-    "Anchor": 29,
-    "External": 26
+    "Internal": 267,
+    "Anchor": 40,
+    "External": 44
   }
 }
