@@ -1,6 +1,9 @@
 let currentIndex = 0;
 let currentImageIndex = 0;
 let selectedElement = null;
+let autoPlayInterval = null;
+let currentAudioSrc = '';
+let movementMultiplier = 30;
 
 // Load settings from local storage or use default
 const storedBannerSettings = JSON.parse(localStorage.getItem('bannerSettings')) || bannerSettings;
@@ -11,17 +14,140 @@ function getSelectedBanner() {
     return document.getElementById('bannerSelect').value;
 }
 
+// Add this function to apply all saved settings for a specific banner size
+function applyAllSavedSettings(size) {
+    const settings = storedBannerSettings.find(setting => setting.size === size).settings;
+    const layoutSettings = settings.layout;
+    const elementSettings = settings.elements;
+
+    // Apply element visibility
+    Object.entries(elementSettings).forEach(([element, isVisible]) => {
+        const el = document.getElementById(`${element}-${size}`);
+        if (el) {
+            el.style.display = isVisible ? 'block' : 'none';
+        }
+    });
+
+    // Apply positions
+    if (layoutSettings.positions) {
+        Object.entries(layoutSettings.positions).forEach(([elementType, position]) => {
+            const element = document.getElementById(`${elementType}-${size}`);
+            if (element) {
+                if (element.tagName.toLowerCase() === 'path') {
+                    element.setAttribute('transform', position);
+                } else {
+                    element.style.position = 'relative';
+                    element.style.top = position.top;
+                    element.style.left = position.left;
+                }
+            }
+        });
+    }
+
+    // Apply rotations
+    if (layoutSettings.rotations) {
+        Object.entries(layoutSettings.rotations).forEach(([elementType, rotation]) => {
+            const element = document.getElementById(`${elementType}-${size}`);
+            if (element) {
+                element.style.transform = `rotate(${rotation}deg)`;
+            }
+        });
+    }
+
+    // Apply scales
+    if (layoutSettings.scales) {
+        Object.entries(layoutSettings.scales).forEach(([elementType, scale]) => {
+            const element = document.getElementById(`${elementType}-${size}`);
+            if (element) {
+                element.style.transform = `scale(${scale})`;
+            }
+        });
+    }
+
+    // Apply opacities
+    if (layoutSettings.opacities) {
+        Object.entries(layoutSettings.opacities).forEach(([elementType, opacity]) => {
+            const element = document.getElementById(`${elementType}-${size}`);
+            if (element) {
+                element.style.opacity = opacity;
+            }
+        });
+    }
+
+    // Apply SVG opacities
+    if (layoutSettings.opacities) {
+        if (layoutSettings.opacities.svgOneOpacity !== undefined) {
+            const pathOne = document.getElementById(`path-one-${size}`);
+            if (pathOne) pathOne.setAttribute('fill-opacity', layoutSettings.opacities.svgOneOpacity);
+            const sliderOne = document.getElementById('svg-one-opacity');
+            if (sliderOne) sliderOne.value = layoutSettings.opacities.svgOneOpacity;
+        }
+        if (layoutSettings.opacities.svgTwoOpacity !== undefined) {
+            const pathTwo = document.getElementById(`path-two-${size}`);
+            if (pathTwo) pathTwo.setAttribute('fill-opacity', layoutSettings.opacities.svgTwoOpacity);
+            const sliderTwo = document.getElementById('svg-two-opacity');
+            if (sliderTwo) sliderTwo.value = layoutSettings.opacities.svgTwoOpacity;
+        }
+    }
+
+    // Apply colors
+    applyStoredColors();
+
+    // Apply other layout settings
+    if (layoutSettings.imageSize) {
+        const image = document.getElementById(`image-${size}`);
+        if (image) image.style.width = layoutSettings.imageSize;
+    }
+    if (layoutSettings.titleSize) {
+        const headline = document.getElementById(`headline-${size}`);
+        if (headline) headline.style.fontSize = layoutSettings.titleSize;
+    }
+    if (layoutSettings.bodySize) {
+        const text = document.getElementById(`text-${size}`);
+        if (text) text.style.fontSize = layoutSettings.bodySize;
+    }
+    if (layoutSettings.logoRotation !== undefined) {
+        const logoIcon = document.getElementById(`logo-icon-${size}`);
+        if (logoIcon) logoIcon.style.transform = `rotate(${layoutSettings.logoRotation}deg)`;
+    }
+    if (layoutSettings.backgroundImage !== undefined) {
+        toggleBackground();
+    }
+}
+
+
+
 function updateElementsList() {
     const size = getSelectedBanner();
     const elementsList = document.getElementById('elements-list');
-    const settings = storedBannerSettings.find(setting => setting.size === size).settings.layout;
+
+    console.log('Selected banner size:', size);
+    console.log('storedBannerSettings:', storedBannerSettings);
+
+    const settingForSize = storedBannerSettings.find(setting => setting.size === size);
+
+    if (!settingForSize) {
+        console.error(`No settings found for banner size: ${size}`);
+        return;
+    }
+
+    console.log('Settings for selected size:', settingForSize);
+
+    const settings = settingForSize.settings.layout;
+
+    if (!settings) {
+        console.error(`No layout settings found for banner size: ${size}`);
+        return;
+    }
 
     elementsList.innerHTML = '';
 
     const elements = [
         { id: `logo-icon-${size}`, name: 'Logo' },
+        { id: `logo-title-${size}`, name: 'Logo Title' },
         { id: `image-${size}`, name: 'Image' },
         { id: `headline-${size}`, name: 'Headline' },
+        { id: `text-container-${size}`, name: 'Text Container' },
         { id: `text-${size}`, name: 'Text' },
         { id: `tags-${size}`, name: 'Tags' },
         { id: `cta-${size}`, name: 'CTA' },
@@ -137,81 +263,113 @@ function highlightSelectedElement() {
 function changeZIndex(direction) {
     if (!selectedElement) return;
 
+    const size = getSelectedBanner();
+    const elementType = selectedElement.id.split('-')[0];
     const currentZIndex = parseInt(window.getComputedStyle(selectedElement).zIndex) || 0;
     const newZIndex = direction === 'up' ? currentZIndex + 10 : Math.max(0, currentZIndex - 10);
 
     selectedElement.style.zIndex = newZIndex;
 
-    // Update the banner settings to store the new z-index
-    const size = getSelectedBanner();
-    const elementType = selectedElement.id.split('-')[0];
-    const settings = storedBannerSettings.find(setting => setting.size === size).settings.layout;
+    updateSetting(size, 'layout', 'zIndex', elementType, newZIndex);
+}
 
-    if (!settings.zIndex) {
-        settings.zIndex = {};
+function changeElementColor(color) {
+    console.log('Changing color to:', color);
+    if (!selectedElement) return;
+    console.log('Selected element:', selectedElement);
+
+    const size = getSelectedBanner();
+    const bannerSetting = storedBannerSettings.find(setting => setting.size === size);
+
+    if (!bannerSetting || !bannerSetting.settings.layout) {
+        console.error(`Settings not found for banner size: ${size}`);
+        return;
     }
-    settings.zIndex[elementType] = newZIndex;
+
+    const settings = bannerSetting.settings.layout;
+
+    if (!settings.colors) {
+        settings.colors = {};
+    }
+
+    const elementType = selectedElement.id.split('-').slice(0, 2).join('-');
+    console.log('elementType:', selectedElement.tagName.toLowerCase());
+
+    if (elementType === 'path-one' || elementType === 'path-two') {
+        selectedElement.setAttribute('fill', color);
+        selectedElement.classList.remove('path-one', 'path-two');
+        settings.colors[elementType.replace('-', '')] = color; // Convert 'path-one' to 'pathOne'
+    } else {
+        selectedElement.style.color = color;
+        settings.colors[elementType] = color;
+    }
 
     saveSettings();
 }
 
-function changeElementColor(color) {
-    if (!selectedElement) return;
-    
-    if (selectedElement.tagName.toLowerCase() === 'path') {
-        selectedElement.setAttribute('fill', color);
-    } else if (selectedElement.id.includes('logo-icon')) {
-        selectedElement.style.color = color;
-    } else {
-        selectedElement.style.color = color;
+
+
+function updateSetting(size, category, subcategory, key, value) {
+    const setting = storedBannerSettings.find(s => s.size === size);
+    if (setting && setting.settings[category] && setting.settings[category][subcategory]) {
+        setting.settings[category][subcategory][key] = value;
+        saveSettings();
     }
-    
-    saveElementColor(color);
 }
+
+function getSetting(size, category, subcategory, key) {
+    const setting = storedBannerSettings.find(s => s.size === size);
+    if (setting && setting.settings[category] && setting.settings[category][subcategory]) {
+        return setting.settings[category][subcategory][key];
+    }
+    return null; // or a default value
+}
+
 
 function changeBackgroundColor(color) {
     const size = getSelectedBanner();
     const container = document.getElementById(`ad-container-${size}`);
     container.style.backgroundColor = color;
-    
+
     saveBackgroundColor(color);
 }
 
 function saveElementColor(color) {
     const size = getSelectedBanner();
     const settings = storedBannerSettings.find(setting => setting.size === size).settings.layout;
-    
+
     if (!settings.colors) {
         settings.colors = {};
     }
-    
+
     const elementType = selectedElement.id.split('-')[0];
     settings.colors[elementType] = color;
-    
+
     saveSettings();
 }
+
 
 function saveBackgroundColor(color) {
     const size = getSelectedBanner();
     const settings = storedBannerSettings.find(setting => setting.size === size).settings.layout;
-    
+
     if (!settings.colors) {
         settings.colors = {};
     }
-    
+
     settings.colors.background = color;
-    
+
     saveSettings();
 }
 
 function resetColors() {
     const size = getSelectedBanner();
     const settings = storedBannerSettings.find(setting => setting.size === size).settings.layout;
-    
+
     // Reset background color
     const container = document.getElementById(`ad-container-${size}`);
     container.style.backgroundColor = '';
-    
+
     // Reset element colors
     const elements = container.querySelectorAll('*');
     elements.forEach(element => {
@@ -221,23 +379,30 @@ function resetColors() {
             element.style.color = '';
         }
     });
-    
+
     // Clear saved colors
     if (settings.colors) {
         delete settings.colors;
     }
-    
+
     // Reset color inputs
     document.getElementById('element-color').value = '#000000';
     document.getElementById('background-color').value = '#ffffff';
-    
+
     saveSettings();
 }
 
 function applyStoredColors() {
     const size = getSelectedBanner();
-    const settings = storedBannerSettings.find(setting => setting.size === size).settings.layout;
-    
+    const bannerSetting = storedBannerSettings.find(setting => setting.size === size);
+
+    if (!bannerSetting || !bannerSetting.settings.layout) {
+        console.error(`Settings not found for banner size: ${size}`);
+        return;
+    }
+
+    const settings = bannerSetting.settings.layout;
+
     if (settings.colors) {
         // Apply background color
         if (settings.colors.background) {
@@ -245,17 +410,24 @@ function applyStoredColors() {
             container.style.backgroundColor = settings.colors.background;
             document.getElementById('background-color').value = settings.colors.background;
         }
-        
+
         // Apply element colors
         Object.entries(settings.colors).forEach(([elementType, color]) => {
-            if (elementType !== 'background') {
-                const element = document.getElementById(`${elementType}-${size}`);
-                if (element) {
-                    if (element.tagName.toLowerCase() === 'path') {
-                        element.setAttribute('fill', color);
-                    } else {
-                        element.style.color = color;
+            const elementId = elementType.startsWith('path') ? elementType.replace(/([A-Z])/g, '-$1').toLowerCase() : elementType.split('-')[0]
+            const element = document.getElementById(`${elementId.replace('path','path-')}-${size}`);
+            console.log("--+",elementId.slice('path'),element)
+            if (element) {
+                console.log("--->",elementType)
+                if (elementType === 'pathone' || elementType === 'pathtwo') {
+                    element.setAttribute('fill', color);
+                    if (elementType === 'pathone') {
+                        element.classList.remove('path-one');
                     }
+                    if (elementType === 'pathtwo') {
+                        element.classList.remove('path-two');
+                    }
+                } else {
+                    element.style.color = color;
                 }
             }
         });
@@ -264,168 +436,170 @@ function applyStoredColors() {
 
 
 
-function moveElement(direction) {
+
+
+
+
+
+// Update the moveElement function
+function moveElement(direction, step = 5) {
     if (!selectedElement) return;
-    const step = 5;
+    const size = getSelectedBanner();
+    const elementType = selectedElement.id.split('-')[0];
+    const settings = storedBannerSettings.find(setting => setting.size === size).settings.layout;
 
     if (selectedElement.tagName.toLowerCase() === 'path') {
-        // Handle SVG path movement
         const currentTransform = selectedElement.getAttribute('transform') || '';
         let currentX = 0;
         let currentY = 0;
 
-        // Extract current translation if it exists
         const match = currentTransform.match(/translate\((-?\d+\.?\d*),\s*(-?\d+\.?\d*)\)/);
         if (match) {
             currentX = parseFloat(match[1]);
             currentY = parseFloat(match[2]);
         }
 
-        // Update translation based on direction
         switch (direction) {
-            case 'up':
-                currentY -= step;
-                break;
-            case 'down':
-                currentY += step;
-                break;
-            case 'left':
-                currentX -= step;
-                break;
-            case 'right':
-                currentX += step;
-                break;
+            case 'up': currentY -= step; break;
+            case 'down': currentY += step; break;
+            case 'left': currentX -= step; break;
+            case 'right': currentX += step; break;
         }
 
-        // Apply the new transform
-        selectedElement.setAttribute('transform', `translate(${currentX}, ${currentY})`);
+        const newTransform = `translate(${currentX}, ${currentY})`;
+        selectedElement.setAttribute('transform', newTransform);
+
+        if (!settings.positions) settings.positions = {};
+        settings.positions[elementType] = newTransform;
     } else {
-        // Handle regular HTML element movement
         const currentTop = parseInt(selectedElement.style.top) || 0;
         const currentLeft = parseInt(selectedElement.style.left) || 0;
+        let newTop = currentTop;
+        let newLeft = currentLeft;
 
         switch (direction) {
-            case 'up':
-                selectedElement.style.top = `${currentTop - step}px`;
-                break;
-            case 'down':
-                selectedElement.style.top = `${currentTop + step}px`;
-                break;
-            case 'left':
-                selectedElement.style.left = `${currentLeft - step}px`;
-                break;
-            case 'right':
-                selectedElement.style.left = `${currentLeft + step}px`;
-                break;
+            case 'up': newTop -= step; break;
+            case 'down': newTop += step; break;
+            case 'left': newLeft -= step; break;
+            case 'right': newLeft += step; break;
         }
+
+        selectedElement.style.top = `${newTop}px`;
+        selectedElement.style.left = `${newLeft}px`;
         selectedElement.style.position = 'relative';
+
+        if (!settings.positions) settings.positions = {};
+        settings.positions[elementType] = { top: `${newTop}px`, left: `${newLeft}px` };
     }
 
-    // Save the new position in the settings
-    const size = getSelectedBanner();
-    const settings = storedBannerSettings.find(setting => setting.size === size).settings.layout;
-    const elementType = selectedElement.id.split('-')[0];
-    if (!settings.positions) {
-        settings.positions = {};
-    }
-    if (selectedElement.tagName.toLowerCase() === 'path') {
-        settings.positions[elementType] = selectedElement.getAttribute('transform');
-    } else {
-        settings.positions[elementType] = {
-            top: selectedElement.style.top,
-            left: selectedElement.style.left
-        };
-    }
     saveSettings();
 }
 
 
-function rotateElement(direction) {
+// Update the changeZIndex function to increase/decrease by a larger step if Shift is pressed
+function changeZIndex(direction) {
     if (!selectedElement) return;
-    const currentRotation = selectedElement.style.transform ? parseInt(selectedElement.style.transform.replace(/[^\d-]/g, '')) : 0;
-    const newRotation = direction === 'left' ? currentRotation - 15 : currentRotation + 15;
-    selectedElement.style.transform = `rotate(${newRotation}deg)`;
+
+    const size = getSelectedBanner();
+    const elementType = selectedElement.id.split('-')[0];
+    const currentZIndex = parseInt(window.getComputedStyle(selectedElement).zIndex) || 0;
+    const newZIndex = direction === 'up' ? currentZIndex + 10 : Math.max(0, currentZIndex - 10);
+
+    selectedElement.style.zIndex = newZIndex;
+
+    const settings = storedBannerSettings.find(setting => setting.size === size).settings.layout;
+    if (!settings.zIndex) settings.zIndex = {};
+    settings.zIndex[elementType] = newZIndex;
+
+    saveSettings();
 }
 
+// Update the rotateElement function
+function rotateElement(direction) {
+    if (!selectedElement) return;
+    const size = getSelectedBanner();
+    const elementType = selectedElement.id.split('-')[0];
+    const settings = storedBannerSettings.find(setting => setting.size === size).settings.layout;
+
+    const currentRotation = selectedElement.style.transform ?
+        parseInt(selectedElement.style.transform.replace(/[^\d-]/g, '')) : 0;
+    const newRotation = direction === 'left' ? currentRotation - 15 : currentRotation + 15;
+    selectedElement.style.transform = `rotate(${newRotation}deg)`;
+
+    // Save the new rotation
+    if (!settings.rotations) settings.rotations = {};
+    settings.rotations[elementType] = newRotation;
+
+    saveSettings();
+}
+
+// Update the mirrorElement function
 function mirrorElement() {
     if (!selectedElement) return;
+    const size = getSelectedBanner();
+    const elementType = selectedElement.id.split('-')[0];
+    const settings = storedBannerSettings.find(setting => setting.size === size).settings.layout;
+
     const currentScale = selectedElement.style.transform && selectedElement.style.transform.includes('scale')
         ? parseInt(selectedElement.style.transform.split('scale(')[1])
         : 1;
-    selectedElement.style.transform = `scale(${-currentScale}, 1)`;
+    const newScale = -currentScale;
+    selectedElement.style.transform = `scale(${newScale}, 1)`;
+
+    // Save the new scale
+    if (!settings.scales) settings.scales = {};
+    settings.scales[elementType] = newScale;
+
+    saveSettings();
 }
 
+// Update the resizeElement function
 function resizeElement(direction) {
     if (!selectedElement) return;
+    const size = getSelectedBanner();
+    const elementType = selectedElement.id.split('-')[0];
+    const settings = storedBannerSettings.find(setting => setting.size === size).settings.layout;
+
     const currentScale = selectedElement.style.transform && selectedElement.style.transform.includes('scale')
         ? parseFloat(selectedElement.style.transform.split('scale(')[1])
         : 1;
     const newScale = direction === 'up' ? currentScale * 1.1 : currentScale * 0.9;
     selectedElement.style.transform = `scale(${newScale})`;
-}
 
-function changeElementOpacity(value) {
-    if (!selectedElement) return;
-    if (selectedElement.id.startsWith('path-')) {
-        selectedElement.setAttribute('fill-opacity', value);
-        // Update the corresponding settings
-        const size = getSelectedBanner();
-        const settings = storedBannerSettings.find(setting => setting.size === size).settings.layout;
-        const svgNumber = selectedElement.id.includes('one') ? 'One' : 'Two';
-        settings[`svg${svgNumber}Opacity`] = value;
-    } else {
-        selectedElement.style.opacity = value;
-    }
+    // Save the new scale
+    if (!settings.scales) settings.scales = {};
+    settings.scales[elementType] = newScale;
+
     saveSettings();
 }
 
-function resetElement() {
+// Update the changeElementOpacity function
+function changeElementOpacity(value) {
     if (!selectedElement) return;
-
-    if (selectedElement.tagName.toLowerCase() === 'path') {
-        selectedElement.removeAttribute('transform');
-    } else {
-        selectedElement.style.top = '';
-        selectedElement.style.left = '';
-        selectedElement.style.transform = '';
-        selectedElement.style.position = '';
-    }
-
-    if (selectedElement.id.startsWith('path-')) {
-        selectedElement.setAttribute('fill-opacity', '1');
-    } else {
-        selectedElement.style.opacity = '';
-    }
-
-    selectedElement.style.zIndex = '';
-    document.getElementById('element-opacity').value = 1;
-    highlightSelectedElement();
-
     const size = getSelectedBanner();
     const elementType = selectedElement.id.split('-')[0];
     const settings = storedBannerSettings.find(setting => setting.size === size).settings.layout;
 
-    if (settings.zIndex) {
-        delete settings.zIndex[elementType];
-    }
-
-    if (settings.positions) {
-        delete settings.positions[elementType];
-    }
-
     if (selectedElement.id.startsWith('path-')) {
+        selectedElement.setAttribute('fill-opacity', value);
         const svgNumber = selectedElement.id.includes('one') ? 'One' : 'Two';
-        settings[`svg${svgNumber}Opacity`] = 1;
+        if (!settings.opacities) settings.opacities = {};
+        settings.opacities[`svg${svgNumber}Opacity`] = value;
+    } else {
+        selectedElement.style.opacity = value;
+        if (!settings.opacities) settings.opacities = {};
+        settings.opacities[elementType] = value;
     }
 
     saveSettings();
-
-    console.log(`Element reset: ${selectedElement.id}`);
 }
 
+
+// Update the applyElementPositions function
 function applyElementPositions() {
     const size = getSelectedBanner();
     const settings = storedBannerSettings.find(setting => setting.size === size).settings.layout;
+
     if (settings.positions) {
         Object.entries(settings.positions).forEach(([elementType, position]) => {
             const element = document.getElementById(`${elementType}-${size}`);
@@ -441,8 +615,92 @@ function applyElementPositions() {
         });
     }
 
+    if (settings.rotations) {
+        Object.entries(settings.rotations).forEach(([elementType, rotation]) => {
+            const element = document.getElementById(`${elementType}-${size}`);
+            if (element) {
+                element.style.transform = `rotate(${rotation}deg)`;
+            }
+        });
+    }
+
+    if (settings.scales) {
+        Object.entries(settings.scales).forEach(([elementType, scale]) => {
+            const element = document.getElementById(`${elementType}-${size}`);
+            if (element) {
+                element.style.transform = `scale(${scale})`;
+            }
+        });
+    }
+
+    if (settings.opacities) {
+        Object.entries(settings.opacities).forEach(([elementType, opacity]) => {
+            const element = document.getElementById(`${elementType}-${size}`);
+            if (element) {
+                if (elementType.startsWith('svg')) {
+                    element.setAttribute('fill-opacity', opacity);
+                } else {
+                    element.style.opacity = opacity;
+                }
+            }
+        });
+    }
+
     applyStoredColors();
 }
+
+
+function resetElement() {
+    if (!selectedElement) return;
+
+    const size = getSelectedBanner();
+    const elementType = selectedElement.id.split('-')[0];
+    const settings = storedBannerSettings.find(setting => setting.size === size).settings.layout;
+
+    // Reset position
+    selectedElement.style.top = '';
+    selectedElement.style.left = '';
+    selectedElement.style.position = '';
+    if (settings.positions) delete settings.positions[elementType];
+
+    // Reset transform (rotation and scale)
+    selectedElement.style.transform = '';
+    if (settings.rotations) delete settings.rotations[elementType];
+    if (settings.scales) delete settings.scales[elementType];
+
+    // Reset opacity
+    if (selectedElement.id.startsWith('path-')) {
+        selectedElement.setAttribute('fill-opacity', '1');
+        selectedElement.classList.remove('path-one', 'path-two');
+        const svgNumber = selectedElement.id.includes('one') ? 'One' : 'Two';
+        if (settings.opacities) settings.opacities[`svg${svgNumber}Opacity`] = 1;
+    } else {
+        selectedElement.style.opacity = '';
+        if (settings.opacities) delete settings.opacities[elementType];
+    }
+
+    // Reset z-index
+    selectedElement.style.zIndex = '';
+    if (settings.zIndex) delete settings.zIndex[elementType];
+
+    // Reset color
+    if (elementType === 'path-one' || elementType === 'path-two') {
+        selectedElement.removeAttribute('fill');
+        if (settings.colors) delete settings.colors[elementType.replace('-', '')];
+    } else {
+        selectedElement.style.color = '';
+        if (settings.colors) delete settings.colors[elementType];
+    }
+
+    document.getElementById('element-opacity').value = 1;
+    highlightSelectedElement();
+
+    saveSettings();
+
+    console.log(`Element reset: ${selectedElement.id}`);
+}
+
+
 
 function updateCheckboxStates(size) {
     const settings = storedBannerSettings.find(setting => setting.size === size).settings.elements;
@@ -497,12 +755,14 @@ function selectBanner(size) {
         document.getElementById('bannerSelect').value = size;
         document.querySelectorAll('.border-blue-500').forEach(el => el.classList.remove('border-blue-500', 'shadow-xl', 'ring-4', 'ring-blue-300'));
         selectedBanner.classList.add('border-blue-500', 'shadow-xl', 'ring-4', 'ring-blue-300');
+
+        applyAllSavedSettings(size);
         updateSliderValues(size);
         updateCheckboxStates(size);
         updateElementsList();
+
         selectedElement = null;
         highlightSelectedElement();
-        updateElementsList();
         deselectElement();
     }
 }
@@ -510,30 +770,53 @@ function selectBanner(size) {
 function updateSliderValues(size) {
     const settings = storedBannerSettings.find(setting => setting.size === size).settings.layout;
     if (settings) {
-        if (settings.svgOneOpacity !== undefined) {
-            document.getElementById('svg-one-opacity').value = settings.svgOneOpacity;
-        }
-        if (settings.svgTwoOpacity !== undefined) {
-            document.getElementById('svg-two-opacity').value = settings.svgTwoOpacity;
+        if (settings.opacities) {
+            if (settings.opacities.svgOneOpacity !== undefined) {
+                const sliderOne = document.getElementById('svg-one-opacity');
+                if (sliderOne) {
+                    sliderOne.value = settings.opacities.svgOneOpacity;
+                }
+            }
+            if (settings.opacities.svgTwoOpacity !== undefined) {
+                const sliderTwo = document.getElementById('svg-two-opacity');
+                if (sliderTwo) {
+                    sliderTwo.value = settings.opacities.svgTwoOpacity;
+                }
+            }
         }
         if (settings.imageOpacity !== undefined) {
-            document.getElementById('opacity').value = settings.imageOpacity;
+            const imageOpacitySlider = document.getElementById('image-opacity');
+            if (imageOpacitySlider) {
+                imageOpacitySlider.value = settings.imageOpacity;
+            }
         }
         if (settings.titleSize) {
-            document.getElementById('title-size').value = settings.titleSize.replace('rem', '');
+            const titleSizeSlider = document.getElementById('title-size');
+            if (titleSizeSlider) {
+                titleSizeSlider.value = settings.titleSize.replace('rem', '');
+            }
         }
         if (settings.bodySize) {
-            document.getElementById('body-size').value = settings.bodySize.replace('rem', '');
+            const bodySizeSlider = document.getElementById('body-size');
+            if (bodySizeSlider) {
+                bodySizeSlider.value = settings.bodySize.replace('rem', '');
+            }
         }
         if (settings.imageSize) {
-            document.getElementById('image-size').value = settings.imageSize.replace('%', '');
+            const imageSizeSlider = document.getElementById('image-size');
+            if (imageSizeSlider) {
+                imageSizeSlider.value = settings.imageSize.replace('%', '');
+            }
         }
         if (settings.logoRotation !== undefined) {
             const logoIcon = document.getElementById(`logo-icon-${size}`);
-            logoIcon.style.transform = `rotate(${settings.logoRotation}deg)`;
+            if (logoIcon) {
+                logoIcon.style.transform = `rotate(${settings.logoRotation}deg)`;
+            }
         }
     }
 }
+
 
 function saveSettings() {
     localStorage.setItem('bannerSettings', JSON.stringify(storedBannerSettings));
@@ -560,43 +843,20 @@ function toggleElement(element) {
     const elementKey = {
         'logo-icon': 'logoIcon',
         'svg-wave': 'svgWave',
+        'path-one': 'pathOne',
+        'path-two': 'pathTwo',
         'image': 'image',
         'headline': 'headline',
         'text': 'text',
         'tags': 'tags',
-        'cta': 'cta'
+        'cta': 'cta',
+        'background': 'backgroundImage',
     }[element];
     settings[elementKey] = el.style.display !== 'none';
     saveSettings();
     updateElementsList(); // Refresh the elements list
 }
 
-
-
-
-function setOpacity() {
-    const size = getSelectedBanner();
-    const image = document.getElementById(`image-${size}`);
-    const container = document.getElementById(`ad-container-${size}`);
-    const opacity = document.getElementById('opacity').value;
-    const settings = storedBannerSettings.find(setting => setting.size === size).settings.layout;
-    settings.imageOpacity = opacity;
-    if (settings.backgroundImage) {
-        container.style.backgroundImage = `linear-gradient(rgba(255, 255, 255, ${1 - opacity}), rgba(255, 255, 255, ${1 - opacity})), url(${image.src})`;
-    } else {
-        image.style.opacity = opacity;
-    }
-    saveSettings();
-}
-
-function setSvgOpacity(item) {
-    const size = getSelectedBanner();
-    const settings = storedBannerSettings.find(setting => setting.size === size).settings.layout;
-    settings[`svg${item.charAt(0).toUpperCase() + item.slice(1)}Opacity`] = document.getElementById(`svg-${item}-opacity`).value;
-    const path = document.getElementById(`path-${item}-${size}`);
-    if (path) path.style.fillOpacity = settings[`svg${item.charAt(0).toUpperCase() + item.slice(1)}Opacity`];
-    saveSettings();
-}
 
 function downloadSettings() {
     const settingsToDownload = {
@@ -752,18 +1012,19 @@ function decreaseImageZIndex() {
 
 
 function updateAds() {
-    const sizes = ["480x120", "300x250", "160x600", "300x250-text", "728x90", "1200x628", "1200x628-2"];
+    const sizes = ["480x120", "300x250", "160x600", "300x250-text", "728x90", "1200x628", "1200x628-2", "1080x1080"];
     sizes.forEach(size => {
         const pathOne = document.getElementById(`path-one-${size}`);
         const pathTwo = document.getElementById(`path-two-${size}`);
         const headline = document.getElementById(`headline-${size}`);
+        const textContainer = document.getElementById(`text-container-${size}`);
         const text = document.getElementById(`text-${size}`);
         const tags = document.getElementById(`tags-${size}`);
         const cta = document.getElementById(`cta-${size}`);
         const image = document.getElementById(`image-${size}`);
         const logoIcon = document.getElementById(`logo-icon-${size}`);
+        const logoTitle = document.getElementById(`logo-title-${size}`);
         const settings = storedBannerSettings.find(setting => setting.size === size).settings;
-
 
         if (headline) headline.innerText = storedAds[currentIndex].headline;
         const adTextArray = storedAds[currentIndex].text;
@@ -774,7 +1035,10 @@ function updateAds() {
         }
         updateLogo(size);
 
-        // Apply visibility settings to elements
+        if (storedAds[currentIndex].img) {
+            if (image) image.src = storedAds[currentIndex].img;
+        }
+
         if (pathOne) pathOne.style.display = settings.elements.svgWave ? 'block' : 'none';
         if (pathTwo) pathTwo.style.display = settings.elements.svgWave ? 'block' : 'none';
         if (headline) headline.style.display = settings.elements.headline ? 'block' : 'none';
@@ -784,21 +1048,12 @@ function updateAds() {
         if (image) image.style.display = settings.elements.image ? 'block' : 'none';
         if (logoIcon) logoIcon.style.display = settings.elements.logoIcon ? 'block' : 'none';
 
-        // Apply size settings
         if (image) image.style.width = settings.layout.imageSize;
         if (headline) headline.style.fontSize = settings.layout.titleSize;
         if (text) text.style.fontSize = settings.layout.bodySize;
-
-        // Apply rotation setting
-        if (logoIcon) {
-            logoIcon.style.transform = `rotate(${settings.layout.logoRotation}deg)`;
-        }
-
-        // Apply z-index setting
+        if (logoIcon) logoIcon.style.transform = `rotate(${settings.layout.logoRotation}deg)`;
         if (image) image.style.zIndex = settings.layout.imageZIndex || 30;
 
-
-        // Initially hide all elements
         if (pathOne) pathOne.classList.add('hidden-element');
         if (pathTwo) pathTwo.classList.add('hidden-element');
         if (headline) headline.classList.add('hidden-element');
@@ -808,10 +1063,8 @@ function updateAds() {
         if (image) image.classList.add('hidden-element');
         if (logoIcon) logoIcon.classList.add('hidden-element');
 
-        // Determine if the banner is horizontal
         const isHorizontal = size === '480x120' || size === '728x90' || size === '1200x628' || size === '1200x628-2';
 
-        // Apply animations
         if (isHorizontal) {
             setTimeout(() => pathOne?.classList.replace('hidden-element', 'slide-from-bottom'), 0);
             setTimeout(() => pathTwo?.classList.replace('hidden-element', 'slide-from-bottom'), 250);
@@ -838,7 +1091,6 @@ function updateAds() {
             cta.style.borderRadius = '100%';
         }
 
-        // Remove animation classes after animation ends to enable re-animation if needed
         setTimeout(() => {
             pathOne?.classList.remove('slide-from-bottom');
             pathTwo?.classList.remove('slide-from-bottom');
@@ -850,9 +1102,18 @@ function updateAds() {
             logoIcon?.classList.remove('slide-from-left');
         }, 1750);
     });
+
+    const audioPlayer = document.getElementById('audioPlayer');
+    const adAudioSrc = storedAds[currentIndex].audio;
+    if (adAudioSrc !== currentAudioSrc) {
+        currentAudioSrc = adAudioSrc;
+        audioPlayer.src = adAudioSrc;
+        audioPlayer.play().catch((error) => {
+            console.log('Audio play error:', error);
+            audioPlayer.pause();
+        });
+    }
 }
-
-
 
 
 function updateTitleSize() {
@@ -904,26 +1165,47 @@ function updateTextLength() {
     saveSettings();
 }
 
-
-
-
 function updateImages() {
-    const sizes = ["160x600", "480x120", "300x250", "300x250-text", "728x90", "1200x628", "1200x628-2"];
+    const sizes = ["160x600", "480x120", "300x250", "300x250-text", "728x90", "1200x628", "1200x628-2", "1080x1080"];
     sizes.forEach(size => {
         document.getElementById(`image-${size}`).src = storedImages[currentImageIndex];
     });
 }
 
-function previousAd() {
-    if (currentIndex > 0) {
-        currentIndex--;
-        updateAds();
+function initializeAutoPlay() {
+    document.getElementById('initialPlayContainer').style.display = 'none';
+    document.addEventListener('click', startAutoPlay, { once: true });
+}
+
+function startAutoPlay() {
+    const startButton = document.getElementById('startAutoPlayButton');
+    if (!autoPlayInterval) {
+        autoPlayInterval = setInterval(() => {
+            nextAd();
+        }, 5000); // Change slide every 5 seconds
+        startButton.classList.add('active');
+    }
+}
+
+function stopAutoPlay() {
+    const startButton = document.getElementById('startAutoPlayButton');
+    if (autoPlayInterval) {
+        clearInterval(autoPlayInterval);
+        autoPlayInterval = null;
+        startButton.classList.remove('active');
     }
 }
 
 function nextAd() {
     if (currentIndex < storedAds.length - 1) {
         currentIndex++;
+        updateAds();
+    }
+}
+
+function previousAd() {
+    if (currentIndex > 0) {
+        currentIndex--;
         updateAds();
     }
 }
@@ -1003,7 +1285,7 @@ function toggleBackground() {
         image.style.display = 'block';
         settings.backgroundImage = false;
     }
-    setOpacity();
+    // setOpacity();
     saveSettings();
 }
 
@@ -1085,7 +1367,8 @@ function downloadAllBannersAsZip() {
         { size: '300x250-text', dimensions: '300x250' },
         { size: '728x90', dimensions: '728x90' },
         { size: '1200x628', dimensions: '1200x628' },
-        { size: '1200x628-2', dimensions: '1200x628' }
+        { size: '1200x628-2', dimensions: '1200x628' },
+        { size: '1080x1080', dimensions: '1080x1080' }
     ];
 
     const zip = new JSZip();
@@ -1266,29 +1549,49 @@ function updateImageUrls() {
 
 // Initialize ads and images
 document.addEventListener('DOMContentLoaded', () => {
-    updateAds();
-    updateImages();
-    updateElementsList();
-    applyElementPositions();
+    
+    // Apply saved settings for all banner sizes
+    storedBannerSettings.forEach(bannerSetting => {
+        applyAllSavedSettings(bannerSetting.size);
+    });
 
+    // Apply settings for the initially selected banner
     const initialBanner = getSelectedBanner();
     if (initialBanner) {
         updateSliderValues(initialBanner);
         updateCheckboxStates(initialBanner);
+        highlightSelectedBanner();
     }
-    highlightSelectedBanner();
-    setOpacity();
-    setSvgOpacity('one');
-    setSvgOpacity('two');
 
+    // Add event listeners for sliders
+    const svgOneOpacitySlider = document.getElementById('svg-one-opacity');
+    const svgTwoOpacitySlider = document.getElementById('svg-two-opacity');
+    if (svgOneOpacitySlider) {
+        svgOneOpacitySlider.addEventListener('input', () => {
+            changeElementOpacity(svgOneOpacitySlider.value);
+        });
+    }
+    if (svgTwoOpacitySlider) {
+        svgTwoOpacitySlider.addEventListener('input', () => {
+            changeElementOpacity(svgTwoOpacitySlider.value);
+        });
+    }
+
+    updateAds();
+    updateImages();
+    updateElementsList();
+    applyElementPositions();
+    highlightSelectedBanner();
+
+    // Initialize image URLs container
     const imageUrlsContainer = document.getElementById('imageUrlsContainer');
     storedImages.forEach((image, index) => {
         const inputField = document.createElement('div');
         inputField.classList.add('flex', 'items-center', 'mb-2');
         inputField.innerHTML = `
-            <label for="imageUrl-${index}" class="mr-2 w-24"> Image ${index + 1}:</label>
+            <label for="imageUrl-${index}" class="mr-2 w-24">Image ${index + 1}:</label>
             <input type="text" id="imageUrl-${index}" class="imageUrlInput flex-grow px-2 py-1 border rounded" value="${image}">
-            <a onclick="deleteImageUrlInputField(${index})" class="p-2 cursor-pointer "><i class="fas fa-times"></i></a>
+            <a onclick="deleteImageUrlInputField(${index})" class="p-2 cursor-pointer"><i class="fas fa-times"></i></a>
         `;
         imageUrlsContainer.appendChild(inputField);
     });
@@ -1297,9 +1600,9 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('saveImagesButton').addEventListener('click', updateStoredImages);
 
     // Additional check to hide the image if the setting is false
-    Object.keys(storedBannerSettings).forEach((key) => {
-        const size = storedBannerSettings[key].size;
-        if (!storedBannerSettings[key].settings.elements.image) {
+    storedBannerSettings.forEach(setting => {
+        const size = setting.size;
+        if (!setting.settings.elements.image) {
             const image = document.getElementById(`image-${size}`);
             if (image) {
                 image.style.display = 'none';
@@ -1307,6 +1610,38 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 });
+
+document.addEventListener('keydown', (event) => {
+    if (!selectedElement) return;
+
+    const isShiftPressed = event.shiftKey;
+    let step = isShiftPressed ? movementMultiplier : 5;
+
+    switch (event.key) {
+        case 'ArrowUp':
+            event.preventDefault(); // Prevent the page from scrolling up
+            moveElement('up', step);
+            break;
+        case 'ArrowDown':
+            event.preventDefault(); // Prevent the page from scrolling down
+            moveElement('down', step);
+            break;
+        case 'ArrowLeft':
+            moveElement('left', step);
+            break;
+        case 'ArrowRight':
+            moveElement('right', step);
+            break;
+        case ']':
+            if (isShiftPressed) changeZIndex('up');
+            break;
+        case '[':
+            if (isShiftPressed) changeZIndex('down');
+            break;
+    }
+});
+
+
 
 
 

@@ -35,38 +35,39 @@ let htmlFileCount = 0;
 async function analyzeWebsite() {
     const args = process.argv.slice(2);
 
-    if (args.includes('-help') || args.includes('-h') || args.includes('-?')) {
+    if (args.includes('--help') || args.includes('-h') || args.includes('-?')) {
         displayHelp();
     }
 
-    const shouldScan = args.includes('-scan') || args.includes('-s'); // Scan the folders and create blogs.js and images.js
-    const shouldGenerate = args.includes('-generate') || args.includes('-g'); // Generate the HTML files without scanning the folders
+    const shouldScan = args.includes('--scan') || args.includes('-s'); // Scan the folders and create blogs.js and images.js
+    const shouldGenerate = args.includes('--generate') || args.includes('-g'); // Generate the HTML files without scanning the folders
+    const isVerbose = args.includes('--verbose') || args.includes('-v'); // Display verbose output
 
     if (!shouldScan && !shouldGenerate) {
-        console.error('Please provide a valid option. Use -help -h -? for more information.');
+        console.error('Please provide a valid option. Use --help -h -? for more information.');
         process.exit(1);
     }
 
     if (shouldScan) {
         console.log('Starting website analysis...');
-        console.log(`Root directory: ${rootDir}`);
+        isVerbose && console.log(`Root directory: ${rootDir}`);
 
         const rootFiles = await fs.readdir(rootDir);
-        console.log('Files in root directory:', rootFiles);
+        isVerbose && console.log('Files in root directory:', rootFiles);
 
         await createOutputDirectory();
         await createCacheDirectory();
-        console.log('Processing directory...');
+        isVerbose && console.log('Processing directory...');
         await processDirectory(rootDir);
-        console.log(`Total HTML files found: ${htmlFileCount}`);
+        isVerbose && console.log(`Total HTML files found: ${htmlFileCount}`);
         if (htmlFileCount === 0) {
-            console.warn('No HTML files were found in the directory structure.');
+            isVerbose && console.warn('No HTML files were found in the directory structure.');
         }
         if (!detectedDomain) {
-            console.warn('Warning: Could not detect domain. Using a placeholder.');
+            isVerbose && console.warn('Warning: Could not detect domain. Using a placeholder.');
             detectedDomain = 'https://example.com/';
         }
-        console.log(`Detected domain: ${detectedDomain}`);
+        isVerbose && console.log(`Detected domain: ${detectedDomain}`);
         const previousResults = await loadPreviousResults();
 
         await Promise.all([
@@ -79,10 +80,11 @@ async function analyzeWebsite() {
             generateImagesJsFile(),
             generateBlogsJsFile(),
             generateCatsJsFile(),
-            generateBlogsIndexHtml()
+            generateBlogsIndexHtml(),
+            
         ]);
 
-        console.log('Analysis complete. Check the link-check folder and sitemap.xml for results.');
+        isVerbose && console.log('Analysis complete. Check the link-check folder and sitemap.xml for results.');
         console.log(`Files generated:
         - ${reportFile}
         - ${siteMapFile}
@@ -94,7 +96,7 @@ async function analyzeWebsite() {
         - ${blogsJsFile}
         - ${blogTestFile}`);
     } else if (shouldGenerate) {
-        console.log('Skipping folder scanning and using existing blogs.js, images.js, and cats.js...');
+        isVerbose && console.log('Skipping folder scanning and using existing blogs.js, images.js, and cats.js...');
         await generateBlogsIndexHtml();
     }
 
@@ -107,9 +109,9 @@ function displayHelp() {
 Usage: node analyze-website.js [options]
 
 Options:
-  -help          Display this help message.
-  -scan          Scan the folders and create blogs.js and images.js.
-  -generate      Generate the HTML files without scanning the folders.
+  --help     -h -? :Display this help message.
+  --scan     -s    :Scan the folders and create blogs.js and images.js.
+  --generate -g    :Generate the HTML files without scanning the folders.
     `);
     process.exit(0);
 }
@@ -161,7 +163,6 @@ async function processDirectory(dir, structure = folderStructure, extendedStruct
 }
 
 async function extractHtmlMetadata(filePath) {
-    console.log(`Extracting metadata from: ${filePath}`);
     const content = await fs.readFile(filePath, 'utf-8');
     const titleMatch = content.match(/<title>(.*?)<\/title>/i);
     const descriptionMatch = content.match(/<meta\s+name="description"\s+content="(.*?)"/i);
@@ -173,28 +174,21 @@ async function extractHtmlMetadata(filePath) {
     const externalLinkMatches = [...content.matchAll(/<a\s+[^>]*href="(https?:\/\/[^"]*)"/gi)];
 
     const metadata = {
-        url: "/"+path.relative(rootDir, filePath),
+        url: "/" + path.relative(rootDir, filePath),
         title: titleMatch ? titleMatch[1] : null,
         description: descriptionMatch ? descriptionMatch[1] : null,
         keywords: keywordsMatch ? keywordsMatch[1].split(',').map(keyword => keyword.trim()) : null,
         cat: path.basename(path.dirname(filePath)),
         author: authorMatch ? authorMatch[1] : null,
         readingTime: readingTimeMatch ? readingTimeMatch[1] : null,
-        images: imageMatches ? 
-        // Remove duplicates
-        [...new Set(imageMatches.map(match => match[1]))] : null,
-        internalLinks: internalLinkMatches ? 
-        // Remove duplicates
-        [...new Set(internalLinkMatches.map(match => match[1]))] : null,
-        externalLinks: externalLinkMatches ? 
-        // Remove duplicates
-        [...new Set(externalLinkMatches.map(match => match[1]))] : null,
-        
+        images: imageMatches ? [...new Set(imageMatches.map(match => match[1]))] : null,
+        internalLinks: internalLinkMatches ? [...new Set(internalLinkMatches.map(match => match[1]))] : null,
+        externalLinks: externalLinkMatches ? [...new Set(externalLinkMatches.map(match => match[1]))] : null,
     };
 
-    console.log(`Extracted metadata:`, metadata);
     return metadata;
 }
+
 
 async function createOutputDirectory() {
     // only crate the output directory if it doesn't already exist
@@ -399,7 +393,7 @@ async function generateHTMLReport(previousResults) {
 
     content += `
       </ul>
-      <footer>
+      <footer class="container">
       <p style="text-align: right;">&copy; 2024 Octopus Energy. All rights reserved.</p>
       </footer>
       <section id="decoration" style="position: relative; margin-top: 100px;">
@@ -633,6 +627,7 @@ async function generateImagesJsFile() {
 async function generateBlogsJsFile() {
     console.log('Generating blogs.js file...');
     const blogEntries = [];
+    const categories = new Set();
 
     async function processDirectory(dir) {
         const entries = await fs.readdir(dir, { withFileTypes: true });
@@ -642,13 +637,14 @@ async function generateBlogsJsFile() {
             const filePath = path.join(dir, name);
 
             if (entry.isDirectory()) {
+                categories.add(path.relative(blogsDir, filePath).replace(/\\/g, '/'));
                 await processDirectory(filePath);
             } else if (path.extname(name).toLowerCase() === '.html' && name.toLowerCase() !== 'index.html') {
                 const relativePath = path.relative(rootDir, filePath);
                 const metadata = await extractHtmlMetadata(filePath);
                 const blogEntry = {
-                    title: metadata.title,
                     url: `/${relativePath.replace(/\\/g, '/')}`,
+                    title: metadata.title,
                     description: metadata.description,
                     author: metadata.author,
                     readingTime: metadata.readingTime,
@@ -658,17 +654,21 @@ async function generateBlogsJsFile() {
                 blogEntries.push(blogEntry);
             }
         }
-
-        // Generate index.html for the current directory
-        const relativeDir = path.relative(rootDir, dir).replace(/\\/g, '/');
-        const directoryName = relativeDir.split('/').pop() || 'Our Blog';
-        const blogEntriesInDir = blogEntries.filter(entry => entry.url.startsWith(`/${relativeDir}/`) && !entry.url.endsWith('index.html'));
-        if (blogEntriesInDir.length > 0) {
-            await generateCategoriesIndexHtml(relativeDir, directoryName, blogEntriesInDir);
-        }
     }
 
     await processDirectory(blogsDir);
+
+    // Generate index.html for each category
+    for (const category of categories) {
+        const categoryPath = path.join(blogsDir, category);
+        const relativeDir = path.relative(rootDir, categoryPath).replace(/\\/g, '/');
+        const directoryName = path.basename(categoryPath);
+        const blogEntriesInCategory = blogEntries.filter(entry => entry.url.startsWith(`/${relativeDir}/`));
+        
+        if (blogEntriesInCategory.length > 0 || categories.has(path.join(category, '*').replace(/\\/g, '/'))) {
+            await generateBlogListingPage(relativeDir, directoryName, blogEntriesInCategory);
+        }
+    }
 
     const blogsJsContent = `const blogPosts = [\n${blogEntries.map(blog => `    ${JSON.stringify(blog)}`).join(',\n')}\n];\n`;
     await fs.writeFile(blogsJsFile, blogsJsContent);
@@ -736,7 +736,7 @@ async function generateBlogHtml() {
         </div>
       </section>
     </main>
-    <footer>
+    <footer class="container">
     <p style="text-align: right;">&copy; 2024 Octopus Energy. All rights reserved.</p>
       </footer>
       <section id="decoration" style="position: relative; margin-top: 100px;">
@@ -771,8 +771,8 @@ async function generateBlogsJsFile() {
                 const relativePath = path.relative(rootDir, filePath);
                 const metadata = await extractHtmlMetadata(filePath);
                 const blogEntry = {
-                    title: metadata.title,
                     url: `/${relativePath.replace(/\\/g, '/')}`,
+                    title: metadata.title,
                     description: metadata.description,
                     author: metadata.author,
                     readingTime: metadata.readingTime,
@@ -787,7 +787,10 @@ async function generateBlogsJsFile() {
         const relativeDir = path.relative(rootDir, dir).replace(/\\/g, '/');
         const directoryName = relativeDir.split('/').pop() || 'Our Blog';
         const blogEntriesInDir = blogEntries.filter(entry => entry.url.startsWith(`/${relativeDir}/`) && !entry.url.endsWith('index.html'));
-        if (blogEntriesInDir.length > 0) {
+        if (blogEntriesInDir.length > 0
+            // and if the directory is /blog/
+            && relativeDir !== 'blog'
+        ) {
             await generateCategoriesIndexHtml(relativeDir, directoryName, blogEntriesInDir);
         }
     }
@@ -867,7 +870,7 @@ async function generateCategoriesIndexHtml(relativeDir, directoryName, blogEntri
         </div>
       </section>
     </main>
-    <footer>
+    <footer class="container">
       
     <p style="text-align: right;">&copy; 2024 Octopus Energy. All rights reserved.</p>
       </footer>
@@ -890,6 +893,7 @@ async function generateCategoriesIndexHtml(relativeDir, directoryName, blogEntri
 async function generateCatsJsFile() {
     console.log('Generating cats.js file...');
     const categories = [];
+    const categoriesToGenerateIndex = [];
 
     async function processDirectory(dir, parentDir = null) {
         const entries = await fs.readdir(dir, { withFileTypes: true });
@@ -902,16 +906,21 @@ async function generateCatsJsFile() {
             const filePath = path.join(dir, name);
 
             if (entry.isDirectory()) {
+                const relativePath = path.relative(rootDir, filePath).replace(/\\/g, '/');
+                const postsInCategory = blogPosts.filter(post => {
+                    const postDir = path.dirname(post.url).replace(/^\//, '');
+                    return postDir === relativePath;
+                });
+
                 const category = {
                     title: name,
                     longTitle: null,
                     parent: parentDir ? path.basename(parentDir) : 'blog',
-                    url: `/${path.relative(rootDir, filePath).replace(/\\/g, '/')}`,
+                    children: [],
+                    url: `/${relativePath}`,
                     image: null,
                     description: null,
-                    blogs: blogPosts.filter(post => post.url.startsWith(`/${path.relative(rootDir, filePath).replace(/\\/g, '/')}/`)),
-
-
+                    posts: postsInCategory,
                 };
 
                 const imageEntries = await fs.readdir(filePath);
@@ -922,16 +931,37 @@ async function generateCatsJsFile() {
 
                 categories.push(category);
                 await processDirectory(filePath, filePath);
+
+                // Instead of generating index.html here, we'll add it to a list to process later
+                if (category.posts.length === 0 && category.children.length > 0) {
+                    categoriesToGenerateIndex.push(category);
+                }
+
+                if (parentDir) {
+                    const parentCategory = categories.find(cat => cat.url === `/${path.relative(rootDir, parentDir).replace(/\\/g, '/')}`);
+                    if (parentCategory) {
+                        parentCategory.children.push(name);
+                    }
+                }
             }
         }
     }
 
     await processDirectory(blogsDir);
 
+    // Generate index.html for categories with no posts but with children
+    for (const category of categoriesToGenerateIndex) {
+        await generateEmptyCategoryPage(category, categories);
+    }
+
     const catsJsContent = `const cats = [\n${categories.map(cat => `    ${JSON.stringify(cat)}`).join(',\n')}\n];\n`;
     await fs.writeFile(catsJsFile, catsJsContent);
     console.log(`Written ${catsJsFile}`);
 }
+
+
+
+
 
 async function generateBlogsIndexHtml() {
     // Read blogPosts data from blogs.js
@@ -943,13 +973,20 @@ async function generateBlogsIndexHtml() {
     const cats = JSON.parse(catsJsContent.replace('const cats = ', '').replace(';', ''));
 
     const categoriesHtml = cats
-        .filter(cat => cat.blogs.length > 0) // only show categories with blog posts
+        .filter(cat => cat.posts?.length > 0) // only show categories with blog posts
+        // only show categories with  posts on the same level as the current url directory
+        
+        
+
+
+             
+        
         .map(cat => `
         <article style="display:flex;flex-direction:column; align-items:center;text-align: center;">
         <a href="${cat.url}" style="display:flex; align-items:center; gap: 15px;">
          
         <img class="cat-img"  src="${cat.image}" width="100" alt="${cat.title}" />
-          <button style="color: gray; text-transform:uppercase;">${cat.blogs.length} <span style="font-size:.8rem;text-transform:lowercase;">posts in</span> ${cat.title}</button>
+          <button style="color: gray; text-transform:uppercase;">${cat.posts?.length} <span style="font-size:.8rem;text-transform:lowercase;">posts in</span> ${cat.title}</button>
         </a>
         </article>
       `).join('')
@@ -1033,6 +1070,81 @@ async function generateBlogsIndexHtml() {
     await fs.writeFile(outputDir, content);
     console.log(`Written ${outputDir}`);
 }
+
+async function generateEmptyCategoryPage(category, categories) {
+    const childCategories = categories.filter(cat => cat.parent === category.title);
+    
+    const categoriesHtml = childCategories.map(cat => `
+        <article style="display:flex;flex-direction:column; align-items:center;text-align: center;">
+            <a href="${cat.url}" style="display:flex; align-items:center; gap: 15px;">
+                <img class="cat-img" src="${cat.image}" width="100" alt="${cat.title}" />
+                <button style="color: gray; text-transform:uppercase;">
+                    ${cat.posts?.length} <span style="font-size:.8rem;text-transform:lowercase;">posts in</span> ${cat.title}
+                </button>
+            </a>
+        </article>
+    `).join('');
+
+    const content = `
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="color-scheme" content="light dark" />
+    <title>${category.title} - Blog Categories</title>
+    <meta name="description" content="Explore our ${category.title} blog categories" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Gabarito:wght@400..900&family=Oswald:wght@200..700&family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap" rel="stylesheet" />
+    <link href="/styles.css" type="text/css" rel="stylesheet" />
+  </head>
+  <body>
+    <header class="container">
+      <div>
+        <nav>
+          <ul>
+            <li>
+              <i class="fa-brands fa-octopus-deploy"></i> <a href="https://octopus.energy"><span style="font-weight: 700">octopus</span>energy</a>
+            </li>
+          </ul>
+          <ul class="screen">
+            <li><a href="#services">Services</a></li>
+            <li><a href="/blog/">Blog</a></li>
+          </ul>
+        </nav>
+      </div>
+    </header>
+
+    <main class="container">
+      <section id="categories">
+        <div style="width:full">
+          <h1 style="text-align: center; text-transform: uppercase;">${category.title}</h1>
+        </div>
+        <div class="grid">
+          ${categoriesHtml}
+        </div>
+      </section>
+    </main>
+
+    <footer class="container" id="contact">
+      <p style="text-align: right;">&copy; 2024 Octopus Energy. All rights reserved.</p>
+    </footer>
+    <section id="decoration" style="position: relative; margin-top: 100px;">
+      <svg xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none" viewBox="2 -2 1440 320" class="footer-wave" style="bottom:-20;">
+        <path fill-opacity="1" d="M0,288L48,272C96,256,192,224,288,197.3C384,171,480,149,576,165.3C672,181,768,235,864,250.7C960,267,1056,245,1152,250.7C1248,256,1344,288,1392,304L1440,320L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"></path>
+      </svg>
+    </section>
+  </body>
+</html>
+    `;
+
+    const outputDir = path.join(rootDir, category.url.slice(1));
+    await fs.writeFile(path.join(outputDir, 'index.html'), content);
+    console.log(`Written ${path.join(outputDir, 'index.html')}`);
+}
+
+
+
 
 analyzeWebsite();
 

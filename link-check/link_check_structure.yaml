@@ -5,9 +5,11 @@
 - ai-update.js
 - ai-update.sh
 - analyze-website.js
+audio:
+  - 01-pod-cast.aac
+  - 01-why-businesses-hesitate-to-implement-lead-generation.aac
 blog:
   business:
-    - 01-why-businesses-hesitate-to-implement-lead-generation.html
     - index.html
     - leads4.png
     marketing:
@@ -17,22 +19,29 @@ blog:
       - info.json
       - leads5.png
     sales:
+      - 01-why-businesses-hesitate-to-implement-lead-generation.html
+      - 08-why-businesses-hesitate-to-implement-lead-generation-in-their-sales-pipeline.html
       - car3.jpg
+      - index.html
   default:
     - 01-benefits-of-lead-generation.html
     - 02-lead-generation-ai-biggest-nightmare.html
     - 03-scale-your-business-with-lead-generation.html
     - 04-the-benefits-of-lead-generation.html
-    - 05-how-lead-generation-can-exponentially-scale-your-business.html
-    - 06-how-lead-generation-can-transform-your-success.html
     - 07-how-much-can-lead-generation-scale-up-your-business.html
-    - 08-why-businesses-hesitate-to-implement-lead-generation-in-their-sales-pipeline.html
     - 09-why-businesses-hesitate-to-implement-lead-generation.html
     - index.html
     - leads3.png
   finance:
     accounting:
+      - 05-how-lead-generation-can-exponentially-scale-your-business.html
+      - index.html
       - umbrella.webp
+    - index.html
+    investing:
+      - 06-how-lead-generation-can-transform-your-success.html
+      - index.html
+      - tree4.webp
     - tree2.png
   - index.html
   - leads8.webp
@@ -41,9 +50,12 @@ blog:
 cache:
   - blogs.js
   - cats.js
+  - cats_.js
   - images.js
 - favicon.ico
 img:
+  - 01-banner_1200x628.jpg
+  - 18ct-yellow-gold-and-floating-diamond-solitaire-ring-810-1-p-transformed.png
   - 18ct-yellow-gold-and-floating-diamond-solitaire-ring-810-1-p.png
   - banner_300x250.jpg
   - banner_300x250_2.jpg

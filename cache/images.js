@@ -1,4 +1,5 @@
 const images = [
+    "/img/18ct-yellow-gold-and-floating-diamond-solitaire-ring-810-1-p-transformed.png",
     "/img/18ct-yellow-gold-and-floating-diamond-solitaire-ring-810-1-p.png",
     "/img/car.png",
     "/img/car3.png",

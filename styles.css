@@ -11,7 +11,7 @@
   --sjs-primary-backcolor: rgba(0, 0, 0, 1);
   --sjs-primary-backcolor-light: rgba(255, 216, 77, 1);
   --sjs-primary-backcolor-dark: rgba(116, 116, 116, 1);
-  --sjs-primary-forecolor: rgb(229, 231, 228,1);
+  --sjs-primary-forecolor: rgb(229, 231, 228, 1);
   --sjs-primary-forecolor-light: rgba(255, 255, 255, 0.25);
   --sjs-base-unit: 8px;
   --sjs-corner-radius: 8px;
@@ -83,13 +83,11 @@
   --sjs-article-font-default-textCase: none;
 }
 
-
-[dir=ltr] {
+[dir="ltr"] {
   --icon-direction: 1;
-  
 }
 
-[dir=rtl] {
+[dir="rtl"] {
   --icon-direction: -1;
   --sjs-article-font-xx-large-fontWeight: 300;
   --sjs-article-font-x-large-fontWeight: 300;
@@ -102,7 +100,7 @@ main {
   display: flex;
   flex-direction: column;
   min-height: 81vh;
-  animation: fadeIn .8s ease 1 backwards;
+  animation: fadeIn 0.8s ease 1 backwards;
 }
 
 html {
@@ -111,13 +109,12 @@ html {
 
 body {
   background-color: var(--sjs-general-backcolor);
-  font-family: "Tajawal","Inter", Roboto, serif;
+  font-family: "Tajawal", "Inter", Roboto, serif;
   font-size: 1.1rem;
   line-height: 1.5;
   font-weight: var(--sjs-article-font-default-fontWeight);
   margin: 0;
   color: var(--sjs-primary-backcolor-dark);
-  
 }
 
 strong {
@@ -138,8 +135,7 @@ select,
 textarea,
 .sd-selectbase__label {
   border-radius: var(--sjs-corner-radius);
-  font-family:  "Tajawal","Inter", Roboto, sans-serif;
-  
+  font-family: "Tajawal", "Inter", Roboto, sans-serif;
 }
 
 .ads-button {
@@ -157,9 +153,36 @@ button,
   border-radius: var(--sjs-editorpanel-cornerRadius, var(--sjs-corner-radius, 4px));
   text-align: start;
   cursor: pointer;
-  transition: box-shadow var(--sjs-transition-duration, 150ms);
+  transition: var(--sjs-transition-duration, 150ms);
   font-size: 1.1rem;
   box-shadow: var(--sjs-shadow-medium) !important;
+}
+
+audio{
+    color: var(--sjs-primary-backcolor) !important;
+    background-color: rgb(241 243 244) !important;
+    border: 2px solid var(--sjs-primary-backcolor) !important;
+    margin: 0.25rem 0;
+    display: inline-block;
+    border-radius: var(--sjs-editorpanel-cornerRadius, var(--sjs-corner-radius, 4px));
+    text-align: start;
+    cursor: pointer;
+    transition: var(--sjs-transition-duration, 150ms);
+    font-size: 1.1rem;
+    box-shadow: var(--sjs-shadow-medium) !important;
+    /* width: 55%; */
+}
+
+audio:hover {
+  transition: 0.25s !important;
+  box-shadow: var(--sjs-shadow-large) !important;
+  transform: translateY(-3px);
+}
+
+audio:active{
+    transition: 0.25s !important;
+    transform: translateY(0px);
+    box-shadow: var(--sjs-shadow-small-reset) !important;
 }
 
 button:hover,
@@ -223,7 +246,7 @@ footer {
 }
 
 .ads-title {
-  font-family: "Tajawal","Oswald", sans-serif !important;
+  font-family: "Tajawal", "Oswald", sans-serif !important;
 }
 
 h1,
@@ -233,7 +256,7 @@ h4,
 h5,
 h6 {
   color: var(--sjs-general-forecolor);
-  font-family: "Tajawal","Gabarito", ReithSans, Helvetica, Roboto, sans-serif;
+  font-family: "Tajawal", "Gabarito", ReithSans, Helvetica, Roboto, sans-serif;
 }
 
 h1 {
@@ -353,7 +376,6 @@ tr:nth-child(even) {
   background-color: var(--sjs-general-backcolor-dim);
 }
 
-
 nav {
   color: var(--sjs-general-forecolor);
   display: flex;
@@ -411,7 +433,8 @@ nav ul li a:active {
   color: var(--sjs-primary-backcolor-dark);
 }
 
-i,.material-symbols-outlined {
+i,
+.material-symbols-outlined {
   transform: scaleX(var(--icon-direction));
 }
 
@@ -542,8 +565,34 @@ nav :first-of-type li a {
   /* transform: translateY(-10px) scale(1.1); */
 }
 
+aside{
+  position:relative;
+  width: 300px;
+}
+
 .toc {
-  flex: 1;
+  /* position:sticky; */
+  /* top:0px; */
+  display: flex; 
+  flex-wrap: wrap;
+  /* flex-direction: column;  */
+  /* gap: 15px; */
+  overflow: scroll;
+  /* scroll-behavior: smooth; */
+/* height: 100vh; */
+/* padding-bottom: 20px; */
+}
+
+.ad-banner{
+  position:sticky;
+  top: 15px;
+}
+
+.related-articles{
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+
 }
 
 .content-wrapper {
@@ -553,7 +602,6 @@ nav :first-of-type li a {
 
 #searchInput {
   box-shadow: var(--sjs-shadow-inner);
- 
 }
 #searchInput:focus {
   z-index: 9999;
@@ -588,10 +636,8 @@ nav :first-of-type li a {
   text-decoration: none !important;
   position: absolute;
   top: 334px;
-  left:18px;
+  left: 18px;
   z-index: 999;
-  ;
-
 }
 
 .search-result {
@@ -702,6 +748,13 @@ nav :first-of-type li a {
   letter-spacing: var(--sjs-article-font-default-letterSpacing);
   line-height: var(--sjs-article-font-default-lineHeight);
   text-transform: var(--sjs-article-font-default-textCase);
+}
+
+.p-title .back-to-category {
+  display: inline-flex;
+  align-items: center;
+  margin-right: 15px;
+  vertical-align: middle;
 }
 
 .sd-element--with-frame.sd-question--title-top {
@@ -838,9 +891,64 @@ nav :first-of-type li a {
   background: var(--sjs-general-backcolor-dark);
 }
 
-/* Media Queries */
+/* Media Queries tablet */
+
+@media (max-width: 1024px) {
+  .grid {
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  }
+
+  .grid3 {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .grid3 > :first-child {
+    flex: 1 1 100%;
+  }
+
+  .grid3 > :last-child {
+    flex: 1 1 100%;
+  }
+
+  .content-wrapper {
+    flex-direction: column;
+  }
+
+  .blog-content {
+    margin: 0 60px;
+  }
+
+  .search-bar {
+    width: 88%;
+  }
+
+  #searchResults {
+    width: 89%;
+    top: 360px;
+  }
+
+  #searchResults img {
+    display: none;
+  }
+
+  #searchResults a {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  #decoration {
+    display: none;
+  }
+
+  aside {
+    display: none;
+  }
+}
+
+/* Media Queries mobile phone */
 @media (max-width: 768px) {
-  
   h1 {
     font-size: 3.5rem;
   }
@@ -891,6 +999,10 @@ nav :first-of-type li a {
     flex-direction: column;
   }
 
+  .blog-content {
+    margin: 0px;
+  }
+
   .hero {
     height: auto;
     /* flex-direction: row; */
@@ -923,9 +1035,9 @@ nav :first-of-type li a {
     width: 88%;
   }
 
-  #searchResults{
+  #searchResults {
     width: 89%;
-    top:360px;
+    top: 360px;
   }
 
   #searchResults img {
@@ -934,11 +1046,11 @@ nav :first-of-type li a {
 
   #searchResults a {
     overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
 
-  #decoration{
+  #decoration {
     display: none;
   }
 }
@@ -947,10 +1059,10 @@ nav :first-of-type li a {
 
 @keyframes fadeIn {
   0% {
-      opacity: 0;
+    opacity: 0;
   }
   100% {
-      opacity: 1;
+    opacity: 1;
   }
 }
 

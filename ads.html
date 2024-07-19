@@ -20,6 +20,9 @@
     <link rel="stylesheet" href="styles.css" />
   </head>
   <body class="p-10 flex relative bg-gray-100">
+    <div class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50" id="initialPlayContainer">
+      <button class="px-6 py-3 rounded bg-blue-500 text-white" onclick="initializeAutoPlay()">Start Slideshow</button>
+    </div>
     <div class="w-1/4 fixed h-full max-h-screen overflow-y-auto scroll-auto snap-y">
       <div class="flex justify-center mb-4 snap-center">
         <select id="bannerSelect" class="px-2 py-2 border-2 border-gray-400 rounded" onchange="highlightSelectedBanner()">
@@ -30,6 +33,7 @@
           <option value="728x90">728x90</option>
           <option value="1200x628">1200x628</option>
           <option value="1200x628-2">1200x628-2</option>
+          <option value="1080x1080">1080x1080</option>
         </select>
       </div>
 
@@ -39,12 +43,17 @@
           <button class="px-2 py-1 rounded ml-2" onclick="nextAd()"><i class="fas fa-arrow-right float-end"></i> Text</button>
           <button class="px-2 py-1 rounded ml-2" onclick="previousImage()"><i class="fas fa-arrow-left"></i> Image</button>
           <button class="px-2 py-1 rounded ml-2" onclick="nextImage()"><i class="fas fa-arrow-right float-end"></i> Image</button>
+          
         </div>
 
         <div class="flex justify-between">
-          <button class="px-2 py-1 rounded bg-green-300" onclick="updateAds()"><i class="fas fa-play"></i></button>
+          <button id="startAutoPlayButton" class="px-2 py-1 rounded bg-blue-500 text-white" onclick="startAutoPlay()"><i class="fas fa-play"></i> </button>
+          <button id="stopAutoPlayButton" class="px-2 py-1 rounded bg-red-500 text-white" onclick="stopAutoPlay()"><i class="fas fa-stop"></i></button>
+          <!-- <button class="px-2 py-1 rounded bg-green-300" onclick="updateAds()"><i class="fas fa-play"></i></button> -->
           <button class="px-2 py-1 rounded" onclick="downloadAllBannersAsZip()"><i class="fas fa-download"></i> ZIP</button>
         </div>
+
+        <audio id="audioPlayer" src="" type="audio/aac"></audio>
       </div>
 
       <hr />
@@ -71,8 +80,6 @@
             </div>
           </div>
 
-         
-
           <!-- Rotation and mirror controls -->
           <div class="flex justify-between w-full mb-4 items-center">
             <!-- Size controls -->
@@ -90,15 +97,15 @@
             <button onclick="mirrorElement()" class="px-3 py-2 bg-purple-500 text-white rounded-full hover:bg-purple-600"><i class="fas fa-exchange-alt fa-rotate-90"></i></button>
           </div>
 
-           <!-- Color controls -->
-           <div class="flex  gap-2 my-4 justify-between w-full">
+          <!-- Color controls -->
+          <div class="flex gap-2 my-4 justify-between w-full">
             <div class="flex items-center justify-between">
               <label for="element-color" class="text-sm">Element Color:</label>
-              <input class="m-2" type="color" id="element-color" onchange="changeElementColor(this.value)">
+              <input class="m-2" type="color" id="element-color" onchange="changeElementColor(this.value)" />
             </div>
             <div class="flex items-center justify-between">
               <label for="background-color" class="text-sm">Background Color:</label>
-              <input class="m-2" type="color" id="background-color" onchange="changeBackgroundColor(this.value)">
+              <input class="m-2" type="color" id="background-color" onchange="changeBackgroundColor(this.value)" />
             </div>
             <button onclick="resetColors()" class="px-2 py-1 bg-red-500 text-white rounded">Reset Colors</button>
           </div>
@@ -228,23 +235,7 @@
 
       <hr />
 
-      <details class="snap-center">
-        <summary><span class="font-bold">Opacity</span></summary>
-        <div class="flex flex-col gap-2 w-full my-4">
-          <div class="flex justify-between">
-            <label for="opacity" class="w-full text-sm">Image Opacity:</label>
-            <input class="w-full" type="range" id="opacity" min="0" max="1" step="0.1" value="1" onchange="setOpacity()" />
-          </div>
-          <div class="flex justify-between">
-            <label for="svg-one-opacity" class="w-full text-sm">SVG Wave Path One Opacity:</label>
-            <input class="w-full" type="range" id="svg-one-opacity" min="0" max="1" step="0.1" value="1" oninput="setSvgOpacity('one')" />
-          </div>
-          <div class="flex justify-between">
-            <label for="svg-two-opacity" class="w-full text-sm">SVG Wave Path Two Opacity:</label>
-            <input class="w-full" type="range" id="svg-two-opacity" min="0" max="1" step="0.1" value="1" oninput="setSvgOpacity('two')" />
-          </div>
-        </div>
-      </details>
+
 
       <hr />
 
@@ -295,8 +286,8 @@
               <i class="fa fa-box" aria-hidden="true"></i><a href="https://octopus.energy"> <span style="font-weight: 700">Octopus</span> Energy</a>
             </div>
             <img id="image-480x120" src="img/energy_savings_2.png" alt="Ad Image" class="w-1/4 z-30 relative top-0" />
-            <div class="w-2/3 ml-4 relative z-50">
-              <h2 class="ads-title text-lg font-bold" id="headline-480x120">Sunglasses Deals Up to 50% Off</h2>
+            <div id="text-container-480x120" class="w-2/3 ml-4 relative z-50">
+              <h2 class="ads-title text-lg font-bold relative z-[60] top-0" id="headline-480x120">Sunglasses Deals Up to 50% Off</h2>
               <div class="flex justify-between items-center">
                 <p class="hidden text-sm" id="text-480x120">From Aviator Shades to Retro sunglasses. Check out our new collection</p>
                 <p class="text-sm hidden" id="tags-480x120">#EnergySavings #SwitchAndSave</p>
@@ -316,7 +307,7 @@
                   d="m0.11,439.89l0,-258.28c212.07,24.97 193.46,19.74 440.44,0l0,258.28l-440.44,0z"
                   stroke="none"
                   stroke-width="0"
-                  fill="rgba(250, 204, 21, 1)"
+                 
                   fill-opacity="0.53"
                   class="path-one"
                   style="transition-property: all; transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1); transition-duration: 300ms; transition-delay: 150ms"
@@ -330,7 +321,7 @@
                   d="m-0.28,439.44l0,-128.02c143.67,-64.3 241.78,-45.6 440.61,0l0,128.02l-440.61,0z"
                   stroke="none"
                   stroke-width="0"
-                  fill="rgba(250, 204, 21, 1)"
+                 
                   fill-opacity="1"
                   class="path-two hidden"
                   style="transition-property: all; transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1); transition-duration: 300ms; transition-delay: 150ms"
@@ -338,16 +329,16 @@
                 ></path>
               </svg>
             </div>
-            <div class="flex items-start relative">
-              <div id="logo-title-300x250" class="flex flex-col gap-2">
+            <div class="flex items-start relative z-20">
+              <div id="logo-title-300x250" class="flex flex-col gap-2 relative z-20">
                 <div id="logo-icon-300x250" class="text-sm mr-4 flex flex-row gap-1">
                   <i class="fa fa-box" aria-hidden="true"></i> <a href="https://octopus.energy"> <span style="font-weight: 700">Octopus</span> Energy</a>
                 </div>
-                <h2 class="ads-title text-xl font-bold mb-2 self-center" id="headline-300x250">Sunglasses Deals Up to 50% Off</h2>
+                <h2 class="ads-title text-xl font-bold mb-2 self-center relative z-20" id="headline-300x250">Sunglasses Deals Up to 50% Off</h2>
               </div>
               <img id="image-300x250" src="img/energy_savings_2.png" alt="Ad Image" class="w-1/2" />
             </div>
-            <div class="z-50 relative">
+            <div id="text-container-300x250" class="z-50 relative">
               <p class="text-sm -mt-4" id="text-300x250">Discover the latest collection of Men's sunglasses. Summer Sale Up to 50% Off</p>
               <div class="flex justify-between items-center">
                 <p class="text-sm" id="tags-300x250">#EnergySavings #SwitchAndSave</p>
@@ -393,7 +384,7 @@
               <i class="fa fa-box" aria-hidden="true"></i> <a href="https://octopus.energy"> <span style="font-weight: 700">Octopus</span>Energy</a>
             </div>
             <img id="image-160x600" src="img/energy_savings.jpg" alt="Ad Image" class="w-full mb-4 absolute right-0 top-10" />
-            <div class="relative z-20">
+            <div id="text-container-160x600" class="relative z-20">
               <h2 class="ads-title text-xl font-bold mb-2" id="headline-160x600">Sunglasses Deals Up to 50% Off</h2>
               <p class="text-sm" id="text-160x600">Discover the latest collection of Men's sunglasses. Summer Sale Up to 50% Off</p>
               <p class="text-sm" id="tags-160x600">#EnergySavings #SwitchAndSave</p>
@@ -410,7 +401,7 @@
               <i class="fa fa-box" aria-hidden="true"></i> <a href="https://octopus.energy"> <span style="font-weight: 700">Octopus</span>Energy</a>
             </div>
             <img id="image-300x250-text" src="img/energy_savings_2.png" alt="Ad Image" />
-            <div>
+            <div id="text-container-300x250-text" class="relative z-20">
               <h2 class="ads-title text-xl font-bold mb-2" id="headline-300x250-text">Sunglasses Deals Up to 50% Off</h2>
               <p class="text-sm" id="text-300x250-text">Discover the latest collection of Men's sunglasses. Summer Sale Up to 50% Off</p>
               <p class="text-sm" id="tags-300x250-text">#EnergySavings #SwitchAndSave</p>
@@ -455,7 +446,7 @@
             <i class="fa fa-box" aria-hidden="true"></i><a href="https://octopus.energy"> <span style="font-weight: 700">Octopus</span> Energy</a>
           </div>
           <img id="image-728x90" src="img/energy_savings_2.png" alt="Ad Image" class="w-24 z-50 relative" />
-          <div class="flex justify-between w-2/3 ml-4 z-50 relative items-center">
+          <div id="text-container-728x90" class="flex justify-between w-2/3 ml-4 z-50 relative items-center">
             <h2 class="ads-title text-lg font-bold" id="headline-728x90">Sunglasses Deals Up to 50% Off</h2>
             <p class="hidden text-sm px-4" id="text-728x90">Discover the latest collection of Men's sunglasses. Summer Sale Up to 50% Off</p>
             <p class="text-sm hidden" id="tags-728x90">#EnergySavings #SwitchAndSave</p>
@@ -502,7 +493,7 @@
             <i class="fa fa-box" aria-hidden="true"></i><a href="https://octopus.energy"> <span style="font-weight: 700">Octopus</span> Energy</a>
           </div>
           <img id="image-1200x628" src="img/energy_savings_2.png" alt="Ad Image" class="w-1/3 relative ml-20" />
-          <div class="flex flex-col gap-2 w-1/2 ml-4 items-start z-10 relative">
+          <div id="text-container-1200x628" class="flex flex-col gap-2 w-1/2 ml-4 items-start z-20 relative">
             <h2 id="headline-1200x628" class="ads-title font-bold">Sunglasses Deals Up to 50% Off</h2>
             <p class="hidden" id="text-1200x628">From Aviator Shades to Retro sunglasses. Check out our new collection</p>
             <p class="text-sm" id="tags-1200x628">#EnergySavings #SwitchAndSave</p>
@@ -519,7 +510,7 @@
           style="width: 1200px; height: 628px"
         >
           <div class="absolute -bottom-3 left-0 w-full h-3/4 z-10">
-            <svg width="100%" height="100%" id="svg-1200x628" viewBox="0 0 1440 523" xmlns="http://www.w3.org/2000/svg">
+            <svg width="100%" height="100%" id="svg-1200x628-2" viewBox="0 0 1440 523" xmlns="http://www.w3.org/2000/svg">
               <path
                 d="M 0,533 C 0,533 0,177 0,177 C 111.64285714285714,171.32142857142856 223.28571428571428,165.64285714285714 336,151 C 448.7142857142857,136.35714285714286 562.4999999999999,112.74999999999997 674,134 C 785.5000000000001,155.25000000000003 894.7142857142858,221.3571428571429 1022,236 C 1149.2857142857142,250.6428571428571 1294.642857142857,213.82142857142856 1440,177 C 1440,177 1440,533 1440,533 Z"
                 stroke="none"
@@ -527,12 +518,12 @@
                 fill-opacity="0.53"
                 class="path-one"
                 style="transition-property: all; transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1); transition-duration: 300ms; transition-delay: 150ms"
-                id="path-one-1200x628"
+                id="path-one-1200x628-2"
               ></path>
             </svg>
           </div>
           <div class="absolute -bottom-3 left-0 w-full h-3/4 z-20">
-            <svg width="100%" height="100%" id="svg-1200x628" viewBox="0 0 1440 523" xmlns="http://www.w3.org/2000/svg">
+            <svg width="100%" height="100%" id="svg-1200x628-2" viewBox="0 0 1440 523" xmlns="http://www.w3.org/2000/svg">
               <path
                 d="M 0,533 C 0,533 0,355 0,355 C 126.78571428571428,377.3571428571429 253.57142857142856,399.7142857142857 357,390 C 460.42857142857144,380.2857142857143 540.4999999999999,338.5 668,336 C 795.5000000000001,333.5 970.4285714285716,370.2857142857143 1107,380 C 1243.5714285714284,389.7142857142857 1341.7857142857142,372.3571428571429 1440,355 C 1440,355 1440,533 1440,533 Z"
                 stroke="none"
@@ -540,7 +531,7 @@
                 fill-opacity="1"
                 class="path-two"
                 style="transition-property: all; transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1); transition-duration: 300ms; transition-delay: 150ms"
-                id="path-two-1200x628"
+                id="path-two-1200x628-2"
               ></path>
             </svg>
           </div>
@@ -549,11 +540,59 @@
             <i class="fa fa-box" aria-hidden="true"></i><a href="https://octopus.energy"> <span style="font-weight: 700">Octopus</span> Energy</a>
           </div>
           <img id="image-1200x628-2" src="img/energy_savings_2.png" alt="Ad Image" class="w-1/2 z-10 relative" />
-          <div class="flex flex-col gap-2 w-1/3 ml-4 items-start z-10 relative">
+          <div id="text-container-1200x628-2" class="flex flex-col gap-2 w-1/3 ml-4 items-start z-10 relative">
             <h2 class="ads-title text-3xl font-bold" id="headline-1200x628-2">Sunglasses Deals Up to 50% Off</h2>
             <p class="hidden" id="text-1200x628-2">From Aviator Shades to Retro sunglasses. Check out our new collection</p>
             <p class="text-sm" id="tags-1200x628-2">#EnergySavings #SwitchAndSave</p>
             <button class="ads-button text-white px-4 py-2 mt-2 rounded" id="cta-1200x628-2">Shop now</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- 1080x1080 -->
+      <div class="flex flex-col items-center" onclick="selectBanner('1080x1080')">
+        <div class="bg-yellow-400 font-bold px-4 py-1 mb-2">1080x1080 Facebook 1:1 Ad</div>
+        <div
+          id="ad-container-1080x1080"
+          class="ad-container ring-1 ring-gray-300 relative p-8 flex flex-col justify-between items-center overflow-hidden"
+          style="width: 1080px; height: 1080px"
+        >
+          <div class="absolute -bottom-3 left-0 w-full h-3/4 z-10">
+            <svg width="100%" height="100%" id="svg-1080x1080" viewBox="0 0 1580 1180" xmlns="http://www.w3.org/2000/svg">
+              <path
+                d="M0,1600 L0,800 C266.67,866.67 533.33,933.33 800,933.33 C1066.67,933.33 1333.33,800 1600,666.67 L1600,1600 Z"
+                stroke="none"
+                stroke-width="0"
+                fill-opacity="0.53"
+                class="path-one"
+                id="path-one-1080x1080"
+              ></path>
+            </svg>
+          </div>
+          <div class="absolute -bottom-3 left-0 w-full h-3/4 z-20">
+            <svg width="100%" height="100%" id="svg-1080x1080" viewBox="0 0 1580 1180" xmlns="http://www.w3.org/2000/svg">
+              <path
+                d="M0,1600 L0,1066.67 C266.67,1000 533.33,933.33 800,933.33 C1066.67,933.33 1333.33,1066.67 1600,1200 L1600,1600 Z"
+                stroke="none"
+                stroke-width="0"
+                fill-opacity="1"
+                class="path-two"
+                id="path-two-1080x1080"
+              ></path>
+            </svg>
+          </div>
+
+          <div id="logo-icon-1080x1080" class="text-4xl mb-8 flex flex-row gap-2 z-30">
+            <i class="fa fa-box" aria-hidden="true"></i><a href="https://octopus.energy"> <span style="font-weight: 700">Octopus</span> Energy</a>
+          </div>
+
+          <img id="image-1080x1080" src="img/energy_savings_2.png" alt="Ad Image" class="w-3/4 z-30 mb-8" />
+
+          <div id="text-container-1080x1080" class="flex flex-col gap-6 w-3/4 items-center z-30 text-center">
+            <h2 class="ads-title text-6xl font-bold" id="headline-1080x1080">Sunglasses Deals Up to 50% Off</h2>
+            <p class="text-2xl" id="text-1080x1080">From Aviator Shades to Retro sunglasses. Check out our new collection</p>
+            <p class="text-xl" id="tags-1080x1080">#EnergySavings #SwitchAndSave</p>
+            <button class="ads-button text-white px-8 py-4 mt-4 rounded-lg text-2xl" id="cta-1080x1080">Shop now</button>
           </div>
         </div>
       </div>
