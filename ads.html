@@ -19,11 +19,8 @@
     <script defer src="js/ads.js"></script>
     <link rel="stylesheet" href="styles.css" />
   </head>
-  <body class="p-10 flex relative bg-gray-100">
-    <div class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50" id="initialPlayContainer">
-      <button class="px-6 py-3 rounded bg-blue-500 text-white" onclick="initializeAutoPlay()">Start Slideshow</button>
-    </div>
-    <div class="w-1/4 fixed h-full max-h-screen overflow-y-auto scroll-auto snap-y">
+  <body class=" p-10 flex relative bg-gray-100">
+    <div class="sidebar w-1/4 fixed h-full max-h-screen overflow-y-auto scroll-auto snap-y ">
       <div class="flex justify-center mb-4 snap-center">
         <select id="bannerSelect" class="px-2 py-2 border-2 border-gray-400 rounded" onchange="highlightSelectedBanner()">
           <option value="480x120">480x120</option>
@@ -37,27 +34,71 @@
         </select>
       </div>
 
-      <div class="flex flex-col justify-center mb-4 snap-center">
+      <div class="flex flex-col justify-center mb-4 snap-center ">
         <div class="flex justify-between mb-4">
           <button class="px-2 py-1 rounded" onclick="previousAd()"><i class="fas fa-arrow-left"></i> Text</button>
           <button class="px-2 py-1 rounded ml-2" onclick="nextAd()"><i class="fas fa-arrow-right float-end"></i> Text</button>
           <button class="px-2 py-1 rounded ml-2" onclick="previousImage()"><i class="fas fa-arrow-left"></i> Image</button>
           <button class="px-2 py-1 rounded ml-2" onclick="nextImage()"><i class="fas fa-arrow-right float-end"></i> Image</button>
-          
+        </div>
+
+        <div id="slideNavigation" class="flex justify-between my-4 gap-2">
+          <button id="prevSlideButton" class="px-4 py-2 bg-gray-200 rounded truncate text-xs"></button>
+          <button id="currentSlideButton" class="px-4 py-2 bg-gray-300 rounded truncate font-bold text-xs"></button>
+          <button id="nextSlideButton" class="px-4 py-2 bg-gray-200 rounded truncate text-xs"></button>
         </div>
 
         <div class="flex justify-between">
-          <button id="startAutoPlayButton" class="px-2 py-1 rounded bg-blue-500 text-white" onclick="startAutoPlay()"><i class="fas fa-play"></i> </button>
-          <button id="stopAutoPlayButton" class="px-2 py-1 rounded bg-red-500 text-white" onclick="stopAutoPlay()"><i class="fas fa-stop"></i></button>
-          <!-- <button class="px-2 py-1 rounded bg-green-300" onclick="updateAds()"><i class="fas fa-play"></i></button> -->
-          <button class="px-2 py-1 rounded" onclick="downloadAllBannersAsZip()"><i class="fas fa-download"></i> ZIP</button>
-        </div>
+          <button id="restartAudioButton" class="px-2 py-1 rounded bg-green-500 text-white" onclick="restartAutoPlay()"><i class="fa-solid fa-rotate-left"></i></button>
 
+          <div class="flex gap-2">
+            <button class="px-2 py-1 rounded" onclick="previousAd()"><i class="fas fa-backward-step"></i></button>
+            <button id="goBackButton" class="px-2 py-1 rounded bg-yellow-500 text-white" onclick="goBack(5)"><i class="fas fa-backward-step"></i> 5</button>
+            <button id="goBackButton" class="px-2 py-1 rounded bg-yellow-500 text-white" onclick="goBack(2)"><i class="fas fa-backward-step"></i> 2</button>
+            <button id="playAudioButton" class="px-2 py-1 rounded bg-blue-500 text-white" onclick="playFirstAudioAndRunSlides()"><i class="fas fa-play w-10"></i></button>
+            <button id="goForwardButton" class="px-2 py-1 rounded bg-yellow-500 text-white" onclick="goForward(5)">5 <i class="fas fa-forward-step"></i></button>
+            <button class="px-2 py-1 rounded" onclick="nextAd()"><i class="fas fa-forward-step"></i></button>
+          </div>
+
+          <button class="px-2 py-1 rounded bg-red-500 text-white" onclick="stopAutoPlay()"><i class="fas fa-stop"></i></button>
+        </div>
+        <div class="flex flex-col w-full snap-center">
+          <div class="w-full mt-16 relative">
+            <div class="timeline-container">
+              <div id="timelineWrapper" class="relative" style="width: 100%; min-width: 100%">
+                <div id="timelineMarkers" class="flex justify-between absolute w-full" style="top: -15px"></div>
+                <input type="range" id="timelineSlider" class="w-full" min="0" max="100" value="0" />
+              </div>
+            </div>
+          </div>
+          
+          <div class="relative h-4 mt-2 overflow-hidden">
+            <div id="scrollContainer" class="absolute top-0 left-0 h-full" style="width: 100%">
+              <div id="scrollContent" class="h-full bg-gray-200"></div>
+            </div>
+            <div id="scrollIndicator" class="absolute top-0 h-full bg-blue-500 opacity-50" style="width: 100%"></div>
+          </div>
+        </div>
+        <div class="flex items-center self-center my-2 gap-2">
+          <div disabled id="timeCounter" class=" text-center text-sm font-bold">00:00.000</div> - <div id="zoomIndicator" class="text-center text-sm ">Zoom: 1x</div>
+        </div>
+        <p id="audioStatus" class="my-2 text-start text-sm font-bold">Time line edit</p>
+        <div class="flex gap-2">
+          <button id="moveSlidesButton" class="px-2 py-1 rounded bg-gray-300 hover:bg-gray-400 focus:outline-none"><i class="fas fa-arrows-alt"></i></button>
+          <button id="editSlideButton" class="px-4 py-2 bg-blue-500 text-white rounded"><i class="fas fa-edit"></i></button>
+          <button id="addSlideButton" class="px-4 py-2 bg-green-500 text-white rounded"><i class="fas fa-plus"></i></button>
+        </div>
+        <div class="flex gap-2 mt-2">
+          <button id="zoomInButton" class="px-2 py-1 rounded bg-blue-500 text-white" onclick="zoomTimeline('in')"><i class="fas fa-search-plus"></i></button>
+          <button id="zoomOutButton" class="px-2 py-1 rounded bg-blue-500 text-white" onclick="zoomTimeline('out')"><i class="fas fa-search-minus"></i></button>
+          <button id="resetZoomButton" class="px-2 py-1 rounded bg-gray-500 text-white" onclick="resetTimelineZoom()"><i class="fas fa-undo"></i></button>
+        </div>
         <audio id="audioPlayer" src="" type="audio/aac"></audio>
       </div>
+      <button class="px-2 py-1 rounded" onclick="downloadAllBannersAsZip()"><i class="fas fa-download"></i> ZIP</button>
 
       <hr />
-      <details open class="snap-center">
+      <details class="snap-center">
         <summary><span class="font-bold">Elements</span></summary>
         <div id="elements-list" class="my-4 flex flex-wrap justify-center"></div>
         <div id="element-controls" class="flex flex-col items-center gap-2 my-4 p-4">
@@ -235,8 +276,6 @@
 
       <hr />
 
-
-
       <hr />
 
       <details class="snap-center">
@@ -245,9 +284,131 @@
         <button id="addMoreImagesButton" class="px-2">Add More</button>
         <button id="saveImagesButton" class="px-2">Save</button>
       </details>
+      <!-- Edit Slide Modal -->
+      <div id="editSlideModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50 hidden">
+        <div class="relative top-20 mx-auto p-5 border w-96 lg:w-[800px] shadow-lg rounded-md bg-white">
+          <h3 class="text-lg font-bold mb-4">Edit Slide</h3>
+          <form id="editSlideForm">
+            <div class="flex">
+              <div class="mb-4">
+                <label class="block text-gray-700 text-sm font-bold mb-2" for="editTimestamp">Timestamp (ms)</label>
+                <input
+                  type="number"
+                  id="editTimestamp"
+                  name="timestamp"
+                  class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                />
+              </div>
+              <div>
+                <label for="formattedTime" class="block text-sm font-medium text-gray-700">Formatted Time (mm:ss)</label>
+                <input type="text" id="formattedTime" name="formattedTime" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm bg-gray-100" disabled />
+              </div>
+            </div>
+            <div class="mb-4">
+              <label class="block text-gray-700 text-sm font-bold mb-2" for="editAudio">Audio Source</label>
+              <input
+                type="text"
+                id="editAudio"
+                name="audio"
+                class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+              />
+            </div>
+
+            <div class="flex gap-4">
+              <div class="mb-4 w-full">
+                <label class="block text-gray-700 text-sm font-bold mb-2" for="editLogoIcon">Logo Icon</label>
+                <input
+                  type="text"
+                  id="editLogoIcon"
+                  name="logoIcon"
+                  class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                />
+              </div>
+              <div class="mb-4 w-1/2">
+                <label class="block text-gray-700 text-sm font-bold mb-2" for="editLogoFirstWord">Logo First Word</label>
+                <input
+                  type="text"
+                  id="editLogoFirstWord"
+                  name="logoFirstWord"
+                  class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                />
+              </div>
+              <div class="mb-4 w-1/2">
+                <label class="block text-gray-700 text-sm font-bold mb-2" for="editLogoSecondWord">Logo Second Word</label>
+                <input
+                  type="text"
+                  id="editLogoSecondWord"
+                  name="logoSecondWord"
+                  class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                />
+              </div>
+            </div>
+            <div class="mb-4">
+              <label class="block text-gray-700 text-sm font-bold mb-2" for="editHeadline">Headline</label>
+              <input
+                type="text"
+                id="editHeadline"
+                name="headline"
+                class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+              />
+            </div>
+            <div class="mb-4">
+              <label class="block text-gray-700 text-sm font-bold mb-2" for="editText">Text</label>
+              <textarea
+                id="editText"
+                name="text"
+                class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                rows="3"
+              ></textarea>
+            </div>
+            <div class="mb-4">
+              <label class="block text-gray-700 text-sm font-bold mb-2" for="editTags">Tags</label>
+              <input
+                type="text"
+                id="editTags"
+                name="tags"
+                class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+              />
+            </div>
+            <div class="mb-4">
+              <label class="block text-gray-700 text-sm font-bold mb-2" for="editImg">Image URL</label>
+              <input
+                type="text"
+                id="editImg"
+                name="img"
+                class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+              />
+            </div>
+            <div class="mb-4">
+              <label class="block text-gray-700 text-sm font-bold mb-2" for="editCta">CTA</label>
+              <input
+                type="text"
+                id="editCta"
+                name="cta"
+                class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+              />
+            </div>
+            <div class="mb-4">
+              <label class="block text-gray-700 text-sm font-bold mb-2" for="editAnimations">Animations (JSON)</label>
+              <textarea
+                id="editAnimations"
+                name="animations"
+                class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                rows="5"
+              ></textarea>
+            </div>
+            <div class="flex items-center justify-between">
+              <button type="submit" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">Save Changes</button>
+              <button type="button" id="cancelEdit" class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
+                Cancel
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
     </div>
 
-    <div class="w-3/4 ml-52 md:ml-72 lg:ml-96">
+    <div id="banners" class="w-3/4 ml-52 md:ml-72 lg:ml-96">
       <div class="grid grid-cols-1 md:grid-cols-1 lg:grid-cols-2 gap-6">
         <!-- 480x120 -->
         <div class="flex flex-col items-center" onclick="selectBanner('480x120')">
@@ -307,7 +468,6 @@
                   d="m0.11,439.89l0,-258.28c212.07,24.97 193.46,19.74 440.44,0l0,258.28l-440.44,0z"
                   stroke="none"
                   stroke-width="0"
-                 
                   fill-opacity="0.53"
                   class="path-one"
                   style="transition-property: all; transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1); transition-duration: 300ms; transition-delay: 150ms"
@@ -321,7 +481,6 @@
                   d="m-0.28,439.44l0,-128.02c143.67,-64.3 241.78,-45.6 440.61,0l0,128.02l-440.61,0z"
                   stroke="none"
                   stroke-width="0"
-                 
                   fill-opacity="1"
                   class="path-two hidden"
                   style="transition-property: all; transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1); transition-duration: 300ms; transition-delay: 150ms"

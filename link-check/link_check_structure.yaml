@@ -7,6 +7,7 @@
 - analyze-website.js
 audio:
   - 01-pod-cast.aac
+  - 01-pod-cast.wav
   - 01-why-businesses-hesitate-to-implement-lead-generation.aac
 blog:
   business:
@@ -55,14 +56,17 @@ cache:
 - favicon.ico
 img:
   - 01-banner_1200x628.jpg
+  - 01x01.png
   - 18ct-yellow-gold-and-floating-diamond-solitaire-ring-810-1-p-transformed.png
   - 18ct-yellow-gold-and-floating-diamond-solitaire-ring-810-1-p.png
+  - S37-S3BBmzUKJsuy8kFU2-bg-removed.png
   - banner_300x250.jpg
   - banner_300x250_2.jpg
   - car.jpg
   - car.png
   - car3.jpg
   - car3.png
+  - clock.webp
   - energy_savings.jpg
   - energy_savings_2.afphoto
   - energy_savings_2.jpg
@@ -70,6 +74,7 @@ img:
   - energy_savings_3.png
   - energy_savings_3.webp
   - google-ads-responsive-ad-example.png.webp
+  - lead_generation_intro.webp
   - leads.png
   - leads10.webp
   - leads11.webp
@@ -81,6 +86,9 @@ img:
   - leads7.webp
   - leads8.webp
   - leads9.webp
+  - podcast_intro.webp
+  - sherif.png
+  - sherif2.webp
   - spinner.gif
   - tree.png
   - tree2.png

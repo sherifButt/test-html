@@ -100,7 +100,7 @@ main {
   display: flex;
   flex-direction: column;
   min-height: 81vh;
-  animation: fadeIn 0.8s ease 1 backwards;
+  animation: slideFromTopSmall .8s ease 1 backwards;
 }
 
 html {
@@ -189,23 +189,23 @@ button:hover,
 .sd-selectbase__label:hover {
   background-color: var(--sjs-primary-backcolor-light) !important;
   transition: 0.25s !important;
-  box-shadow: var(--sjs-shadow-large) !important;
-  transform: translateY(-3px);
+  /* box-shadow: var(--sjs-shadow-large) !important;
+  transform: translateY(-3px); */
 }
 
 .active {
   background-color: var(--sjs-primary-backcolor-light) !important;
   transition: 0.25s !important;
-  box-shadow: var(--sjs-shadow-large) !important;
-  transform: translateY(-3px);
+  transform: translateY(1px);
+  box-shadow: var(--sjs-shadow-small) !important;
 }
 
 button:active,
 .sd-selectbase__label:active {
   background-color: var(--sjs-primary-backcolor-dark);
   transition: 0.25s !important;
-  transform: translateY(0px);
-  box-shadow: var(--sjs-shadow-small-reset) !important;
+  transform: translateY(1px);
+  box-shadow: var(--sjs-shadow-small) !important;
 }
 
 button::selection {
@@ -1058,10 +1058,10 @@ aside{
 /* ads animation */
 
 @keyframes fadeIn {
-  0% {
+  from {
     opacity: 0;
   }
-  100% {
+  to{
     opacity: 1;
   }
 }
@@ -1088,9 +1088,31 @@ aside{
   }
 }
 
+@keyframes slideFromLeftSmall {
+  from {
+    transform: translateX(100px);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
 @keyframes slideFromTop {
   from {
     transform: translateY(-100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes slideFromTopSmall {
+  from {
+    transform: translateY(-30px);
     opacity: 0;
   }
   to {
@@ -1110,6 +1132,18 @@ aside{
   }
 }
 
+@keyframes slideFromRightSmall {
+  from {
+    transform: translateX(-200px);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+
 @keyframes zoomIn {
   from {
     transform: scale(0);
@@ -1121,8 +1155,14 @@ aside{
   }
 }
 
+
+
 .hidden-element {
   opacity: 0;
+}
+
+.fadeIn {
+  animation: fadeIn 0.5s ease-out forwards;
 }
 
 .slide-from-bottom {
@@ -1207,3 +1247,89 @@ aside{
   color: red;
   font-weight: bold;
 }
+
+.timeline-container {
+  width: 100%;
+  /* overflow-x: auto;
+  overflow-y: hidden; */
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: thin;
+  scrollbar-color: #4a5568 #cbd5e0;
+}
+
+.timeline-container::-webkit-scrollbar {
+  height: 8px;
+}
+
+.timeline-container::-webkit-scrollbar-track {
+  background: #cbd5e0;
+}
+
+.timeline-container::-webkit-scrollbar-thumb {
+  background-color: #4a5568;
+  border-radius: 4px;
+}
+
+#timelineSlider {
+  -webkit-appearance: none;
+  width: 100%;
+  height: 5px;
+  background: #ddd;
+  outline: none;
+  opacity: 0.7;
+  transition: opacity .2s;
+  /* margin-top:15px; */
+  margin: 0;
+  padding: 0;
+}
+
+#timelineSlider:hover {
+  opacity: 1;
+}
+
+#timelineWrapper {
+  transition: width 0.3s ease;
+}
+
+#timelineSlider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 15px;
+  height: 15px;
+  background: #4CAF50;
+  cursor: pointer;
+  border-radius: 50%;
+}
+
+#timelineSlider::-moz-range-thumb {
+  width: 10px;
+  height: 10px;
+  background: #4CAF50;
+  cursor: pointer;
+  border-radius: 50%;
+}
+
+#timelineMarkers {
+  position: relative;
+    width: 96%;
+    height: 0;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.timeline-marker {
+  transition: all 0.2s ease-out;
+}
+
+#scrollContainer {
+  cursor: pointer;
+}
+
+#scrollIndicator {
+  cursor: grab;
+}
+
+#scrollIndicator:active {
+  cursor: grabbing;
+}
+

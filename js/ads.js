@@ -4,6 +4,41 @@ let selectedElement = null;
 let autoPlayInterval = null;
 let currentAudioSrc = '';
 let movementMultiplier = 30;
+let autoPlayTimeout = null;
+let startTime = null;
+let audioStarted = false;
+let pausedTime = 0;
+let pauseStartTime = null;
+let totalDuration = 0;
+let isMoveSlidesActive = false;
+let isShiftKeyDown = false;
+let isDragging = false;
+let draggedMarker = null;
+let dragStartX = 0;
+let originalMarkerPosition = 0;
+
+// Important snapping issue:
+// bringing back moving slide to time line location 
+// fixing timeline length issue
+// time line zoom
+// zoom scroller
+
+
+
+let zoomLevel = 1;
+const maxZoom = 5;
+const minZoom = 0.2;
+let zoomCenter = 0;
+
+// add scroller below the timeline
+let scrollContainerWidth = 0;
+
+// gapping scroll bar and moving it
+// enhancing gapping scroll bar accuracy
+// show marker exact time on draping
+let originalCounterValue = '';
+
+// time line to jump to marker location when clicked
 
 // Load settings from local storage or use default
 const storedBannerSettings = JSON.parse(localStorage.getItem('bannerSettings')) || bannerSettings;
@@ -414,10 +449,10 @@ function applyStoredColors() {
         // Apply element colors
         Object.entries(settings.colors).forEach(([elementType, color]) => {
             const elementId = elementType.startsWith('path') ? elementType.replace(/([A-Z])/g, '-$1').toLowerCase() : elementType.split('-')[0]
-            const element = document.getElementById(`${elementId.replace('path','path-')}-${size}`);
-            console.log("--+",elementId.slice('path'),element)
+            const element = document.getElementById(`${elementId.replace('path', 'path-')}-${size}`);
+            console.log("--+", elementId.slice('path'), element)
             if (element) {
-                console.log("--->",elementType)
+                console.log("--->", elementType)
                 if (elementType === 'pathone' || elementType === 'pathtwo') {
                     element.setAttribute('fill', color);
                     if (elementType === 'pathone') {
@@ -433,13 +468,6 @@ function applyStoredColors() {
         });
     }
 }
-
-
-
-
-
-
-
 
 // Update the moveElement function
 function moveElement(direction, step = 5) {
@@ -744,8 +772,6 @@ function updateCheckboxStates(size) {
     }
 }
 
-
-
 function selectBanner(size) {
     const selectedBanner = document.getElementById(`ad-container-${size}`);
     if (selectedBanner.classList.contains('border-blue-500')) {
@@ -1010,112 +1036,6 @@ function decreaseImageZIndex() {
     saveSettings();
 }
 
-
-function updateAds() {
-    const sizes = ["480x120", "300x250", "160x600", "300x250-text", "728x90", "1200x628", "1200x628-2", "1080x1080"];
-    sizes.forEach(size => {
-        const pathOne = document.getElementById(`path-one-${size}`);
-        const pathTwo = document.getElementById(`path-two-${size}`);
-        const headline = document.getElementById(`headline-${size}`);
-        const textContainer = document.getElementById(`text-container-${size}`);
-        const text = document.getElementById(`text-${size}`);
-        const tags = document.getElementById(`tags-${size}`);
-        const cta = document.getElementById(`cta-${size}`);
-        const image = document.getElementById(`image-${size}`);
-        const logoIcon = document.getElementById(`logo-icon-${size}`);
-        const logoTitle = document.getElementById(`logo-title-${size}`);
-        const settings = storedBannerSettings.find(setting => setting.size === size).settings;
-
-        if (headline) headline.innerText = storedAds[currentIndex].headline;
-        const adTextArray = storedAds[currentIndex].text;
-        if (text) text.innerText = adTextArray[settings.layout.textLength] || adTextArray[0];
-        if (tags) tags.innerText = storedAds[currentIndex].tags;
-        if (cta && cta.innerText !== '>') {
-            cta.innerText = storedAds[currentIndex].cta;
-        }
-        updateLogo(size);
-
-        if (storedAds[currentIndex].img) {
-            if (image) image.src = storedAds[currentIndex].img;
-        }
-
-        if (pathOne) pathOne.style.display = settings.elements.svgWave ? 'block' : 'none';
-        if (pathTwo) pathTwo.style.display = settings.elements.svgWave ? 'block' : 'none';
-        if (headline) headline.style.display = settings.elements.headline ? 'block' : 'none';
-        if (text) text.style.display = settings.elements.text ? 'block' : 'none';
-        if (tags) tags.style.display = settings.elements.tags ? 'block' : 'none';
-        if (cta) cta.style.display = settings.elements.cta ? 'block' : 'none';
-        if (image) image.style.display = settings.elements.image ? 'block' : 'none';
-        if (logoIcon) logoIcon.style.display = settings.elements.logoIcon ? 'block' : 'none';
-
-        if (image) image.style.width = settings.layout.imageSize;
-        if (headline) headline.style.fontSize = settings.layout.titleSize;
-        if (text) text.style.fontSize = settings.layout.bodySize;
-        if (logoIcon) logoIcon.style.transform = `rotate(${settings.layout.logoRotation}deg)`;
-        if (image) image.style.zIndex = settings.layout.imageZIndex || 30;
-
-        if (pathOne) pathOne.classList.add('hidden-element');
-        if (pathTwo) pathTwo.classList.add('hidden-element');
-        if (headline) headline.classList.add('hidden-element');
-        if (text) text.classList.add('hidden-element');
-        if (tags) tags.classList.add('hidden-element');
-        if (cta) cta.classList.add('hidden-element');
-        if (image) image.classList.add('hidden-element');
-        if (logoIcon) logoIcon.classList.add('hidden-element');
-
-        const isHorizontal = size === '480x120' || size === '728x90' || size === '1200x628' || size === '1200x628-2';
-
-        if (isHorizontal) {
-            setTimeout(() => pathOne?.classList.replace('hidden-element', 'slide-from-bottom'), 0);
-            setTimeout(() => pathTwo?.classList.replace('hidden-element', 'slide-from-bottom'), 250);
-            setTimeout(() => logoIcon?.classList.replace('hidden-element', 'slide-from-left'), 500);
-            setTimeout(() => headline?.classList.replace('hidden-element', 'slide-from-top'), 500);
-            setTimeout(() => text?.classList.replace('hidden-element', 'slide-from-right'), 1000);
-            setTimeout(() => tags?.classList.replace('hidden-element', 'slide-from-right'), 1250);
-            setTimeout(() => cta?.classList.replace('hidden-element', 'slide-from-bottom'), 1500);
-            setTimeout(() => image?.classList.replace('hidden-element', 'slide-from-top'), 1750);
-        } else {
-            setTimeout(() => pathOne?.classList.replace('hidden-element', 'slide-from-bottom'), 0);
-            setTimeout(() => pathTwo?.classList.replace('hidden-element', 'slide-from-bottom'), 250);
-            setTimeout(() => logoIcon?.classList.replace('hidden-element', 'slide-from-left'), 500);
-            setTimeout(() => headline?.classList.replace('hidden-element', 'slide-from-left'), 500);
-            setTimeout(() => text?.classList.replace('hidden-element', 'slide-from-left'), 750);
-            setTimeout(() => tags?.classList.replace('hidden-element', 'slide-from-left'), 1000);
-            setTimeout(() => cta?.classList.replace('hidden-element', 'slide-from-bottom'), 1250);
-            setTimeout(() => image?.classList.replace('hidden-element', 'slide-from-bottom'), 1500);
-        }
-
-        if (size === '160x600' || size === '728x90' || size === '300x250' || size === '480x120') {
-            cta.innerText = '>';
-            cta.style.padding = '5px 12px';
-            cta.style.borderRadius = '100%';
-        }
-
-        setTimeout(() => {
-            pathOne?.classList.remove('slide-from-bottom');
-            pathTwo?.classList.remove('slide-from-bottom');
-            headline?.classList.remove(isHorizontal ? 'slide-from-top' : 'slide-from-left');
-            text?.classList.remove(isHorizontal ? 'slide-from-right' : 'slide-from-left');
-            tags?.classList.remove(isHorizontal ? 'slide-from-right' : 'slide-from-left');
-            cta?.classList.remove('slide-from-bottom');
-            image?.classList.remove(isHorizontal ? 'slide-from-top' : 'slide-from-bottom');
-            logoIcon?.classList.remove('slide-from-left');
-        }, 1750);
-    });
-
-    const audioPlayer = document.getElementById('audioPlayer');
-    const adAudioSrc = storedAds[currentIndex].audio;
-    if (adAudioSrc !== currentAudioSrc) {
-        currentAudioSrc = adAudioSrc;
-        audioPlayer.src = adAudioSrc;
-        audioPlayer.play().catch((error) => {
-            console.log('Audio play error:', error);
-            audioPlayer.pause();
-        });
-    }
-}
-
-
 function updateTitleSize() {
     const size = getSelectedBanner();
     const titleSize = document.getElementById('title-size').value + 'rem';
@@ -1172,42 +1092,913 @@ function updateImages() {
     });
 }
 
-function initializeAutoPlay() {
-    document.getElementById('initialPlayContainer').style.display = 'none';
-    document.addEventListener('click', startAutoPlay, { once: true });
+function playFirstAudioAndRunSlides() {
+    const audioPlayer = document.getElementById('audioPlayer');
+    const playButton = document.getElementById('playAudioButton');
+    const timelineSlider = document.getElementById('timelineSlider');
+
+    if (audioStarted && !audioPlayer.paused) {
+        // Pause functionality
+        pauseAutoPlay();
+        playButton.innerHTML = '<i class="fas fa-play w-10"></i>';
+        playButton.classList.remove('active');
+    } else {
+        // Play functionality
+        if (!audioStarted) {
+            const firstAdAudioSrc = storedAds[0].audio;
+            if (firstAdAudioSrc) {
+                audioPlayer.src = firstAdAudioSrc;
+                audioPlayer.load(); // Force the audio to load
+            }
+        }
+
+        // Set audio time based on slider position
+        const sliderTime = parseInt(timelineSlider.value) / 1000; // Convert to seconds
+        audioPlayer.currentTime = sliderTime;
+
+        // Update startTime and find the correct current index
+        startTime = Date.now() - (sliderTime * 1000);
+        currentIndex = findAdIndexForTime(sliderTime * 1000);
+
+        audioPlayer.play().then(() => {
+            audioStarted = true;
+            startAutoPlay();
+            startCounter();
+            playButton.innerHTML = '<i class="fas fa-pause w-10"></i>';
+            playButton.classList.add('active');
+        }).catch(error => {
+            console.log('Audio play error:', error);
+            audioPlayer.pause();
+        });
+    }
+}
+
+// Helper function to find the correct ad index for a given time
+function findAdIndexForTime(time) {
+    let index = 0;
+    while (index < storedAds.length - 1 && getCurrentAdTimestamp(index + 1) <= time) {
+        index++;
+    }
+    return index;
+}
+
+function goBack(seconds) {
+    const audioPlayer = document.getElementById('audioPlayer');
+    const newTime = Math.max(0, audioPlayer.currentTime - seconds);
+    adjustPlaybackTime(newTime);
+}
+
+function goForward(seconds) {
+    const audioPlayer = document.getElementById('audioPlayer');
+    const newTime = Math.min(audioPlayer.duration, audioPlayer.currentTime + seconds);
+    adjustPlaybackTime(newTime);
+}
+
+function adjustPlaybackTime(newTimeInSeconds) {
+    const audioPlayer = document.getElementById('audioPlayer');
+
+    // Set the new audio time
+    audioPlayer.currentTime = newTimeInSeconds;
+
+    // Calculate the new timestamp in milliseconds
+    const newTimestamp = newTimeInSeconds * 1000;
+
+    // Update the startTime to reflect the new position
+    startTime = Date.now() - newTimestamp;
+
+    // Find the correct ad index for the new time
+    let newIndex = 0;
+    while (newIndex < storedAds.length - 1 && getCurrentAdTimestamp(newIndex + 1) <= newTimestamp) {
+        newIndex++;
+    }
+
+    // Update current index and ads if necessary
+    if (newIndex !== currentIndex) {
+        currentIndex = newIndex;
+        updateAds();
+    }
+
+    // Clear existing timeout and schedule next ad
+    if (autoPlayTimeout) {
+        clearTimeout(autoPlayTimeout);
+    }
+    scheduleNextAd();
+
+    // Update counter and slider
+    updateCounter();
+    updateSliderPosition();
+}
+
+
+function pauseAutoPlay() {
+    const audioPlayer = document.getElementById('audioPlayer');
+    if (autoPlayTimeout) {
+        clearTimeout(autoPlayTimeout);
+        autoPlayTimeout = null;
+    }
+    audioPlayer.pause();
+    stopCounter();
+    pauseStartTime = Date.now();
 }
 
 function startAutoPlay() {
-    const startButton = document.getElementById('startAutoPlayButton');
-    if (!autoPlayInterval) {
-        autoPlayInterval = setInterval(() => {
-            nextAd();
-        }, 5000); // Change slide every 5 seconds
-        startButton.classList.add('active');
+    if (pauseStartTime !== null) {
+        pausedTime += Date.now() - pauseStartTime;
+        pauseStartTime = null;
+    }
+    if (!autoPlayTimeout) {
+        scheduleNextAd();
     }
 }
 
 function stopAutoPlay() {
-    const startButton = document.getElementById('startAutoPlayButton');
-    if (autoPlayInterval) {
-        clearInterval(autoPlayInterval);
-        autoPlayInterval = null;
-        startButton.classList.remove('active');
+    const audioPlayer = document.getElementById('audioPlayer');
+    const stopButton = document.getElementById('stopAudioButton');
+    if (autoPlayTimeout) {
+        clearTimeout(autoPlayTimeout);
+        autoPlayTimeout = null;
+        audioPlayer.pause();
+        audioPlayer.currentTime = 0;
+        if (stopButton) {
+            stopButton.classList.remove('active');
+        }
     }
+    stopCounter();
+}
+
+function restartAutoPlay() {
+    const audioPlayer = document.getElementById('audioPlayer');
+    const playButton = document.getElementById('playAudioButton');
+    const timelineSlider = document.getElementById('timelineSlider');
+
+    // Stop current playback
+    if (autoPlayTimeout) {
+        clearTimeout(autoPlayTimeout);
+        autoPlayTimeout = null;
+    }
+    stopCounter();
+
+    // Reset all variables
+    currentIndex = 0;
+    startTime = Date.now();
+    pausedTime = 0;
+    pauseStartTime = null;
+
+    // Reset audio
+    audioPlayer.currentTime = 0;
+    audioPlayer.pause();
+
+    // Update UI
+    updateAds();
+    updateCounter();
+    timelineSlider.value = 0;
+
+    // Start playback
+    audioPlayer.play().then(() => {
+        audioStarted = true;
+        startAutoPlay();
+        startCounter();
+        playButton.innerHTML = '<i class="fas fa-pause"></i>';
+        playButton.classList.add('active');
+    }).catch(error => {
+        console.log('Audio play error:', error);
+        audioPlayer.pause();
+    });
+}
+
+function getCurrentAdTimestamp(index) {
+    const timestamp = storedAds[index].timestamp;
+    return timestamp; // Assuming all timestamps are now stored as milliseconds
+}
+
+function updateCounter() {
+    const audioPlayer = document.getElementById('audioPlayer');
+    const currentTime = audioPlayer.currentTime * 1000; // Convert to milliseconds
+    document.getElementById('timeCounter').innerText = formatTimestamp(currentTime);
+    updateSliderPosition();
+}
+
+function scheduleNextAd() {
+    const audioPlayer = document.getElementById('audioPlayer');
+    const currentTime = audioPlayer.currentTime * 1000; // Convert to milliseconds
+
+    if (currentTime >= totalDuration) {
+        // Audio has ended, stop scheduling
+        return;
+    }
+
+    if (currentIndex < storedAds.length - 1) {
+        const nextAdIndex = currentIndex + 1;
+        const nextAdTime = getCurrentAdTimestamp(nextAdIndex);
+
+        const delay = nextAdTime - currentTime;
+        autoPlayTimeout = setTimeout(() => {
+            currentIndex = nextAdIndex;
+            updateAds();
+            scheduleNextAd();
+        }, Math.max(delay, 0));
+    } else {
+        // We're past the last ad, so just update the slider position
+        autoPlayTimeout = setTimeout(() => {
+            updateSliderPosition();
+            scheduleNextAd(); // Keep calling this to continue updating the slider
+        }, 1000); // Update every second
+    }
+}
+
+function toggleMoveSlides() {
+    const moveSlidesButton = document.getElementById('moveSlidesButton');
+    isMoveSlidesActive = !isMoveSlidesActive;
+
+    if (isMoveSlidesActive) {
+        moveSlidesButton.classList.add('active', 'bg-blue-500', 'text-white');
+        moveSlidesButton.classList.remove('bg-gray-300');
+    } else {
+        moveSlidesButton.classList.remove('active', 'bg-blue-500', 'text-white');
+        moveSlidesButton.classList.add('bg-gray-300');
+    }
+}
+
+function zoomTimeline(direction) {
+    const timelineSlider = document.getElementById('timelineSlider');
+    const currentTime = parseInt(timelineSlider.value);
+    zoomCenter = currentTime;
+
+    const startZoom = zoomLevel;
+    let endZoom;
+
+    if (direction === 'in' && zoomLevel < maxZoom) {
+        endZoom = Math.min(zoomLevel * 1.5, maxZoom);
+    } else if (direction === 'out' && zoomLevel > minZoom) {
+        endZoom = Math.max(zoomLevel / 1.5, minZoom);
+    } else {
+        return; // No zoom change needed
+    }
+
+    animateZoom(startZoom, endZoom, 300); // 300ms animation duration
+}
+
+function resetTimelineZoom() {
+    zoomCenter = totalDuration / 2;
+    animateZoom(zoomLevel, 1, 300); // Animate back to zoom level 1
+}
+
+function updateTimelineZoom() {
+    const timelineSlider = document.getElementById('timelineSlider');
+    const timelineMarkers = document.getElementById('timelineMarkers');
+
+    // Calculate new start and end times
+    const visibleDuration = totalDuration / zoomLevel;
+    let startTime = Math.max(0, zoomCenter - visibleDuration / 2);
+    let endTime = Math.min(totalDuration, startTime + visibleDuration);
+
+    // Adjust start time if end time exceeds total duration
+    if (endTime > totalDuration) {
+        startTime = Math.max(0, totalDuration - visibleDuration);
+        endTime = totalDuration;
+    }
+
+    // Update slider range
+    timelineSlider.min = startTime;
+    timelineSlider.max = endTime;
+
+    // Update marker positions
+    const markers = timelineMarkers.children;
+    for (let i = 0; i < markers.length; i++) {
+        const marker = markers[i];
+        const markerTime = parseInt(marker.getAttribute('data-time'));
+        const markerPosition = ((markerTime - startTime) / (endTime - startTime)) * 100;
+        marker.style.left = `${markerPosition}%`;
+    }
+
+    // Ensure current time is within visible range
+    const currentTime = parseInt(timelineSlider.value);
+    if (currentTime < startTime || currentTime > endTime) {
+        timelineSlider.value = Math.min(Math.max(currentTime, startTime), endTime);
+    }
+
+    updateSliderPosition();
+    updateZoomIndicator();
+    updateScroller();
+}
+
+function initializeScroller() {
+    const scrollContainer = document.getElementById('scrollContainer');
+    const scrollIndicator = document.getElementById('scrollIndicator');
+    let isScrolling = false;
+    let startX;
+    let scrollLeft;
+
+    scrollIndicator.addEventListener('mousedown', (e) => {
+        isScrolling = true;
+        startX = e.pageX - scrollIndicator.offsetLeft;
+        scrollLeft = scrollContainer.scrollLeft;
+        scrollIndicator.style.cursor = 'grabbing';
+    });
+
+    document.addEventListener('mousemove', (e) => {
+        if (!isScrolling) return;
+        e.preventDefault();
+        const x = e.pageX - scrollContainer.offsetLeft;
+        const walk = (x - startX) * (totalDuration / scrollContainerWidth);
+        const newCenter = Math.max(0, Math.min(totalDuration, zoomCenter + walk));
+        zoomCenter = newCenter;
+        updateTimelineZoom();
+    });
+
+    document.addEventListener('mouseup', () => {
+        isScrolling = false;
+        scrollIndicator.style.cursor = 'grab';
+    });
+
+    // Add click event listeners for the sides of the scroller
+    scrollContainer.addEventListener('click', (e) => {
+        const clickX = e.pageX - scrollContainer.offsetLeft;
+        const scrollerWidth = scrollContainer.offsetWidth;
+        const indicatorWidth = scrollIndicator.offsetWidth;
+        
+        // Check if the click is on the left or right side of the scroller
+        if (clickX < indicatorWidth || clickX > scrollerWidth - indicatorWidth) {
+            const shiftAmount = totalDuration * 0.1; // Shift by 10% of total duration
+            const direction = clickX < indicatorWidth ? -1 : 1;
+            const newCenter = Math.max(0, Math.min(totalDuration, zoomCenter + shiftAmount * direction));
+            zoomCenter = newCenter;
+            updateTimelineZoom();
+        }
+    });
+}
+
+function updateTimelineFromScroller() {
+    const scrollContainer = document.getElementById('scrollContainer');
+    const scrollContent = document.getElementById('scrollContent');
+    
+    const scrollPercentage = scrollContainer.scrollLeft / (scrollContent.offsetWidth - scrollContainer.offsetWidth);
+    const newCenter = scrollPercentage * totalDuration;
+    
+    zoomCenter = newCenter;
+    updateTimelineZoom();
+}
+
+function initializeEnhancedTimeline() {
+    initializeScroller();
+    updateTimelineZoom();
+}
+
+
+function updateZoomIndicator() {
+    const zoomIndicator = document.getElementById('zoomIndicator');
+    zoomIndicator.textContent = `Zoom: ${zoomLevel.toFixed(1)}x`;
+}
+
+function updateScroller() {
+    const scrollContainer = document.getElementById('scrollContainer');
+    const scrollContent = document.getElementById('scrollContent');
+    const scrollIndicator = document.getElementById('scrollIndicator');
+    
+    scrollContainerWidth = scrollContainer.offsetWidth;
+    const contentWidth = scrollContainerWidth * zoomLevel;
+    scrollContent.style.width = `${contentWidth}px`;
+    
+    const indicatorWidth = (scrollContainerWidth / contentWidth) * 100;
+    const indicatorLeft = (zoomCenter / totalDuration) * (100 - indicatorWidth);
+    
+    scrollIndicator.style.width = `${indicatorWidth}%`;
+    scrollIndicator.style.left = `${indicatorLeft}%`;
+}
+
+function initializeTimeline() {
+    const timelineSlider = document.getElementById('timelineSlider');
+    const timelineMarkers = document.getElementById('timelineMarkers');
+
+    // Calculate total duration based on the last ad timestamp or audio duration, whichever is greater
+    const lastAdTimestamp = Math.max(...storedAds.map(ad => ad.timestamp));
+    const audioPlayer = document.getElementById('audioPlayer');
+    totalDuration = Math.max(lastAdTimestamp, audioPlayer.duration * 1000);
+
+    console.log(`Last ad timestamp: ${lastAdTimestamp}, Audio duration: ${audioPlayer.duration * 1000}`);
+    console.log(`Total duration set to: ${totalDuration}`);
+
+    // Set slider max value
+    timelineSlider.max = totalDuration;
+
+    // Clear existing markers
+    timelineMarkers.innerHTML = '';
+
+    // Create draggable markers
+    storedAds.forEach((ad, index) => {
+        createDraggableMarker(index, ad.timestamp);
+    });
+
+    updateSlideNavigationButtons();
+    updateTimelineMarkers();
+    updateTimelineZoom(); // This will apply the current zoom level
+
+    console.log(`Timeline initialized. Total duration: ${formatTimestamp(totalDuration)}`);
+
+    timelineSlider.addEventListener('input', handleSliderChange);
+}
+
+function convertAllTimestampsToMilliseconds() {
+    storedAds.forEach(ad => {
+        if (typeof ad.timestamp === 'string') {
+            const [minutes, seconds] = ad.timestamp.split(':').map(Number);
+            ad.timestamp = (minutes * 60 + seconds) * 1000;
+        }
+    });
+    saveSettings();
+    console.log('All timestamps converted to milliseconds');
+}
+
+function handleMarkerClick(event, index) {
+    if (isMoveSlidesActive || isShiftKeyDown) {
+        moveSlideTimestamp(index);
+    } else {
+        const timestamp = getCurrentAdTimestamp(index);
+        jumpToTime(timestamp);
+    }
+}
+
+
+
+function moveSlideTimestamp(index) {
+    const timelineSlider = document.getElementById('timelineSlider');
+    const currentTime = parseInt(timelineSlider.value);
+
+    storedAds[index].timestamp = currentTime; // Store as milliseconds
+
+    updateMarkerPosition(index, currentTime);
+    saveSettings();
+
+    console.log(`Slide ${index} timestamp moved to ${formatTimestamp(currentTime)}`);
+}
+
+function updateMarkerPosition(index, newTime) {
+    const timelineMarkers = document.getElementById('timelineMarkers');
+    const marker = timelineMarkers.children[index];
+    const markerPosition = (newTime / totalDuration) * 100;
+    marker.style.left = `${markerPosition}%`;
+    marker.title = formatTimestamp(newTime);
+}
+
+function formatTimestamp(milliseconds) {
+    const totalSeconds = Math.floor(milliseconds / 1000);
+    const minutes = Math.floor(totalSeconds / 60);
+    const seconds = totalSeconds % 60;
+    // add milliseconds rounded to the nearest hundredth
+    const millisecondsString = (milliseconds % 1000).toFixed(0).padStart(3, '0');
+    return `${padZero(minutes)}:${padZero(seconds)}:${millisecondsString}`;
+}
+
+function handleSliderChange() {
+    const sliderValue = parseInt(this.value);
+    const audioPlayer = document.getElementById('audioPlayer');
+
+    // Update audio player time
+    audioPlayer.currentTime = sliderValue / 1000; // Convert to seconds
+
+    // Update startTime
+    startTime = Date.now() - sliderValue;
+
+    // Find the correct ad index for the new time
+    currentIndex = findAdIndexForTime(sliderValue);
+
+    // Update ads
+    updateAds();
+
+    // Update counter
+    updateCounter();
+
+    // Clear existing timeout and schedule next ad
+    if (autoPlayTimeout) {
+        clearTimeout(autoPlayTimeout);
+    }
+    scheduleNextAd();
+}
+
+function jumpToTime(timestamp) {
+    const audioPlayer = document.getElementById('audioPlayer');
+    const timelineSlider = document.getElementById('timelineSlider');
+
+    // Ensure timestamp is within the current visible range
+    const visibleStart = parseInt(timelineSlider.min);
+    const visibleEnd = parseInt(timelineSlider.max);
+
+    if (timestamp < visibleStart || timestamp > visibleEnd) {
+        // If the timestamp is outside the visible range, center the timeline on it
+        zoomCenter = timestamp;
+        updateTimelineZoom();
+    }
+
+    // Set audio player time
+    audioPlayer.currentTime = timestamp / 1000;
+
+    // Update other elements
+    updateSliderPosition();
+    currentIndex = findAdIndexForTime(timestamp);
+    updateAds();
+    updateCounter();
+
+    // Clear existing timeout and schedule next ad
+    if (autoPlayTimeout) {
+        clearTimeout(autoPlayTimeout);
+    }
+    scheduleNextAd();
+}
+
+function updateSliderPosition() {
+    const timelineSlider = document.getElementById('timelineSlider');
+    const audioPlayer = document.getElementById('audioPlayer');
+    const currentTime = audioPlayer.currentTime * 1000; // Convert to milliseconds
+    const visibleDuration = parseInt(timelineSlider.max) - parseInt(timelineSlider.min);
+    const sliderPosition = ((currentTime - parseInt(timelineSlider.min)) / visibleDuration) * 100;
+    timelineSlider.value = currentTime;
+    console.log(`Updating slider position: ${sliderPosition}% (${currentTime}ms / ${visibleDuration}ms)`);
+}
+
+function updateSlideNavigationButtons() {
+    const prevButton = document.getElementById('prevSlideButton');
+    const currentButton = document.getElementById('currentSlideButton');
+    const nextButton = document.getElementById('nextSlideButton');
+
+    const prevIndex = Math.max(0, currentIndex - 1);
+    const nextIndex = Math.min(storedAds.length - 1, currentIndex + 1);
+
+    prevButton.textContent = storedAds[prevIndex].headline;
+    currentButton.textContent = storedAds[currentIndex].headline;
+    nextButton.textContent = storedAds[nextIndex].headline;
+
+    prevButton.onclick = () => jumpToAd(prevIndex);
+    currentButton.onclick = () => jumpToAd(currentIndex);
+    nextButton.onclick = () => jumpToAd(nextIndex);
+}
+
+function updateTimelineMarkers() {
+    const markers = document.querySelectorAll('#timelineMarkers > div');
+    markers.forEach((marker, index) => {
+        if (index === currentIndex) {
+            marker.classList.remove('bg-blue-500');
+            marker.classList.add('bg-red-500');
+        } else {
+            marker.classList.remove('bg-red-500');
+            marker.classList.add('bg-blue-500');
+        }
+    });
+}
+
+function createDraggableMarker(index, timestamp) {
+    const timelineMarkers = document.getElementById('timelineMarkers');
+    const markerPosition = (timestamp / totalDuration) * 100;
+    const marker = document.createElement('div');
+    marker.className = 'absolute w-2.5 h-2.5 bg-blue-500 rounded-full cursor-pointer transform -translate-x-1/2';
+    marker.style.left = `${markerPosition}%`;
+    marker.style.top = '-10px';
+    marker.title = formatTimestamp(timestamp);
+    marker.setAttribute('data-index', index);
+    marker.setAttribute('data-time', timestamp);
+
+    marker.addEventListener('mousedown', handleMarkerInteraction);
+    marker.addEventListener('touchstart', handleMarkerInteraction, { passive: false });
+
+    timelineMarkers.appendChild(marker);
+
+    console.log(`Marker created at position: ${markerPosition}%`);
+}
+
+function handleMarkerInteraction(e) {
+    e.preventDefault();
+    const marker = e.target;
+    const index = parseInt(marker.getAttribute('data-index'));
+
+    if (isMoveSlidesActive) {
+        moveSlideToCurrentTime(index);
+    } else {
+        startDragging(e);
+    }
+}
+
+function moveSlideToCurrentTime(index) {
+    const timelineSlider = document.getElementById('timelineSlider');
+    const currentTime = parseInt(timelineSlider.value);
+
+    storedAds[index].timestamp = currentTime;
+
+    // Update the marker position
+    updateMarkerPosition(index, currentTime);
+
+    // Sort storedAds based on new timestamps
+    storedAds.sort((a, b) => a.timestamp - b.timestamp);
+
+    // Update currentIndex
+    currentIndex = storedAds.findIndex(ad => ad.timestamp === currentTime);
+
+    // Save changes and update UI
+    saveSettings();
+    initializeTimeline();
+    updateAds();
+
+    console.log(`Slide ${index} moved to ${formatTimestamp(currentTime)}`);
+}
+
+function startDragging(e) {
+    isDragging = true;
+    draggedMarker = e.target;
+    const timelineRect = document.getElementById('timelineSlider').getBoundingClientRect();
+    dragStartX = (e.clientX || e.touches[0].clientX) - timelineRect.left;
+    originalMarkerPosition = parseFloat(draggedMarker.style.left);
+
+    // Store the original counter value
+    originalCounterValue = document.getElementById('timeCounter').innerText;
+
+    document.addEventListener('mousemove', drag);
+    document.addEventListener('touchmove', drag, { passive: false });
+    document.addEventListener('mouseup', stopDragging);
+    document.addEventListener('touchend', stopDragging);
+}
+
+function ensureAudioLoaded(callback) {
+    const audioPlayer = document.getElementById('audioPlayer');
+    if (audioPlayer.readyState >= 2) {  // HAVE_CURRENT_DATA or higher
+        callback();
+    } else {
+        audioPlayer.addEventListener('loadedmetadata', callback);
+    }
+}
+
+function drag(e) {
+    if (!isDragging) return;
+    e.preventDefault();
+
+    const timelineSlider = document.getElementById('timelineSlider');
+    const timelineRect = timelineSlider.getBoundingClientRect();
+    const currentX = (e.clientX || e.touches[0].clientX) - timelineRect.left;
+    const deltaX = currentX - dragStartX;
+
+    const visibleDuration = parseInt(timelineSlider.max) - parseInt(timelineSlider.min);
+    const pixelsPerMs = timelineRect.width / visibleDuration;
+    
+    // Apply a damping factor to slow down the movement
+    const dampingFactor = 0.25 / zoomLevel;
+    const timeDelta = (deltaX / pixelsPerMs) * dampingFactor;
+
+    const originalTime = parseInt(draggedMarker.getAttribute('data-time'));
+    let newTime = Math.max(parseInt(timelineSlider.min), Math.min(parseInt(timelineSlider.max), originalTime + timeDelta))
+    
+
+    let newPosition = ((newTime - parseInt(timelineSlider.min)) / visibleDuration) * 100;
+    newPosition = Math.max(0, Math.min(100, newPosition));
+
+    draggedMarker.style.left = `${newPosition}%`;
+    draggedMarker.title = formatTimestamp(newTime);
+    draggedMarker.setAttribute('data-time', newTime);
+
+    // Update the counter with the exact time in milliseconds
+    updateCounterDuringDrag(newTime);
+
+    // Update dragStartX to create a smoother dragging experience
+    dragStartX = currentX;
+}
+
+function stopDragging() {
+    if (!isDragging) return;
+
+    const index = parseInt(draggedMarker.getAttribute('data-index'));
+    const newTimestamp = parseInt(draggedMarker.getAttribute('data-time'));
+
+    // Update the timestamp in storedAds
+    storedAds[index].timestamp = newTimestamp;
+
+    // Sort storedAds based on new timestamps
+    storedAds.sort((a, b) => a.timestamp - b.timestamp);
+
+    // Update currentIndex
+    currentIndex = storedAds.findIndex(ad => ad.timestamp === newTimestamp);
+
+    // Revert the counter to its original value
+    document.getElementById('timeCounter').innerText = originalCounterValue;
+
+    // Save changes and update UI
+    saveSettings();
+    initializeTimeline();
+    updateAds();
+
+    isDragging = false;
+    draggedMarker = null;
+
+    document.removeEventListener('mousemove', drag);
+    document.removeEventListener('touchmove', drag);
+    document.removeEventListener('mouseup', stopDragging);
+    document.removeEventListener('touchend', stopDragging);
+}
+
+function updateCounterDuringDrag(time) {
+    const timeCounter = document.getElementById('timeCounter');
+    timeCounter.innerText = `${formatTimestamp(time)}`;
+}
+
+function animateZoom(startZoom, endZoom, duration) {
+    const startTime = Date.now();
+    
+    function step() {
+        const currentTime = Date.now();
+        const progress = Math.min((currentTime - startTime) / duration, 1);
+        
+        zoomLevel = startZoom + (endZoom - startZoom) * progress;
+        updateTimelineZoom();
+        
+        if (progress < 1) {
+            requestAnimationFrame(step);
+        }
+    }
+    
+    requestAnimationFrame(step);
+}
+
+
+function addSlideAtCurrentTime() {
+    const audioPlayer = document.getElementById('audioPlayer');
+    const currentTime = Math.floor(audioPlayer.currentTime * 1000); // Convert to milliseconds
+
+    // Find the index where the new slide should be inserted
+    let insertIndex = 0;
+    while (insertIndex < storedAds.length && getCurrentAdTimestamp(insertIndex) < currentTime) {
+        insertIndex++;
+    }
+
+    // Copy data from the previous slide (or the next slide if it's the first one)
+    const sourceIndex = insertIndex > 0 ? insertIndex - 1 : Math.min(insertIndex, storedAds.length - 1);
+    const newSlide = JSON.parse(JSON.stringify(storedAds[sourceIndex])); // Deep copy
+
+    // Update the timestamp of the new slide
+    newSlide.timestamp = currentTime;
+
+    // Insert the new slide
+    storedAds.splice(insertIndex, 0, newSlide);
+
+    // Update currentIndex to point to the new slide
+    currentIndex = insertIndex;
+
+    // Save changes
+    saveSettings();
+
+    // Update the UI
+    updateAds();
+    initializeTimeline();
+
+    // Open edit modal for the new slide
+    openEditModal();
+}
+
+function updateTimelineWithNewMarker() {
+    const timelineMarkers = document.getElementById('timelineMarkers');
+    const newMarker = document.createElement('div');
+    const markerPosition = (getCurrentAdTimestamp(currentIndex) / totalDuration) * 100;
+
+    newMarker.className = 'absolute w-2.5 h-2.5 bg-green-500 rounded-full cursor-pointer transform -translate-x-1/2';
+    newMarker.style.left = `${markerPosition}%`;
+    newMarker.style.top = '-10px';
+    newMarker.title = formatTimestamp(getCurrentAdTimestamp(currentIndex));
+    newMarker.onclick = (event) => handleMarkerClick(event, currentIndex);
+
+    timelineMarkers.appendChild(newMarker);
+
+    // Highlight the new marker
+    setTimeout(() => {
+        newMarker.classList.remove('bg-green-500');
+        newMarker.classList.add('bg-red-500');
+    }, 1000);
+}
+
+function updateAds() {
+    const sizes = ["480x120", "300x250", "160x600", "300x250-text", "728x90", "1200x628", "1200x628-2", "1080x1080"];
+    sizes.forEach(size => {
+        const pathOne = document.getElementById(`path-one-${size}`);
+        const pathTwo = document.getElementById(`path-two-${size}`);
+        const headline = document.getElementById(`headline-${size}`);
+        const textContainer = document.getElementById(`text-container-${size}`);
+        const text = document.getElementById(`text-${size}`);
+        const tags = document.getElementById(`tags-${size}`);
+        const cta = document.getElementById(`cta-${size}`);
+        const image = document.getElementById(`image-${size}`);
+        const logoIcon = document.getElementById(`logo-icon-${size}`);
+        const logoTitle = document.getElementById(`logo-title-${size}`);
+        const settings = storedBannerSettings.find(setting => setting.size === size).settings;
+
+        const ad = storedAds[currentIndex];
+        const animation = ad.animation || {};
+
+        if (headline) headline.innerText = ad.headline;
+        const adTextArray = ad.text;
+        if (text) text.innerText = adTextArray[settings.layout.textLength] || adTextArray[0];
+        if (tags) tags.innerText = ad.tags;
+        if (cta && cta.innerText !== '>') {
+            cta.innerText = ad.cta;
+        }
+        updateLogo(size);
+
+        if (ad.img) {
+            if (image) image.src = ad.img;
+        }
+
+        if (pathOne) pathOne.style.display = settings.elements.svgWave ? 'block' : 'none';
+        if (pathTwo) pathTwo.style.display = settings.elements.svgWave ? 'block' : 'none';
+        if (headline) headline.style.display = settings.elements.headline ? 'block' : 'none';
+        if (text) text.style.display = settings.elements.text ? 'block' : 'none';
+        if (tags) tags.style.display = settings.elements.tags ? 'block' : 'none';
+        if (cta) cta.style.display = settings.elements.cta ? 'block' : 'none';
+        if (image) image.style.display = settings.elements.image ? 'block' : 'none';
+        if (logoIcon) logoIcon.style.display = settings.elements.logoIcon ? 'block' : 'none';
+
+        if (image) image.style.width = settings.layout.imageSize;
+        if (headline) headline.style.fontSize = settings.layout.titleSize;
+        if (text) text.style.fontSize = settings.layout.bodySize;
+
+        if (logoIcon) {
+            logoIcon.style.transform = `rotate(${settings.layout.logoRotation}deg)`;
+        }
+
+        if (image) image.style.zIndex = settings.layout.imageZIndex || 30;
+
+        if (pathOne) applyAnimation(pathOne, animation.pathOne || 'hidden-element');
+        if (pathTwo) applyAnimation(pathTwo, animation.pathTwo || 'hidden-element');
+        if (headline) applyAnimation(headline, animation.headline || 'hidden-element');
+        if (text) applyAnimation(text, animation.text || 'hidden-element');
+        if (tags) applyAnimation(tags, animation.tags || 'hidden-element');
+        if (cta) applyAnimation(cta, animation.cta || 'hidden-element');
+        if (image) applyAnimation(image, animation.image || 'hidden-element');
+        if (logoIcon) applyAnimation(logoIcon, animation.logoIcon || 'hidden-element');
+    });
+
+    updateSlideNavigationButtons();
+    updateTimelineMarkers();
+}
+
+function applyAnimation(element, animationClass) {
+    if (element && animationClass) {
+        element.classList.add(animationClass);
+        setTimeout(() => {
+            element.classList.remove(animationClass);
+        }, 1750); // Duration of the animation
+    }
+}
+
+let counterInterval = null;
+
+function startCounter() {
+    if (!counterInterval) {
+        updateCounter(); // Update immediately
+        counterInterval = setInterval(updateCounter, 100); // Update every 100ms for smoother display
+    }
+}
+
+function stopCounter() {
+    clearInterval(counterInterval);
+    counterInterval = null;
+}
+
+
+
+function padZero(num, places = 2) {
+    return String(num).padStart(places, '0');
 }
 
 function nextAd() {
     if (currentIndex < storedAds.length - 1) {
         currentIndex++;
-        updateAds();
+        jumpToAd(currentIndex);
     }
 }
 
 function previousAd() {
     if (currentIndex > 0) {
         currentIndex--;
-        updateAds();
+        jumpToAd(currentIndex);
     }
+}
+
+function jumpToAd(index) {
+    const audioPlayer = document.getElementById('audioPlayer');
+    const timestamp = getCurrentAdTimestamp(index);
+    jumpToTime(timestamp);
+
+    // Update the startTime to reflect the new position
+    startTime = Date.now() - timestamp;
+    pausedTime = 0;
+
+    // Update audio position
+    audioPlayer.currentTime = timestamp / 1000; // Convert to seconds
+
+    // Update ads
+    currentIndex = index;
+    updateAds();
+
+    // Clear existing timeout and schedule next ad
+    if (autoPlayTimeout) {
+        clearTimeout(autoPlayTimeout);
+    }
+    scheduleNextAd();
+
+    // Update counter
+    updateCounter();
 }
 
 function previousImage() {
@@ -1546,10 +2337,87 @@ function updateImageUrls() {
     });
 }
 
+function openEditModal() {
+    const modal = document.getElementById('editSlideModal');
+    const form = document.getElementById('editSlideForm');
+
+    const banners = document.getElementById('banners');
+
+
+    const currentSlide = storedAds[currentIndex];
+
+    // Populate form fields
+    form.timestamp.value = currentSlide.timestamp;
+    form.audio.value = currentSlide.audio;
+    form.logoIcon.value = currentSlide.logo.icon;
+    form.logoFirstWord.value = currentSlide.logo.firstWord;
+    form.logoSecondWord.value = currentSlide.logo.secondWord;
+    form.headline.value = currentSlide.headline;
+    form.text.value = currentSlide.text.join('\n');
+    form.tags.value = currentSlide.tags;
+    form.img.value = currentSlide.img;
+    form.cta.value = currentSlide.cta;
+    form.animations.value = JSON.stringify(currentSlide.animation, null, 2);
+
+    modal.classList.remove('hidden');
+    banners.classList.add('hidden');
+
+    // If this is a new slide, highlight the new marker
+    if (currentIndex === storedAds.length - 1 || storedAds[currentIndex].timestamp !== storedAds[currentIndex + 1].timestamp) {
+        updateTimelineWithNewMarker();
+    }
+}
+
+function closeEditModal() {
+    const modal = document.getElementById('editSlideModal');
+    const banners = document.getElementById('banners');
+
+    modal.classList.add('hidden');
+    banners.classList.remove('hidden');
+}
+
+function handleEditFormSubmit(event) {
+    event.preventDefault();
+    const form = event.target;
+    const updatedSlide = {
+        timestamp: parseInt(form.timestamp.value),
+        audio: form.audio.value,
+        logo: {
+            icon: form.logoIcon.value,
+            firstWord: form.logoFirstWord.value,
+            secondWord: form.logoSecondWord.value
+        },
+        headline: form.headline.value,
+        text: form.text.value.split('\n'),
+        tags: form.tags.value,
+        img: form.img.value,
+        cta: form.cta.value,
+        animation: JSON.parse(form.animations.value)
+    };
+
+    // Update the current slide in storedAds
+    storedAds[currentIndex] = updatedSlide;
+
+    // Sort the storedAds array based on timestamps
+    storedAds.sort((a, b) => a.timestamp - b.timestamp);
+
+    // Update the currentIndex to reflect the new position of the edited slide
+    currentIndex = storedAds.findIndex(slide => slide.timestamp === updatedSlide.timestamp);
+
+    // Save changes
+    saveSettings();
+
+    // Update the UI
+    updateAds();
+    initializeTimeline();
+
+    // Close the modal
+    closeEditModal();
+}
 
 // Initialize ads and images
 document.addEventListener('DOMContentLoaded', () => {
-    
+
     // Apply saved settings for all banner sizes
     storedBannerSettings.forEach(bannerSetting => {
         applyAllSavedSettings(bannerSetting.size);
@@ -1582,6 +2450,12 @@ document.addEventListener('DOMContentLoaded', () => {
     updateElementsList();
     applyElementPositions();
     highlightSelectedBanner();
+    initializeTimeline();
+
+    ensureAudioLoaded(() => {
+        initializeTimeline();
+        updateAds();
+    });
 
     // Initialize image URLs container
     const imageUrlsContainer = document.getElementById('imageUrlsContainer');
@@ -1598,6 +2472,32 @@ document.addEventListener('DOMContentLoaded', () => {
 
     document.getElementById('addMoreImagesButton').addEventListener('click', addImageUrlInputField);
     document.getElementById('saveImagesButton').addEventListener('click', updateStoredImages);
+
+    // Add event listeners for the edit slide modal
+    document.getElementById('editSlideButton').addEventListener('click', openEditModal);
+    document.getElementById('cancelEdit').addEventListener('click', closeEditModal);
+    document.getElementById('editSlideForm').addEventListener('submit', handleEditFormSubmit);
+
+    // move slider
+    const moveSlidesButton = document.getElementById('moveSlidesButton');
+    moveSlidesButton.addEventListener('click', toggleMoveSlides);
+
+    // Event Listener for the new Add Slide button
+    document.getElementById('addSlideButton').addEventListener('click', addSlideAtCurrentTime);
+
+    document.addEventListener('keydown', (event) => {
+        if (event.key === 'Shift') {
+            isShiftKeyDown = true;
+        }
+    });
+
+    document.addEventListener('keyup', (event) => {
+        if (event.key === 'Shift') {
+            isShiftKeyDown = false;
+        }
+    });
+
+    initializeTimeline();
 
     // Additional check to hide the image if the setting is false
     storedBannerSettings.forEach(setting => {
@@ -1641,9 +2541,5 @@ document.addEventListener('keydown', (event) => {
     }
 });
 
-
-
-
-
-
+document.addEventListener('DOMContentLoaded', initializeEnhancedTimeline);
 
