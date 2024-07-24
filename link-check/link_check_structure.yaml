@@ -86,14 +86,19 @@ img:
   - leads7.webp
   - leads8.webp
   - leads9.webp
+  - loyalleads-logo.png
+  - man.png
+  - overcoming_barriers.webp
   - podcast_intro.webp
   - sherif.png
   - sherif2.webp
   - spinner.gif
+  - transparent-background-animated-gif.gif
   - tree.png
   - tree2.png
   - tree3.png
   - tree4.webp
+  - tree5.png
   - umbrella.jpg
   - umbrella.png
   - umbrella.webp
@@ -110,6 +115,7 @@ js:
   - video.js
   - videoJson.js
 - lead-generation.html
+- server.js
 - sitemap.xml
 - styles-rtl.css
 - styles.css

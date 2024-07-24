@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="h-full bg-white">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -19,739 +19,1007 @@
     <script defer src="js/ads.js"></script>
     <link rel="stylesheet" href="styles.css" />
   </head>
-  <body class=" p-10 flex relative bg-gray-100">
-    <div class="sidebar w-1/4 fixed h-full max-h-screen overflow-y-auto scroll-auto snap-y ">
-      <div class="flex justify-center mb-4 snap-center">
-        <select id="bannerSelect" class="px-2 py-2 border-2 border-gray-400 rounded" onchange="highlightSelectedBanner()">
-          <option value="480x120">480x120</option>
-          <option value="300x250">300x250</option>
-          <option value="160x600">160x600</option>
-          <option value="300x250-text">300x250 Text</option>
-          <option value="728x90">728x90</option>
-          <option value="1200x628">1200x628</option>
-          <option value="1200x628-2">1200x628-2</option>
-          <option value="1080x1080">1080x1080</option>
-        </select>
-      </div>
+  <body class="h-full">
+    <div>
+      <!-- Off-canvas menu for mobile, show/hide based on off-canvas menu state. -->
+      <div class="relative z-50 lg:hidden" role="dialog" aria-modal="true">
+        <!--
+          Off-canvas menu backdrop, show/hide based on off-canvas menu state.
+    
+          Entering: "transition-opacity ease-linear duration-300"
+            From: "opacity-0"
+            To: "opacity-100"
+          Leaving: "transition-opacity ease-linear duration-300"
+            From: "opacity-100"
+            To: "opacity-0"
+        -->
+        <div class="fixed inset-0 bg-gray-900/80" aria-hidden="true"></div>
 
-      <div class="flex flex-col justify-center mb-4 snap-center ">
-        <div class="flex justify-between mb-4">
-          <button class="px-2 py-1 rounded" onclick="previousAd()"><i class="fas fa-arrow-left"></i> Text</button>
-          <button class="px-2 py-1 rounded ml-2" onclick="nextAd()"><i class="fas fa-arrow-right float-end"></i> Text</button>
-          <button class="px-2 py-1 rounded ml-2" onclick="previousImage()"><i class="fas fa-arrow-left"></i> Image</button>
-          <button class="px-2 py-1 rounded ml-2" onclick="nextImage()"><i class="fas fa-arrow-right float-end"></i> Image</button>
-        </div>
-
-        <div id="slideNavigation" class="flex justify-between my-4 gap-2">
-          <button id="prevSlideButton" class="px-4 py-2 bg-gray-200 rounded truncate text-xs"></button>
-          <button id="currentSlideButton" class="px-4 py-2 bg-gray-300 rounded truncate font-bold text-xs"></button>
-          <button id="nextSlideButton" class="px-4 py-2 bg-gray-200 rounded truncate text-xs"></button>
-        </div>
-
-        <div class="flex justify-between">
-          <button id="restartAudioButton" class="px-2 py-1 rounded bg-green-500 text-white" onclick="restartAutoPlay()"><i class="fa-solid fa-rotate-left"></i></button>
-
-          <div class="flex gap-2">
-            <button class="px-2 py-1 rounded" onclick="previousAd()"><i class="fas fa-backward-step"></i></button>
-            <button id="goBackButton" class="px-2 py-1 rounded bg-yellow-500 text-white" onclick="goBack(5)"><i class="fas fa-backward-step"></i> 5</button>
-            <button id="goBackButton" class="px-2 py-1 rounded bg-yellow-500 text-white" onclick="goBack(2)"><i class="fas fa-backward-step"></i> 2</button>
-            <button id="playAudioButton" class="px-2 py-1 rounded bg-blue-500 text-white" onclick="playFirstAudioAndRunSlides()"><i class="fas fa-play w-10"></i></button>
-            <button id="goForwardButton" class="px-2 py-1 rounded bg-yellow-500 text-white" onclick="goForward(5)">5 <i class="fas fa-forward-step"></i></button>
-            <button class="px-2 py-1 rounded" onclick="nextAd()"><i class="fas fa-forward-step"></i></button>
-          </div>
-
-          <button class="px-2 py-1 rounded bg-red-500 text-white" onclick="stopAutoPlay()"><i class="fas fa-stop"></i></button>
-        </div>
-        <div class="flex flex-col w-full snap-center">
-          <div class="w-full mt-16 relative">
-            <div class="timeline-container">
-              <div id="timelineWrapper" class="relative" style="width: 100%; min-width: 100%">
-                <div id="timelineMarkers" class="flex justify-between absolute w-full" style="top: -15px"></div>
-                <input type="range" id="timelineSlider" class="w-full" min="0" max="100" value="0" />
-              </div>
-            </div>
-          </div>
-          
-          <div class="relative h-4 mt-2 overflow-hidden">
-            <div id="scrollContainer" class="absolute top-0 left-0 h-full" style="width: 100%">
-              <div id="scrollContent" class="h-full bg-gray-200"></div>
-            </div>
-            <div id="scrollIndicator" class="absolute top-0 h-full bg-blue-500 opacity-50" style="width: 100%"></div>
-          </div>
-        </div>
-        <div class="flex items-center self-center my-2 gap-2">
-          <div disabled id="timeCounter" class=" text-center text-sm font-bold">00:00.000</div> - <div id="zoomIndicator" class="text-center text-sm ">Zoom: 1x</div>
-        </div>
-        <p id="audioStatus" class="my-2 text-start text-sm font-bold">Time line edit</p>
-        <div class="flex gap-2">
-          <button id="moveSlidesButton" class="px-2 py-1 rounded bg-gray-300 hover:bg-gray-400 focus:outline-none"><i class="fas fa-arrows-alt"></i></button>
-          <button id="editSlideButton" class="px-4 py-2 bg-blue-500 text-white rounded"><i class="fas fa-edit"></i></button>
-          <button id="addSlideButton" class="px-4 py-2 bg-green-500 text-white rounded"><i class="fas fa-plus"></i></button>
-        </div>
-        <div class="flex gap-2 mt-2">
-          <button id="zoomInButton" class="px-2 py-1 rounded bg-blue-500 text-white" onclick="zoomTimeline('in')"><i class="fas fa-search-plus"></i></button>
-          <button id="zoomOutButton" class="px-2 py-1 rounded bg-blue-500 text-white" onclick="zoomTimeline('out')"><i class="fas fa-search-minus"></i></button>
-          <button id="resetZoomButton" class="px-2 py-1 rounded bg-gray-500 text-white" onclick="resetTimelineZoom()"><i class="fas fa-undo"></i></button>
-        </div>
-        <audio id="audioPlayer" src="" type="audio/aac"></audio>
-      </div>
-      <button class="px-2 py-1 rounded" onclick="downloadAllBannersAsZip()"><i class="fas fa-download"></i> ZIP</button>
-
-      <hr />
-      <details class="snap-center">
-        <summary><span class="font-bold">Elements</span></summary>
-        <div id="elements-list" class="my-4 flex flex-wrap justify-center"></div>
-        <div id="element-controls" class="flex flex-col items-center gap-2 my-4 p-4">
-          <!-- D-pad for movement -->
-          <div class="flex flex-row justify-between items-center w-full">
-            <div class="grid grid-cols-3 gap-2 mb-4">
-              <div></div>
-              <button onclick="moveElement('up')" class="px-3 py-2 bg-gray-300 rounded-t-lg hover:bg-gray-400"><i class="fas fa-caret-up"></i></button>
-              <div></div>
-              <button onclick="moveElement('left')" class="px-3 py-2 bg-gray-300 rounded-l-lg hover:bg-gray-400"><i class="fas fa-caret-left"></i></button>
-              <div class="bg-gray-300 rounded-full"></div>
-              <button onclick="moveElement('right')" class="px-3 py-2 bg-gray-300 rounded-r-lg hover:bg-gray-400"><i class="fas fa-caret-right"></i></button>
-              <div></div>
-              <button onclick="moveElement('down')" class="px-3 py-2 bg-gray-300 rounded-b-lg hover:bg-gray-400"><i class="fas fa-caret-down"></i></button>
-              <div></div>
-            </div>
-            <div class="flex gap-2">
-              <button onclick="rotateElement('left')" class="px-3 py-2 bg-blue-500 text-white rounded-full hover:bg-blue-600"><i class="fas fa-undo"></i></button>
-              <button onclick="rotateElement('right')" class="px-3 py-2 bg-blue-500 text-white rounded-full hover:bg-blue-600"><i class="fas fa-redo"></i></button>
-            </div>
-          </div>
-
-          <!-- Rotation and mirror controls -->
-          <div class="flex justify-between w-full mb-4 items-center">
-            <!-- Size controls -->
-            <div class="flex justify-center gap-4 mb-4">
-              <button onclick="resizeElement('down')" class="px-3 py-2 bg-green-500 text-white rounded-full hover:bg-green-600"><i class="fas fa-search-minus"></i></button>
-              <button onclick="resizeElement('up')" class="px-3 py-2 bg-green-500 text-white rounded-full hover:bg-green-600"><i class="fas fa-search-plus"></i></button>
-            </div>
-
-            <!-- Z Index -->
-            <div class="flex justify-center gap-4 mb-4">
-              <button onclick="changeZIndex('down')" class="px-3 py-2 bg-yellow-500 text-white rounded-full hover:bg-yellow-600"><i class="fas fa-layer-group"></i> -</button>
-              <button onclick="changeZIndex('up')" class="px-3 py-2 bg-yellow-500 text-white rounded-full hover:bg-yellow-600"><i class="fas fa-layer-group"></i> +</button>
-            </div>
-
-            <button onclick="mirrorElement()" class="px-3 py-2 bg-purple-500 text-white rounded-full hover:bg-purple-600"><i class="fas fa-exchange-alt fa-rotate-90"></i></button>
-          </div>
-
-          <!-- Color controls -->
-          <div class="flex gap-2 my-4 justify-between w-full">
-            <div class="flex items-center justify-between">
-              <label for="element-color" class="text-sm">Element Color:</label>
-              <input class="m-2" type="color" id="element-color" onchange="changeElementColor(this.value)" />
-            </div>
-            <div class="flex items-center justify-between">
-              <label for="background-color" class="text-sm">Background Color:</label>
-              <input class="m-2" type="color" id="background-color" onchange="changeBackgroundColor(this.value)" />
-            </div>
-            <button onclick="resetColors()" class="px-2 py-1 bg-red-500 text-white rounded">Reset Colors</button>
-          </div>
-
-          <!-- Opacity slider -->
-          <div class="w-full mb-4">
-            <label for="element-opacity" class="block text-sm font-medium text-gray-700 mb-1">Opacity</label>
-            <input type="range" id="element-opacity" name="element-opacity" min="0" max="1" step="0.1" value="1" class="w-full" onchange="changeElementOpacity(this.value)" />
-          </div>
-
-          <!-- Reset button -->
-          <button onclick="resetElement()" class="px-4 py-2 bg-red-500 text-white rounded-full hover:bg-red-600">Reset</button>
-        </div>
-      </details>
-      <hr />
-
-      <details class="snap-center">
-        <summary><span class="font-bold">Size</span></summary>
-        <div class="flex flex-col gap-2 mb-4 w-48">
-          <div class="flex items-center gap-2 justify-between">
-            <label for="title-size"><span class="text-sm">Title </span></label>
-            <input type="number" id="title-size" class="w-16 p-1" value="1.5" step="0.1" onchange="updateTitleSize()" />
-          </div>
-          <div class="flex items-center gap-2 justify-between">
-            <label for="body-size"><span class="text-sm">Body</span></label>
-            <input type="number" id="body-size" class="w-16 p-1" value="1" step="0.1" onchange="updateBodySize()" />
-          </div>
-          <div class="flex items-center gap-2 justify-between">
-            <label for="image-size"><span class="text-sm">Image (%)</span></label>
-            <input type="number" id="image-size" class="w-16 p-1" value="25" step="1" onchange="updateImageSize()" />
-          </div>
-        </div>
-      </details>
-
-      <hr />
-
-      <details class="snap-center">
-        <summary><span class="font-bold">Layout</span></summary>
-        <div class="flex flex-col gap-2 my-4 divide-y">
-          <div class="flex flex-wrap gap-2 my-2">
-            <button class="px-2 py-1 rounded" onclick="toggleCtaStyle()">Toggle CTA</button>
-            <button class="px-2 py-1 rounded" onclick="toggleLogoLayout()"><i class="fas fa-exchange-alt"></i> Logo Layout</button>
-            <button class="px-2 py-1 rounded" onclick="rotateLogo()"><i class="fas fa-undo"></i>Logo Rotate</button>
-            <button class="px-2 py-1 rounded" onclick="switchPosition()"><i class="fas fa-arrows-alt-h"></i> Switch</button>
-            <button class="px-2 py-1 rounded ml-2" onclick="toggleTextLength()"><i class="fas fa-arrows-alt-h"></i> Text Length</button>
-          </div>
-          <div class="px-2 py-1 rounded ml-2">
-            <div class="flex justify-between items-center">
-              <span class="text-sm">Image z index</span>
-              <div class="flex">
-                <a class="px-2 py-1 rounded ml-2" onclick="increaseImageZIndex()"><i class="fas fa-arrow-up"></i> </a>
-                <a class="px-2 py-1 rounded ml-2" onclick="decreaseImageZIndex()"><i class="fas fa-arrow-down"></i> </a>
-              </div>
-            </div>
-          </div>
-        </div>
-      </details>
-
-      <hr />
-
-      <details class="snap-center">
-        <summary><span class="font-bold">Download/Upload</span></summary>
-        <div class="flex flex-col gap-2 w-48 my-4">
-          <div class="flex justify-between items-center">
-            <span class="text-sm">Settings</span>
-            <div class="flex">
-              <a class="px-2 py-1 rounded ml-2 cursor-pointer" onclick="downloadSettings()"><i class="fas fa-download"></i></a>
-              <a class="px-2 py-1 rounded ml-2 cursor-pointer" onclick="uploadSettings()"><i class="fas fa-upload"></i></a>
-            </div>
-          </div>
-          <div class="flex justify-between items-center">
-            <span class="text-sm">Copy</span>
-            <div class="flex">
-              <a class="px-2 py-1 rounded ml-2 cursor-pointer" onclick="downloadAds()"><i class="fas fa-download"></i></a>
-              <a class="px-2 py-1 rounded ml-2 cursor-pointer" onclick="uploadAds()"><i class="fas fa-upload"></i></a>
-            </div>
-          </div>
-          <div class="flex justify-between items-center">
-            <span class="text-sm">Images</span>
-            <div class="flex">
-              <a class="px-2 py-1 rounded ml-2 cursor-pointer" onclick="downloadImages()"><i class="fas fa-download"></i></a>
-              <a class="px-2 py-1 rounded ml-2 cursor-pointer" onclick="uploadImages()"><i class="fas fa-upload"></i></a>
-            </div>
-          </div>
-        </div>
-      </details>
-
-      <hr />
-
-      <details class="snap-center">
-        <summary><span class="font-bold">Visibility</span></summary>
-        <div class="flex flex-col gap-2 my-4">
-          <label class="flex items-center mr-2"
-            ><span class="text-sm w-full">Logo & Icon</span>
-            <input type="checkbox" id="toggle-logo-icon" onchange="toggleElement('logo-icon')" />
-          </label>
-          <label class="flex items-center mr-2"
-            ><span class="text-sm w-full">Svg Wave</span>
-            <input type="checkbox" id="toggle-svg-wave" onchange="toggleElement('svg-wave')" />
-          </label>
-          <label class="flex items-center mr-2"
-            ><span class="text-sm w-full">Image</span>
-            <input type="checkbox" id="toggle-image" onchange="toggleElement('image')" />
-          </label>
-          <label class="flex items-center mr-2"
-            ><span class="text-sm w-full">Title</span>
-            <input type="checkbox" id="toggle-headline" onchange="toggleElement('headline')" />
-          </label>
-          <label class="flex items-center mr-2"
-            ><span class="text-sm w-full">Body</span>
-            <input type="checkbox" id="toggle-text" onchange="toggleElement('text')" />
-          </label>
-          <label class="flex items-center mr-2"
-            ><span class="text-sm w-full">Tags</span>
-            <input type="checkbox" id="toggle-tags" onchange="toggleElement('tags')" />
-          </label>
-          <label class="flex items-center mr-2"
-            ><span class="text-sm w-full">CTA</span>
-            <input type="checkbox" id="toggle-cta" onchange="toggleElement('cta')" />
-          </label>
-          <label class="flex items-center mr-2"
-            ><span class="text-sm w-full">Set Image as Background</span>
-            <input type="checkbox" id="toggle-background" onchange="toggleBackground()" />
-          </label>
-        </div>
-      </details>
-
-      <hr />
-
-      <hr />
-
-      <details class="snap-center">
-        <summary><span class="font-bold">Image URLs</span></summary>
-        <div id="imageUrlsContainer"></div>
-        <button id="addMoreImagesButton" class="px-2">Add More</button>
-        <button id="saveImagesButton" class="px-2">Save</button>
-      </details>
-      <!-- Edit Slide Modal -->
-      <div id="editSlideModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50 hidden">
-        <div class="relative top-20 mx-auto p-5 border w-96 lg:w-[800px] shadow-lg rounded-md bg-white">
-          <h3 class="text-lg font-bold mb-4">Edit Slide</h3>
-          <form id="editSlideForm">
-            <div class="flex">
-              <div class="mb-4">
-                <label class="block text-gray-700 text-sm font-bold mb-2" for="editTimestamp">Timestamp (ms)</label>
-                <input
-                  type="number"
-                  id="editTimestamp"
-                  name="timestamp"
-                  class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                />
-              </div>
-              <div>
-                <label for="formattedTime" class="block text-sm font-medium text-gray-700">Formatted Time (mm:ss)</label>
-                <input type="text" id="formattedTime" name="formattedTime" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm bg-gray-100" disabled />
-              </div>
-            </div>
-            <div class="mb-4">
-              <label class="block text-gray-700 text-sm font-bold mb-2" for="editAudio">Audio Source</label>
-              <input
-                type="text"
-                id="editAudio"
-                name="audio"
-                class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-              />
-            </div>
-
-            <div class="flex gap-4">
-              <div class="mb-4 w-full">
-                <label class="block text-gray-700 text-sm font-bold mb-2" for="editLogoIcon">Logo Icon</label>
-                <input
-                  type="text"
-                  id="editLogoIcon"
-                  name="logoIcon"
-                  class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                />
-              </div>
-              <div class="mb-4 w-1/2">
-                <label class="block text-gray-700 text-sm font-bold mb-2" for="editLogoFirstWord">Logo First Word</label>
-                <input
-                  type="text"
-                  id="editLogoFirstWord"
-                  name="logoFirstWord"
-                  class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                />
-              </div>
-              <div class="mb-4 w-1/2">
-                <label class="block text-gray-700 text-sm font-bold mb-2" for="editLogoSecondWord">Logo Second Word</label>
-                <input
-                  type="text"
-                  id="editLogoSecondWord"
-                  name="logoSecondWord"
-                  class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                />
-              </div>
-            </div>
-            <div class="mb-4">
-              <label class="block text-gray-700 text-sm font-bold mb-2" for="editHeadline">Headline</label>
-              <input
-                type="text"
-                id="editHeadline"
-                name="headline"
-                class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-              />
-            </div>
-            <div class="mb-4">
-              <label class="block text-gray-700 text-sm font-bold mb-2" for="editText">Text</label>
-              <textarea
-                id="editText"
-                name="text"
-                class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                rows="3"
-              ></textarea>
-            </div>
-            <div class="mb-4">
-              <label class="block text-gray-700 text-sm font-bold mb-2" for="editTags">Tags</label>
-              <input
-                type="text"
-                id="editTags"
-                name="tags"
-                class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-              />
-            </div>
-            <div class="mb-4">
-              <label class="block text-gray-700 text-sm font-bold mb-2" for="editImg">Image URL</label>
-              <input
-                type="text"
-                id="editImg"
-                name="img"
-                class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-              />
-            </div>
-            <div class="mb-4">
-              <label class="block text-gray-700 text-sm font-bold mb-2" for="editCta">CTA</label>
-              <input
-                type="text"
-                id="editCta"
-                name="cta"
-                class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-              />
-            </div>
-            <div class="mb-4">
-              <label class="block text-gray-700 text-sm font-bold mb-2" for="editAnimations">Animations (JSON)</label>
-              <textarea
-                id="editAnimations"
-                name="animations"
-                class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                rows="5"
-              ></textarea>
-            </div>
-            <div class="flex items-center justify-between">
-              <button type="submit" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">Save Changes</button>
-              <button type="button" id="cancelEdit" class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
-                Cancel
+        <div class="fixed inset-0 flex">
+          <!--
+            Off-canvas menu, show/hide based on off-canvas menu state.
+    
+            Entering: "transition ease-in-out duration-300 transform"
+              From: "-translate-x-full"
+              To: "translate-x-0"
+            Leaving: "transition ease-in-out duration-300 transform"
+              From: "translate-x-0"
+              To: "-translate-x-full"
+          -->
+          <div class="relative mr-16 flex w-full max-w-xs flex-1">
+            <!--
+              Close button, show/hide based on off-canvas menu state.
+    
+              Entering: "ease-in-out duration-300"
+                From: "opacity-0"
+                To: "opacity-100"
+              Leaving: "ease-in-out duration-300"
+                From: "opacity-100"
+                To: "opacity-0"
+            -->
+            <div class="absolute left-full top-0 flex w-16 justify-center pt-5">
+              <button type="button" class="-m-2.5 p-2.5">
+                <span class="sr-only">Close sidebar</span>
+                <i class="text-gray-400 fas fa-times"></i>
               </button>
             </div>
-          </form>
-        </div>
-      </div>
-    </div>
 
-    <div id="banners" class="w-3/4 ml-52 md:ml-72 lg:ml-96">
-      <div class="grid grid-cols-1 md:grid-cols-1 lg:grid-cols-2 gap-6">
-        <!-- 480x120 -->
-        <div class="flex flex-col items-center" onclick="selectBanner('480x120')">
-          <div class="bg-yellow-400bg-yellow-400 font-bold px-4 py-1 mb-2">480x120</div>
-
-          <div
-            id="ad-container-480x120"
-            class="ad-container ring-1 ring-gray-300 relative p-4 flex flex-row justify-between items-center overflow-hidden"
-            style="width: 480px; height: 120px"
-          >
-            <div class="absolute -bottom-3 left-0 w-full h-full z-10">
-              <svg width="480" height="120" id="svg-480x120" viewBox="0 -5 480 120" xmlns="http://www.w3.org/2000/svg">
-                <path
-                  d="m0.11,120.89l0,-52.78c269.43,-51.35 199.85,33.94 479.94,-31.5l0,84.28l-479.94,0z"
-                  stroke="none"
-                  stroke-width="0"
-                  fill-opacity="0.53"
-                  class="path-one"
-                  id="path-one-480x120"
-                ></path>
-              </svg>
-            </div>
-            <div class="absolute -bottom-3 left-0 w-full h-full z-20">
-              <svg width="480" height="120" id="svg-480x120" viewBox="0 10 480 120" xmlns="http://www.w3.org/2000/svg">
-                <path
-                  d="m-0.28,120.44l0,-37.03c304.38,84.4 295.51,-35.19 481.11,0l0,37.03l-481.11,0z"
-                  stroke="none"
-                  stroke-width="0"
-                  fill-opacity="1"
-                  class="path-two"
-                  id="path-two-480x120"
-                ></path>
-              </svg>
-            </div>
-            <div id="logo-icon-480x120" class="text-sm mr-4 flex flex-row gap-1 z-30">
-              <i class="fa fa-box" aria-hidden="true"></i><a href="https://octopus.energy"> <span style="font-weight: 700">Octopus</span> Energy</a>
-            </div>
-            <img id="image-480x120" src="img/energy_savings_2.png" alt="Ad Image" class="w-1/4 z-30 relative top-0" />
-            <div id="text-container-480x120" class="w-2/3 ml-4 relative z-50">
-              <h2 class="ads-title text-lg font-bold relative z-[60] top-0" id="headline-480x120">Sunglasses Deals Up to 50% Off</h2>
-              <div class="flex justify-between items-center">
-                <p class="hidden text-sm" id="text-480x120">From Aviator Shades to Retro sunglasses. Check out our new collection</p>
-                <p class="text-sm hidden" id="tags-480x120">#EnergySavings #SwitchAndSave</p>
-                <button class="ads-button text-white px-4 py-2 mt-2 rounded" id="cta-480x120">Shop now</button>
+            <!-- Sidebar component, swap this element with another sidebar if you like -->
+            <div class="flex grow flex-col gap-y-5 overflow-y-auto bg-white px-6 pb-4">
+              <div class="flex h-16 shrink-0 items-center">
+                <img class="h-8 w-auto" src="https://tailwindui.com/img/logos/mark.svg?color=indigo&shade=600" alt="Your Company" />
               </div>
+              <nav class="flex flex-1 flex-col">
+                <ul role="list" class="flex flex-1 flex-col gap-y-7">
+                  <li>
+                    <ul role="list" class="-mx-2 space-y-1">
+                      mobile
+                    </ul>
+                  </li>
+
+                  <li class="mt-auto">
+                    <a href="#" class="group -mx-2 flex gap-x-3 rounded-md p-2 text-sm font-semibold leading-6 text-gray-700 hover:bg-gray-50 hover:text-indigo-600">
+                      <i class="text-gray-400 group-hover:text-indigo-600 fas fa-cog"></i>
+                      Settings
+                    </a>
+                  </li>
+                </ul>
+              </nav>
             </div>
           </div>
         </div>
+      </div>
 
-        <!-- 300x250 -->
-        <div class="flex flex-col items-center" onclick="selectBanner('300x250')">
-          <div class="bg-yellow-400 font-bold px-4 py-1 mb-2">300x250</div>
-          <div id="ad-container-300x250" class="ad-container ring-1 ring-gray-300 relative p-4 flex flex-col justify-between overflow-hidden" style="width: 300px; height: 250px">
-            <div class="absolute -bottom-14 left-0 w-full h-full z-10">
-              <svg width="300" height="250" id="svg-300x250" viewBox="0 70 440 360" xmlns="http://www.w3.org/2000/svg">
-                <path
-                  d="m0.11,439.89l0,-258.28c212.07,24.97 193.46,19.74 440.44,0l0,258.28l-440.44,0z"
-                  stroke="none"
-                  stroke-width="0"
-                  fill-opacity="0.53"
-                  class="path-one"
-                  style="transition-property: all; transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1); transition-duration: 300ms; transition-delay: 150ms"
-                  id="path-one-300x250"
-                ></path>
-              </svg>
-            </div>
-            <div class="absolute -bottom-14 left-0 w-full h-full z-20">
-              <svg width="300" height="250" id="svg-300x250" viewBox="0 90 440 360" xmlns="http://www.w3.org/2000/svg">
-                <path
-                  d="m-0.28,439.44l0,-128.02c143.67,-64.3 241.78,-45.6 440.61,0l0,128.02l-440.61,0z"
-                  stroke="none"
-                  stroke-width="0"
-                  fill-opacity="1"
-                  class="path-two hidden"
-                  style="transition-property: all; transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1); transition-duration: 300ms; transition-delay: 150ms"
-                  id="path-two-300x250"
-                ></path>
-              </svg>
-            </div>
-            <div class="flex items-start relative z-20">
-              <div id="logo-title-300x250" class="flex flex-col gap-2 relative z-20">
-                <div id="logo-icon-300x250" class="text-sm mr-4 flex flex-row gap-1">
-                  <i class="fa fa-box" aria-hidden="true"></i> <a href="https://octopus.energy"> <span style="font-weight: 700">Octopus</span> Energy</a>
+      <!-- Static sidebar for desktop -->
+      <div class="hidden lg:fixed lg:inset-y-0 lg:z-50 lg:flex lg:w-96 lg:flex-col">
+        <!-- Sidebar component, swap this element with another sidebar if you like -->
+        <div class="flex grow flex-col gap-y-5 overflow-y-auto border-r border-gray-200 bg-white px-6 pb-4">
+          <div class="flex h-16 shrink-0 items-center">
+            <img class="h-8 w-auto" src="https://tailwindui.com/img/logos/mark.svg?color=indigo&shade=600" alt="Your Company" />
+          </div>
+          <nav class="flex flex-1 flex-col">
+            <div class="sidebar sticky h-full max-h-screen overflow-y-auto scroll-auto snap-y">
+              <div class="flex justify-center mb-4 snap-center">
+                <select id="bannerSelect" class="px-2 py-2 border-2 border-gray-400 rounded" onchange="highlightSelectedBanner()">
+                  <option value="480x120">480x120</option>
+                  <option value="300x250">300x250</option>
+                  <option value="160x600">160x600</option>
+                  <option value="300x250-text">300x250 Text</option>
+                  <option value="728x90">728x90</option>
+                  <option value="1200x628">1200x628</option>
+                  <option value="1200x628-2">1200x628-2</option>
+                  <option value="1080x1080">1080x1080</option>
+                </select>
+              </div>
+
+              <div class="flex flex-col gap-4">
+                <div class="flex justify-between gap-2 mb-4">
+                  <button onclick="previousAd()"><i class="fas fa-arrow-left"></i> <i class="fa-solid fa-rectangle-ad w-4 h-4"></i></button>
+                  <button onclick="nextAd()"><i class="fas fa-arrow-right float-end"></i> <i class="fa-solid fa-rectangle-ad w-4 h-4"></i></button>
+                  <button onclick="previousImage()"><i class="fas fa-arrow-left"></i> <i class="fa-solid fa-images w-4 h-4"></i></button>
+                  <button onclick="nextImage()"><i class="fas fa-arrow-right float-end"></i> <i class="fa-solid fa-images w-4 h-4"></i></button>
                 </div>
-                <h2 class="ads-title text-xl font-bold mb-2 self-center relative z-20" id="headline-300x250">Sunglasses Deals Up to 50% Off</h2>
+                <button onclick="downloadAllBannersAsZip()"><i class="fas fa-download"></i> Download Ad Banners ZIP</button>
               </div>
-              <img id="image-300x250" src="img/energy_savings_2.png" alt="Ad Image" class="w-1/2" />
+
+              <hr />
+
+              <details class="snap-center">
+                <summary><span class="font-bold">Elements</span></summary>
+                <div id="elements-list" class="my-4 flex flex-wrap justify-center"></div>
+                <div id="element-controls" class="flex flex-col items-center gap-2 my-4 p-4">
+                  <!-- D-pad for movement -->
+                  <div class="flex flex-col justify-between items-center w-full">
+                    <div class="grid grid-cols-3 gap-2 mb-4">
+                      <div></div>
+                      <button onclick="moveElement('up')"><i class="fas fa-caret-up"></i></button>
+                      <div></div>
+                      <button onclick="moveElement('left')"><i class="fas fa-caret-left"></i></button>
+                      <div></div>
+                      <button onclick="moveElement('right')"><i class="fas fa-caret-right"></i></button>
+                      <div></div>
+                      <button onclick="moveElement('down')"><i class="fas fa-caret-down"></i></button>
+                      <div></div>
+                    </div>
+                    <div class="flex gap-2">
+                      <button onclick="rotateElement('left')"><i class="fas fa-undo"></i></button>
+                      <button onclick="rotateElement('right')"><i class="fas fa-redo"></i></button>
+                    </div>
+                  </div>
+
+                  <!-- Rotation and mirror controls -->
+                  <div class="flex flex-col justify-between w-full mb-4 items-center">
+                    <!-- Size controls -->
+                    <div class="flex justify-center gap-4 mb-4">
+                      <button onclick="resizeElement('down')"><i class="fas fa-search-minus"></i></button>
+                      <button onclick="resizeElement('up')"><i class="fas fa-search-plus"></i></button>
+                    </div>
+
+                    <!-- Z Index -->
+                    <div class="flex justify-center gap-4 mb-4">
+                      <button onclick="changeZIndex('down')"><i class="fas fa-layer-group"></i> -</button>
+                      <button onclick="changeZIndex('up')"><i class="fas fa-layer-group"></i> +</button>
+                    </div>
+
+                    <button onclick="mirrorElement()">
+                      <i class="fas fa-exchange-alt fa-rotate"></i>
+                    </button>
+                  </div>
+
+                  <!-- Color controls -->
+                  <div class="flex gap-2 my-4 justify-between w-full">
+                    <div class="flex items-center justify-between">
+                      <label for="element-color" class="text-sm">Element Color:</label>
+                      <input class="m-2" type="color" id="element-color" onchange="changeElementColor(this.value)" />
+                    </div>
+                    <div class="flex items-center justify-between">
+                      <label for="background-color" class="text-sm">BG Color:</label>
+                      <input class="m-2" type="color" id="background-color" onchange="changeBackgroundColor(this.value)" />
+                    </div>
+                    <button onclick="resetColors()" class="px-2 py-1 bg-red-500 text-white rounded-full"><i class="fa-solid fa-arrows-rotate"></i></button>
+                  </div>
+
+                  <!-- Opacity slider -->
+                  <div class="w-full mb-4">
+                    <label for="element-opacity" class="block text-sm font-medium text-gray-700 mb-1">Opacity</label>
+                    <input
+                      type="range"
+                      id="element-opacity"
+                      name="element-opacity"
+                      min="0"
+                      max="1"
+                      step="0.1"
+                      value="1"
+                      class="w-full"
+                      onchange="changeElementOpacity(this.value)"
+                    />
+                  </div>
+
+                  <!-- Reset button -->
+                  <button onclick="resetElement()" class="bg-red-500 text-white rounded-full hover:bg-red-600">Reset</button>
+                </div>
+              </details>
+
+              <hr />
+
+              <details class="snap-center">
+                <summary><span class="font-bold">Size</span></summary>
+                <div class="flex flex-col gap-2 mb-4 w-48">
+                  <div class="flex items-center gap-2 justify-between">
+                    <label for="title-size"><span class="text-sm">Title </span></label>
+                    <input type="number" id="title-size" class="w-16 p-1" value="1.5" step="0.1" onchange="updateTitleSize()" />
+                  </div>
+                  <div class="flex items-center gap-2 justify-between">
+                    <label for="body-size"><span class="text-sm">Body</span></label>
+                    <input type="number" id="body-size" class="w-16 p-1" value="1" step="0.1" onchange="updateBodySize()" />
+                  </div>
+                  <div class="flex items-center gap-2 justify-between">
+                    <label for="image-size"><span class="text-sm">Image (%)</span></label>
+                    <input type="number" id="image-size" class="w-16 p-1" value="25" step="1" onchange="updateImageSize()" />
+                  </div>
+                </div>
+              </details>
+
+              <hr />
+
+              <details class="snap-center">
+                <summary><span class="font-bold">Layout</span></summary>
+                <div class="flex flex-col gap-2 my-4 divide-y">
+                  <div class="flex flex-wrap gap-2 my-2">
+                    <button class="px-2 py-1 text-sm rounded" onclick="toggleCtaStyle()">Toggle CTA</button>
+                    <button class="px-2 py-1 text-sm rounded" onclick="toggleLogoLayout()"><i class="fas fa-exchange-alt"></i> Logo Layout</button>
+                    <button class="px-2 py-1 text-sm rounded" onclick="rotateLogo()"><i class="fas fa-undo"></i>Logo Rotate</button>
+                    <button class="px-2 py-1 text-sm rounded" onclick="switchPosition()"><i class="fas fa-arrows-alt-h"></i> Switch</button>
+                    <button class="px-2 py-1 text-sm rounded ml-2" onclick="toggleTextLength()"><i class="fas fa-arrows-alt-h"></i> Text Length</button>
+                  </div>
+                  <div class="px-2 py-1 text-sm rounded ml-2">
+                    <div class="flex justify-between items-center">
+                      <span class="text-sm">Image z index</span>
+                      <div class="flex">
+                        <a class="px-2 py-1 text-sm rounded ml-2" onclick="increaseImageZIndex()"><i class="fas fa-arrow-up"></i> </a>
+                        <a class="px-2 py-1 text-sm rounded ml-2" onclick="decreaseImageZIndex()"><i class="fas fa-arrow-down"></i> </a>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </details>
+
+              <hr />
+
+              <details class="snap-center">
+                <summary><span class="font-bold">Download/Upload</span></summary>
+                <div class="flex flex-col gap-2 w-3/4 my-4">
+                  <div class="flex justify-between items-center">
+                    <span class="text-sm">Settings</span>
+                    <div class="flex">
+                      <a class="px-2 py-1 rounded ml-2 cursor-pointer" onclick="downloadSettings()"><i class="fas fa-download"></i></a>
+                      <a class="px-2 py-1 rounded ml-2 cursor-pointer" onclick="uploadSettings()"><i class="fas fa-upload"></i></a>
+                      <span class="text-sm pt-2">[json]</span>
+                    </div>
+                  </div>
+                  <div class="flex justify-between items-center">
+                    <span class="text-sm">Slides</span>
+                    <div class="flex">
+                      <a class="px-2 py-1 rounded ml-2 cursor-pointer" onclick="downloadAds()"><i class="fas fa-download"></i></a>
+                      <a class="px-2 py-1 rounded ml-2 cursor-pointer" onclick="uploadAds()"><i class="fas fa-upload"></i></a>
+                      <span class="text-sm pt-2">[json]</span>
+                    </div>
+                  </div>
+                  <div class="flex justify-between items-center">
+                    <span class="text-sm">Images</span>
+                    <div class="flex">
+                      <a class="px-2 py-1 rounded ml-2 cursor-pointer" onclick="downloadImages()"><i class="fas fa-download"></i></a>
+                      <a class="px-2 py-1 rounded ml-2 cursor-pointer" onclick="uploadImages()"><i class="fas fa-upload"></i></a>
+                      <span class="text-sm pt-2">[json]</span>
+                    </div>
+                  </div>
+                  <div class="flex justify-between items-center">
+                    <span class="text-sm">Campaign</span>
+                    <div class="flex">
+                      <a class="px-2 py-1 rounded ml-2 cursor-pointer" onclick="downloadCampaign()"><i class="fas fa-download"></i></a>
+                      <a class="px-2 py-1 rounded ml-2 cursor-pointer" onclick="uploadCampaign()"><i class="fas fa-upload"></i></a>
+                      <span class="text-sm pt-2">[json]</span>
+                    </div>
+                  </div>
+                  <div class="flex justify-between items-center">
+                    <span class="text-sm w-32">All Campaign</span>
+                    <div class="flex">
+                      <a class="px-2 py-1 rounded ml-2 cursor-pointer" onclick="downloadCampaigns()"><i class="fas fa-download"></i></a>
+                      <a class="px-2 py-1 rounded ml-2 cursor-pointer" onclick="uploadCampaigns()"><i class="fas fa-upload"></i></a>
+                      <span class="text-sm pt-2">[json]</span>
+                    </div>
+                  </div>
+                </div>
+              </details>
+
+              <hr />
+
+              <details class="snap-center">
+                <summary><span class="font-bold">Visibility</span></summary>
+                <div class="flex flex-col gap-2 my-4">
+                  <label class="flex items-center mr-2">
+                    <span class="text-sm w-full">Logo & Icon</span>
+                    <input type="checkbox" id="toggle-logo-icon" onchange="toggleElement('logo-icon')" />
+                  </label>
+                  <label class="flex items-center mr-2">
+                    <span class="text-sm w-full">Svg Wave</span>
+                    <input type="checkbox" id="toggle-svg-wave" onchange="toggleElement('svg-wave')" />
+                  </label>
+                  <label class="flex items-center mr-2">
+                    <span class="text-sm w-full">Image</span>
+                    <input type="checkbox" id="toggle-image" onchange="toggleElement('image')" />
+                  </label>
+                  <label class="flex items-center mr-2">
+                    <span class="text-sm w-full">Title</span>
+                    <input type="checkbox" id="toggle-headline" onchange="toggleElement('headline')" />
+                  </label>
+                  <label class="flex items-center mr-2">
+                    <span class="text-sm w-full">Body</span>
+                    <input type="checkbox" id="toggle-text" onchange="toggleElement('text')" />
+                  </label>
+                  <label class="flex items-center mr-2">
+                    <span class="text-sm w-full">Tags</span>
+                    <input type="checkbox" id="toggle-tags" onchange="toggleElement('tags')" />
+                  </label>
+                  <label class="flex items-center mr-2">
+                    <span class="text-sm w-full">CTA</span>
+                    <input type="checkbox" id="toggle-cta" onchange="toggleElement('cta')" />
+                  </label>
+                  <label class="flex items-center mr-2">
+                    <span class="text-sm w-full">Text Container</span>
+                    <input type="checkbox" id="toggle-text-container" onchange="toggleElement('text-container')" />
+                  </label>
+                  <label class="flex items-center mr-2">
+                    <span class="text-sm w-full">Background Image</span>
+                    <input type="checkbox" id="toggle-background-image" onchange="toggleElement('background-image')" />
+                  </label>
+                  <label class="flex items-center mr-2">
+                    <span class="text-sm w-full">Image Filter</span>
+                    <input type="checkbox" id="toggle-image-filter" onchange="toggleElement('image-filter')" />
+                  </label>
+                  <label class="flex items-center mr-2">
+                    <span class="text-sm w-full">Background Banner</span>
+                    <input type="checkbox" id="toggle-background-banner" onchange="toggleElement('background-banner')" />
+                  </label>
+                  <label class="flex items-center mr-2">
+                    <span class="text-sm w-full">Set Image as Background</span>
+                    <input type="checkbox" id="toggle-background" onchange="toggleBackground()" />
+                  </label>
+                </div>
+              </details>
+
+              <hr />
+
+              <details class="snap-center">
+                <summary><span class="font-bold">Image URLs</span></summary>
+                <div class="flex gap-2 my-2">
+                  <button id="addMoreImagesButton" class="px-2">Add More</button>
+                  <button id="saveImagesButton" class="px-2">Save</button>
+                </div>
+                <div id="imageUrlsContainer" class="h-full max-h-screen overflow-y-auto scroll-auto snap-y"></div>
+              </details>
+              <!-- Edit Slide Modal -->
+              <div id="editSlideModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50 hidden">
+                <div class="relative top-20 mx-auto p-5 border w-96 lg:w-[800px] shadow-lg rounded-md bg-white">
+                  <h3 class="text-lg font-bold mb-4">Edit Slide</h3>
+                  <form id="editSlideForm">
+                    <div class="flex">
+                      <div class="mb-4">
+                        <label class="block text-gray-700 text-sm font-bold mb-2" for="editTimestamp">Timestamp (ms)</label>
+                        <input
+                          type="number"
+                          id="editTimestamp"
+                          name="timestamp"
+                          class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                        />
+                      </div>
+                      <div>
+                        <label for="formattedTime" class="block text-sm font-medium text-gray-700">Formatted Time (mm:ss)</label>
+                        <input type="text" id="formattedTime" name="formattedTime" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm bg-gray-100" disabled />
+                      </div>
+                    </div>
+                    <div class="mb-4">
+                      <label class="block text-gray-700 text-sm font-bold mb-2" for="editAudio">Audio Source</label>
+                      <input
+                        type="text"
+                        id="editAudio"
+                        name="audio"
+                        class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                      />
+                    </div>
+
+                    <div class="flex gap-4">
+                      <div class="mb-4 w-full">
+                        <label class="block text-gray-700 text-sm font-bold mb-2" for="editLogoIcon">Logo Icon</label>
+                        <input
+                          type="text"
+                          id="editLogoIcon"
+                          name="logoIcon"
+                          class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                        />
+                      </div>
+                      <div class="mb-4 w-1/2">
+                        <label class="block text-gray-700 text-sm font-bold mb-2" for="editLogoFirstWord">Logo First Word</label>
+                        <input
+                          type="text"
+                          id="editLogoFirstWord"
+                          name="logoFirstWord"
+                          class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                        />
+                      </div>
+                      <div class="mb-4 w-1/2">
+                        <label class="block text-gray-700 text-sm font-bold mb-2" for="editLogoSecondWord">Logo Second Word</label>
+                        <input
+                          type="text"
+                          id="editLogoSecondWord"
+                          name="logoSecondWord"
+                          class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                        />
+                      </div>
+                    </div>
+                    <div class="mb-4">
+                      <label class="block text-gray-700 text-sm font-bold mb-2" for="editHeadline">Headline</label>
+                      <input
+                        type="text"
+                        id="editHeadline"
+                        name="headline"
+                        class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                      />
+                    </div>
+                    <div class="mb-4">
+                      <label class="block text-gray-700 text-sm font-bold mb-2" for="editText">Text</label>
+                      <textarea
+                        id="editText"
+                        name="text"
+                        class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                        rows="3"
+                      ></textarea>
+                    </div>
+                    <div class="mb-4">
+                      <label class="block text-gray-700 text-sm font-bold mb-2" for="editTags">Tags</label>
+                      <input
+                        type="text"
+                        id="editTags"
+                        name="tags"
+                        class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                      />
+                    </div>
+                    <div class="mb-4">
+                      <label class="block text-gray-700 text-sm font-bold mb-2" for="editImg">Image URL</label>
+                      <input
+                        type="text"
+                        id="editImg"
+                        name="img"
+                        class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                      />
+                    </div>
+                    <div class="mb-4">
+                      <label class="block text-gray-700 text-sm font-bold mb-2" for="editCta">CTA</label>
+                      <input
+                        type="text"
+                        id="editCta"
+                        name="cta"
+                        class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                      />
+                    </div>
+                    <div class="mb-4">
+                      <label class="block text-gray-700 text-sm font-bold mb-2" for="editAnimations">Animations (JSON)</label>
+                      <textarea
+                        id="editAnimations"
+                        name="animations"
+                        class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                        rows="5"
+                      ></textarea>
+                    </div>
+                    <div class="flex items-center justify-between">
+                      <button type="submit" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
+                        Save Changes
+                      </button>
+                      <button type="button" id="cancelEdit" class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
+                        Cancel
+                      </button>
+                    </div>
+                  </form>
+                </div>
+              </div>
+
+              <!-- Image Gallery Modal -->
+              <div id="imageGalleryModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50 hidden">
+                <div class="flex flex-col relative top-20 mx-auto p-5 border w-11/12 lg:w-3/4 shadow-lg rounded-md bg-white h-4/5">
+                  <div class="flex justify-between items-center">
+                    <h3 class="text-lg font-bold">Image Gallery</h3>
+                    <div class="flex justify-end">
+                      <button id="closeGalleryButton" class="bg-red-500 text-white rounded-full"><i class="fas fa-times mr-0"></i></button>
+                    </div>
+                  </div>
+                  <div class="h-full max-h-full overflow-y-auto scroll-auto snap-y">
+                    <div id="imageGalleryGrid" class="grid grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
+                      <!-- Images will be dynamically added here -->
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
-            <div id="text-container-300x250" class="z-50 relative">
-              <p class="text-sm -mt-4" id="text-300x250">Discover the latest collection of Men's sunglasses. Summer Sale Up to 50% Off</p>
-              <div class="flex justify-between items-center">
-                <p class="text-sm" id="tags-300x250">#EnergySavings #SwitchAndSave</p>
-                <button class="ads-button text-white px-4 py-2 mt-2 rounded" id="cta-300x250">SHOP NOW</button>
+          </nav>
+        </div>
+      </div>
+
+      <div class="flex flex-col lg:pl-96 relative h-screen">
+        <main class="py-10 h-full">
+          <div class="px-4 sm:px-6 lg:px-8 pb-[340px] snap-y snap-mandatory bg-gray-100">
+            <!-- Your content -->
+            <div class="grid grid-cols-1 md:grid-cols-1 lg:grid-cols-2 gap-6">
+              <!-- 480x120 -->
+              <div class="flex flex-col items-center snap-center" onclick="selectBanner('480x120')">
+                <div class="bg-yellow-400bg-yellow-400 font-bold px-4 py-1 mb-2">480x120</div>
+
+                <div
+                  id="ad-container-480x120"
+                  class="ad-container ring-1 ring-gray-300 relative p-4 flex flex-row justify-between items-center overflow-hidden"
+                  style="width: 480px; height: 120px"
+                >
+                  <div id="background-banner-480x120" class="absolute top-0 left-0 w-full h-full z-0 bg-gray-100"></div>
+                  <img id="background-image-480x120" src="img/transparent-background-animated-gif.gif" alt="Ad Image" class="w-full z-0 absolute top-0 left-0" />
+                  <div class="absolute -bottom-3 left-0 w-full h-full z-10">
+                    <svg width="480" height="120" id="svg-480x120" viewBox="0 -5 480 120" xmlns="http://www.w3.org/2000/svg">
+                      <path
+                        d="m0.11,120.89l0,-52.78c269.43,-51.35 199.85,33.94 479.94,-31.5l0,84.28l-479.94,0z"
+                        stroke="none"
+                        stroke-width="0"
+                        fill-opacity="0.53"
+                        class="path-one"
+                        id="path-one-480x120"
+                      ></path>
+                    </svg>
+                  </div>
+                  <div class="absolute -bottom-3 left-0 w-full h-full z-20">
+                    <svg width="480" height="120" id="svg-480x120" viewBox="0 10 480 120" xmlns="http://www.w3.org/2000/svg">
+                      <path
+                        d="m-0.28,120.44l0,-37.03c304.38,84.4 295.51,-35.19 481.11,0l0,37.03l-481.11,0z"
+                        stroke="none"
+                        stroke-width="0"
+                        fill-opacity="1"
+                        class="path-two"
+                        id="path-two-480x120"
+                      ></path>
+                    </svg>
+                  </div>
+                  <div id="logo-icon-480x120" class="text-sm mr-4 flex flex-row gap-1 z-30">
+                    <i class="fa fa-box" aria-hidden="true"></i><a href="https://octopus.energy"> <span style="font-weight: 700">Octopus</span> Energy</a>
+                  </div>
+                  <img id="image-filter-480x120" src="img/filter-comic.png" alt="Ad Image" class="w-full z-0 absolute top-0 left-0" />
+                  <img id="image-480x120" src="img/energy_savings_2.png" alt="Ad Image" class="w-1/4 z-30 relative top-0" />
+                  <div id="text-container-480x120" class="w-2/3 ml-4 relative z-40">
+                    <h2 class="ads-title text-lg font-bold relative z-40 top-0" id="headline-480x120">Sunglasses Deals Up to 50% Off</h2>
+                    <div class="flex justify-between items-center">
+                      <p class="hidden text-sm" id="text-480x120">From Aviator Shades to Retro sunglasses. Check out our new collection</p>
+                      <p class="text-sm hidden" id="tags-480x120">#EnergySavings #SwitchAndSave</p>
+                      <button class="ads-button text-white px-4 py-2 mt-2 rounded" id="cta-480x120">Shop now</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- 300x250 -->
+              <div class="flex flex-col items-center snap-center" onclick="selectBanner('300x250')">
+                <div class="bg-yellow-400 font-bold px-4 py-1 mb-2">300x250</div>
+                <div
+                  id="ad-container-300x250"
+                  class="ad-container ring-1 ring-gray-300 relative p-4 flex flex-col justify-between overflow-hidden"
+                  style="width: 300px; height: 250px"
+                >
+                  <div id="background-banner-300x250" class="absolute top-0 left-0 w-full h-full z-0 bg-gray-100"></div>
+                  <img id="background-image-300x250" src="img/transparent-background-animated-gif.gif" alt="Ad Image" class="w-full z-0 absolute top-0 left-0" />
+                  <div class="absolute -bottom-14 left-0 w-full h-full z-10">
+                    <svg width="300" height="250" id="svg-300x250" viewBox="0 70 440 360" xmlns="http://www.w3.org/2000/svg">
+                      <path
+                        d="m0.11,439.89l0,-258.28c212.07,24.97 193.46,19.74 440.44,0l0,258.28l-440.44,0z"
+                        stroke="none"
+                        stroke-width="0"
+                        fill-opacity="0.53"
+                        class="path-one"
+                        style="transition-property: all; transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1); transition-duration: 300ms; transition-delay: 150ms"
+                        id="path-one-300x250"
+                      ></path>
+                    </svg>
+                  </div>
+                  <div class="absolute -bottom-14 left-0 w-full h-full z-20">
+                    <svg width="300" height="250" id="svg-300x250" viewBox="0 90 440 360" xmlns="http://www.w3.org/2000/svg">
+                      <path
+                        d="m-0.28,439.44l0,-128.02c143.67,-64.3 241.78,-45.6 440.61,0l0,128.02l-440.61,0z"
+                        stroke="none"
+                        stroke-width="0"
+                        fill-opacity="1"
+                        class="path-two hidden"
+                        style="transition-property: all; transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1); transition-duration: 300ms; transition-delay: 150ms"
+                        id="path-two-300x250"
+                      ></path>
+                    </svg>
+                  </div>
+                  <div class="flex items-start relative z-20">
+                    <div id="logo-title-300x250" class="flex flex-col gap-2 relative z-20">
+                      <div id="logo-icon-300x250" class="text-sm mr-4 flex flex-row gap-1">
+                        <i class="fa fa-box" aria-hidden="true"></i> <a href="https://octopus.energy"> <span style="font-weight: 700">Octopus</span> Energy</a>
+                      </div>
+                      <h2 class="ads-title text-xl font-bold mb-2 self-center relative z-20" id="headline-300x250">Sunglasses Deals Up to 50% Off</h2>
+                    </div>
+                    <img id="image-filter-300x250" src="img/filter-comic.png" alt="Ad Image" class="w-full z-0 absolute top-0 left-0" />
+                    <img id="image-300x250" src="img/energy_savings_2.png" alt="Ad Image" class="w-1/2" />
+                  </div>
+                  <div id="text-container-300x250" class="z-40 relative">
+                    <p class="text-sm -mt-4" id="text-300x250">Discover the latest collection of Men's sunglasses. Summer Sale Up to 50% Off</p>
+                    <div class="flex justify-between items-center">
+                      <p class="text-sm" id="tags-300x250">#EnergySavings #SwitchAndSave</p>
+                      <button class="ads-button text-white px-4 py-2 mt-2 rounded" id="cta-300x250">SHOP NOW</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- 160x600 -->
+              <div class="flex flex-col items-center snap-center" onclick="selectBanner('160x600')">
+                <div class="bg-yellow-400 font-bold px-4 py-1 mb-2">160x600</div>
+                <div
+                  id="ad-container-160x600"
+                  class="ad-container ring-1 ring-gray-300 relative p-4 flex flex-col justify-between overflow-hidden"
+                  style="height: 600px; width: 160px"
+                >
+                  <div id="background-banner-160x600" class="absolute top-0 left-0 w-full h-full z-0 bg-gray-100"></div>
+                  <img id="background-image-160x600" src="img/transparent-background-animated-gif.gif" alt="Ad Image" class="w-full z-0 absolute top-0 left-0" />
+                  <div class="absolute -bottom-40 left-0 w-full h-full z-10">
+                    <svg width="160" height="600" id="svg-160x600" viewBox="5 105 190 480" xmlns="http://www.w3.org/2000/svg">
+                      <path
+                        d="m1.11,438.89l0,-431.78c95.55,41.74 87.16,33 198.44,0l0,431.78l-198.44,0z"
+                        stroke="none"
+                        stroke-width="0"
+                        fill="rgba(250, 204, 21, 1)"
+                        fill-opacity="0.53"
+                        class="path-one"
+                        style="transition-property: all; transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1); transition-duration: 300ms; transition-delay: 150ms"
+                        id="path-one-160x600"
+                      ></path>
+                    </svg>
+                  </div>
+                  <div class="absolute -bottom-40 left-0 w-full h-full z-20">
+                    <svg width="160" height="600" id="svg-160x600" viewBox="5 0 190 480" xmlns="http://www.w3.org/2000/svg">
+                      <path
+                        d="m2.22,438.33l0,-248.23c66.94,-30.64 104.41,-9.89 195.11,0l0,248.23l-195.11,0z"
+                        stroke="none"
+                        stroke-width="0"
+                        fill="rgba(250, 204, 21, 1)"
+                        fill-opacity="1"
+                        class="path-two"
+                        style="transition-property: all; transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1); transition-duration: 300ms; transition-delay: 150ms"
+                        id="path-two-160x600"
+                      ></path>
+                    </svg>
+                  </div>
+                  <div id="logo-icon-160x600" class="text-sm mb-4 flex gap-1 items-center">
+                    <i class="fa fa-box" aria-hidden="true"></i> <a href="https://octopus.energy"> <span style="font-weight: 700">Octopus</span>Energy</a>
+                  </div>
+                  <img id="image-filter-160x600" src="img/filter-comic.png" alt="Ad Image" class="w-full z-0 absolute top-0 left-0" />
+                  <img id="image-160x600" src="img/energy_savings.jpg" alt="Ad Image" class="w-full mb-4 absolute right-0 top-10" />
+                  <div id="text-container-160x600" class="relative z-20">
+                    <h2 class="ads-title text-xl font-bold mb-2" id="headline-160x600">Sunglasses Deals Up to 50% Off</h2>
+                    <p class="text-sm" id="text-160x600">Discover the latest collection of Men's sunglasses. Summer Sale Up to 50% Off</p>
+                    <p class="text-sm" id="tags-160x600">#EnergySavings #SwitchAndSave</p>
+                    <button class="ads-button text-white px-2 py-2 mt-2 rounded" id="cta-160x600">SHOP NOW</button>
+                  </div>
+                </div>
+              </div>
+
+              <!-- 300x250 Text Ad -->
+              <div class="flex flex-col items-center snap-center" onclick="selectBanner('300x250-text')">
+                <div class="bg-yellow-400 font-bold px-4 py-1 mb-2">300x250 Text Ad</div>
+                <div id="ad-container-300x250-text" class="ad-container ring-1 ring-gray-300 p-4 flex flex-col justify-between overflow-hidden" style="width: 300px; height: 250px">
+                  <div id="background-banner-300x250-text" class="absolute top-0 left-0 w-full h-full z-0 bg-gray-100"></div>
+                  <img id="background-image-300x250-text" src="img/transparent-background-animated-gif.gif" alt="Ad Image" class="w-full z-0 absolute top-0 left-0" />
+                  <div id="logo-icon-300x250-text" class="text-sm mb-4">
+                    <i class="fa fa-box" aria-hidden="true"></i> <a href="https://octopus.energy"> <span style="font-weight: 700">Octopus</span>Energy</a>
+                  </div>
+                  <img id="image-filter-300x250-text" src="img/filter-comic.png" alt="Ad Image" class="w-full z-0 absolute top-0 left-0" />
+                  <img id="image-300x250-text" src="img/energy_savings_2.png" alt="Ad Image" />
+                  <div id="text-container-300x250-text" class="relative z-20">
+                    <h2 class="ads-title text-xl font-bold mb-2" id="headline-300x250-text">Sunglasses Deals Up to 50% Off</h2>
+                    <p class="text-sm" id="text-300x250-text">Discover the latest collection of Men's sunglasses. Summer Sale Up to 50% Off</p>
+                    <p class="text-sm" id="tags-300x250-text">#EnergySavings #SwitchAndSave</p>
+                    <button class="ads-button text-white px-4 py-2 mt-2 rounded" id="cta-300x250-text">SHOP NOW</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- 728x90 -->
+            <div class="flex flex-col items-center snap-center" onclick="selectBanner('728x90')">
+              <div class="bg-yellow-400 font-bold px-4 py-1 mb-2">728x90</div>
+              <div
+                id="ad-container-728x90"
+                class="ad-container ring-1 ring-gray-300 relative p-4 flex flex-row justify-between items-center overflow-hidden"
+                style="width: 728px; height: 90px"
+              >
+                <div id="background-banner-728x90" class="absolute top-0 left-0 w-full h-full z-0 bg-gray-100"></div>
+                <img id="background-image-728x90" src="img/transparent-background-animated-gif.gif" alt="Ad Image" class="w-full z-0 absolute top-0 left-0" />
+                <div class="absolute -bottom-3 left-0 w-full h-full">
+                  <svg width="100%" height="100%" id="svg-728x90" viewBox="0 0 1340 170" xmlns="http://www.w3.org/2000/svg">
+                    <path
+                      d="M 0,445 C 0,445 0,148 0,148 C 142.28571428571428,158.21428571428572 284.57142857142856,168.42857142857142 412,170 C 539.4285714285714,171.57142857142858 652,164.5 754,148 C 856,131.5 947.4285714285713,105.57142857142858 1060,104 C 1172.5714285714287,102.42857142857142 1306.2857142857142,125.21428571428571 1440,148 C 1440,148 1440,445 1440,445 Z"
+                      stroke="none"
+                      stroke-width="0"
+                      fill="rgba(250, 204, 21, 1)"
+                      fill-opacity="0.53"
+                      class="path-one"
+                      style="transition-property: all; transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1); transition-duration: 300ms; transition-delay: 150ms"
+                      id="path-one-728x90"
+                    ></path>
+                    <path
+                      d="M 0,533 C 0,533 0,355 0,355 C 126.78571428571428,377.3571428571429 253.57142857142856,399.7142857142857 357,390 C 460.42857142857144,380.2857142857143 540.4999999999999,338.5 668,336 C 795.5000000000001,333.5 970.4285714285716,370.2857142857143 1107,380 C 1243.5714285714284,389.7142857142857 1341.7857142857142,372.3571428571429 1440,355 C 1440,355 1440,533 1440,533 Z"
+                      stroke="none"
+                      stroke-width="0"
+                      fill="rgba(250, 204, 21, 1)"
+                      fill-opacity="1"
+                      class="path-two"
+                      style="transition-property: all; transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1); transition-duration: 300ms; transition-delay: 150ms"
+                      id="path-two-728x90"
+                    ></path>
+                  </svg>
+                </div>
+                <div id="logo-icon-728x90" class="text-sm mr-4 flex flex-row gap-1 z-40">
+                  <i class="fa fa-box" aria-hidden="true"></i><a href="https://octopus.energy"> <span style="font-weight: 700">Octopus</span> Energy</a>
+                </div>
+                <img id="image-filter-728x90" src="img/filter-comic.png" alt="Ad Image" class="w-full z-0 absolute top-0 left-0" />
+                <img id="image-728x90" src="img/energy_savings_2.png" alt="Ad Image" class="w-24 z-40 relative" />
+                <div id="text-container-728x90" class="flex justify-between w-2/3 ml-4 z-40 relative items-center">
+                  <h2 class="ads-title text-lg font-bold" id="headline-728x90">Sunglasses Deals Up to 50% Off</h2>
+                  <p class="hidden text-sm px-4" id="text-728x90">Discover the latest collection of Men's sunglasses. Summer Sale Up to 50% Off</p>
+                  <p class="text-sm hidden" id="tags-728x90">#EnergySavings #SwitchAndSave</p>
+                  <button class="ads-button text-white px-4 py-2 mt-2 rounded-full" id="cta-728x90">SHOP NOW</button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Facebook Ad 1200x628 -->
+            <div class="flex flex-col items-center snap-center" onclick="selectBanner('1200x628')">
+              <div class="bg-yellow-400 font-bold px-4 py-1 mb-2">1200x628 Facebook Ad</div>
+              <div
+                id="ad-container-1200x628"
+                class="ad-container ring-1 ring-gray-300 relative p-4 flex flex-row justify-between items-center overflow-hidden"
+                style="width: 1200px; height: 628px"
+              >
+                <div id="background-banner-1200x628" class="absolute top-0 left-0 w-full h-full z-0 bg-gray-100"></div>
+                <img id="background-image-1200x628" src="img/transparent-background-animated-gif.gif" alt="Ad Image" class="w-full z-0 absolute top-0 left-0" />
+                <div class="absolute -bottom-3 left-0 w-full h-3/4 z-10">
+                  <svg width="100%" height="100%" id="svg-1200x628" viewBox="0 0 1440 523" xmlns="http://www.w3.org/2000/svg">
+                    <path
+                      d="M 0,533 C 0,533 0,177 0,177 C 111.64285714285714,171.32142857142856 223.28571428571428,165.64285714285714 336,151 C 448.7142857142857,136.35714285714286 562.4999999999999,112.74999999999997 674,134 C 785.5000000000001,155.25000000000003 894.7142857142858,221.3571428571429 1022,236 C 1149.2857142857142,250.6428571428571 1294.642857142857,213.82142857142856 1440,177 C 1440,177 1440,533 1440,533 Z"
+                      stroke="none"
+                      stroke-width="0"
+                      fill-opacity="0.53"
+                      class="path-one"
+                      style="transition-property: all; transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1); transition-duration: 300ms; transition-delay: 150ms"
+                      id="path-one-1200x628"
+                    ></path>
+                  </svg>
+                </div>
+                <div class="absolute -bottom-3 left-0 w-full h-3/4 z-20">
+                  <svg width="100%" height="100%" id="svg-1200x628" viewBox="0 0 1440 523" xmlns="http://www.w3.org/2000/svg">
+                    <path
+                      d="M 0,533 C 0,533 0,355 0,355 C 126.78571428571428,377.3571428571429 253.57142857142856,399.7142857142857 357,390 C 460.42857142857144,380.2857142857143 540.4999999999999,338.5 668,336 C 795.5000000000001,333.5 970.4285714285716,370.2857142857143 1107,380 C 1243.5714285714284,389.7142857142857 1341.7857142857142,372.3571428571429 1440,355 C 1440,355 1440,533 1440,533 Z"
+                      stroke="none"
+                      stroke-width="0"
+                      fill-opacity="1"
+                      class="path-two"
+                      style="transition-property: all; transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1); transition-duration: 300ms; transition-delay: 150ms"
+                      id="path-two-1200x628"
+                    ></path>
+                  </svg>
+                </div>
+                <div id="logo-icon-1200x628" class="text-xl mr-4 flex flex-row gap-1 z-30 absolute bottom-2">
+                  <i class="fa fa-box" aria-hidden="true"></i><a href="https://octopus.energy"> <span style="font-weight: 700">Octopus</span> Energy</a>
+                </div>
+                <img id="image-1200x628" src="img/energy_savings_2.png" alt="Ad Image" class="w-1/3 relative ml-20" />
+                <img id="image-filter-1200x628" src="img/filter-comic.png" alt="Ad Image" class="w-full z-0 absolute top-0 left-0" />
+                <div id="text-container-1200x628" class="flex flex-col gap-2 w-1/2 ml-4 items-start z-20 relative">
+                  <h2 id="headline-1200x628" class="ads-title font-bold">Sunglasses Deals Up to 50% Off</h2>
+                  <p class="hidden" id="text-1200x628">From Aviator Shades to Retro sunglasses. Check out our new collection</p>
+                  <p class="text-sm" id="tags-1200x628">#EnergySavings #SwitchAndSave</p>
+                  <button class="ads-button px-4 py-2 mt-2 rounded" id="cta-1200x628">Shop now</button>
+                </div>
+              </div>
+            </div>
+            <!-- Facebook Ad 1200x628-2 -->
+            <div class="flex flex-col items-center" onclick="selectBanner('1200x628-2')">
+              <div class="bg-yellow-400 font-bold px-4 py-1 mb-2">1200x628-2 Facebook Ad</div>
+              <div
+                id="ad-container-1200x628-2"
+                class="ad-container ring-1 ring-gray-300 relative p-4 flex flex-row justify-between items-center overflow-hidden"
+                style="width: 1200px; height: 628px"
+              >
+                <div id="background-banner-1200x628-2" class="absolute top-0 left-0 w-full h-full z-0 bg-gray-100"></div>
+                <img id="background-image-1200x628-2" src="img/transparent-background-animated-gif.gif" alt="Ad Image" class="w-full z-0 absolute top-0 left-0" />
+                <div class="absolute -bottom-3 left-0 w-full h-3/4 z-10">
+                  <svg width="100%" height="100%" id="svg-1200x628-2" viewBox="0 0 1440 523" xmlns="http://www.w3.org/2000/svg">
+                    <path
+                      d="M 0,533 C 0,533 0,177 0,177 C 111.64285714285714,171.32142857142856 223.28571428571428,165.64285714285714 336,151 C 448.7142857142857,136.35714285714286 562.4999999999999,112.74999999999997 674,134 C 785.5000000000001,155.25000000000003 894.7142857142858,221.3571428571429 1022,236 C 1149.2857142857142,250.6428571428571 1294.642857142857,213.82142857142856 1440,177 C 1440,177 1440,533 1440,533 Z"
+                      stroke="none"
+                      stroke-width="0"
+                      fill-opacity="0.53"
+                      class="path-one"
+                      style="transition-property: all; transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1); transition-duration: 300ms; transition-delay: 150ms"
+                      id="path-one-1200x628-2"
+                    ></path>
+                  </svg>
+                </div>
+                <div class="absolute -bottom-3 left-0 w-full h-3/4 z-20">
+                  <svg width="100%" height="100%" id="svg-1200x628-2" viewBox="0 0 1440 523" xmlns="http://www.w3.org/2000/svg">
+                    <path
+                      d="M 0,533 C 0,533 0,355 0,355 C 126.78571428571428,377.3571428571429 253.57142857142856,399.7142857142857 357,390 C 460.42857142857144,380.2857142857143 540.4999999999999,338.5 668,336 C 795.5000000000001,333.5 970.4285714285716,370.2857142857143 1107,380 C 1243.5714285714284,389.7142857142857 1341.7857142857142,372.3571428571429 1440,355 C 1440,355 1440,533 1440,533 Z"
+                      stroke="none"
+                      stroke-width="0"
+                      fill-opacity="1"
+                      class="path-two"
+                      style="transition-property: all; transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1); transition-duration: 300ms; transition-delay: 150ms"
+                      id="path-two-1200x628-2"
+                    ></path>
+                  </svg>
+                </div>
+
+                <div id="logo-icon-1200x628-2" class="text-sm mr-4 flex flex-row gap-1 z-30">
+                  <i class="fa fa-box" aria-hidden="true"></i><a href="https://octopus.energy"> <span style="font-weight: 700">Octopus</span> Energy</a>
+                </div>
+                <img id="image-filter-1200x628-2" src="img/filter-comic.png" alt="Ad Image" class="w-full z-0 absolute top-0 left-0" />
+                <img id="image-1200x628-2" src="img/energy_savings_2.png" alt="Ad Image" class="w-1/2 z-10 relative" />
+                <div id="text-container-1200x628-2" class="flex flex-col gap-2 w-1/3 ml-4 items-start z-10 relative">
+                  <h2 class="ads-title text-3xl font-bold" id="headline-1200x628-2">Sunglasses Deals Up to 50% Off</h2>
+                  <p class="hidden" id="text-1200x628-2">From Aviator Shades to Retro sunglasses. Check out our new collection</p>
+                  <p class="text-sm" id="tags-1200x628-2">#EnergySavings #SwitchAndSave</p>
+                  <button class="ads-button text-white px-4 py-2 mt-2 rounded" id="cta-1200x628-2">Shop now</button>
+                </div>
+              </div>
+            </div>
+
+            <!-- 1080x1080 -->
+            <div class="flex flex-col items-center" onclick="selectBanner('1080x1080')">
+              <div class="bg-yellow-400 font-bold px-4 py-1 mb-2">1080x1080 Facebook 1:1 Ad</div>
+              <div
+                id="ad-container-1080x1080"
+                class="ad-container ring-1 ring-gray-300 relative p-8 flex flex-col justify-between items-center overflow-hidden"
+                style="width: 1080px; height: 1080px"
+              >
+                <div id="background-banner-1080x1080" class="absolute top-0 left-0 w-full h-full z-0 bg-gray-100"></div>
+                <img id="background-image-1080x1080" src="img/transparent-background-animated-gif.gif" alt="Ad Image" class="w-full z-0 absolute top-0 left-0" />
+                <div class="absolute -bottom-3 left-0 w-full h-3/4 z-10">
+                  <svg width="100%" height="100%" id="svg-1080x1080" viewBox="0 0 1580 1180" xmlns="http://www.w3.org/2000/svg">
+                    <path
+                      d="M0,1600 L0,800 C266.67,866.67 533.33,933.33 800,933.33 C1066.67,933.33 1333.33,800 1600,666.67 L1600,1600 Z"
+                      stroke="none"
+                      stroke-width="0"
+                      fill-opacity="0.53"
+                      class="path-one"
+                      id="path-one-1080x1080"
+                    ></path>
+                  </svg>
+                </div>
+                <div class="absolute -bottom-3 left-0 w-full h-3/4 z-20">
+                  <svg width="100%" height="100%" id="svg-1080x1080" viewBox="0 0 1580 1180" xmlns="http://www.w3.org/2000/svg">
+                    <path
+                      d="M0,1600 L0,1066.67 C266.67,1000 533.33,933.33 800,933.33 C1066.67,933.33 1333.33,1066.67 1600,1200 L1600,1600 Z"
+                      stroke="none"
+                      stroke-width="0"
+                      fill-opacity="1"
+                      class="path-two"
+                      id="path-two-1080x1080"
+                    ></path>
+                  </svg>
+                </div>
+
+                <div id="logo-icon-1080x1080" class="text-4xl mb-8 flex flex-row gap-2 z-30">
+                  <i class="fa fa-box" aria-hidden="true"></i><a href="https://octopus.energy"> <span style="font-weight: 700">Octopus</span> Energy</a>
+                </div>
+
+                <img id="image-filter-1080x1080" src="img/filter-comic.png" alt="Ad Image" class="w-full z-40 " />
+                <img id="image-1080x1080" src="img/energy_savings_2.png" alt="Ad Image" class="w-3/4 z-30 mb-8" />
+
+                <div id="text-container-1080x1080" class="flex flex-col gap-6 w-3/4 items-center z-30 text-center">
+                  <h2 class="ads-title text-6xl font-bold" id="headline-1080x1080">Sunglasses Deals Up to 50% Off</h2>
+                  <p class="text-2xl" id="text-1080x1080">From Aviator Shades to Retro sunglasses. Check out our new collection</p>
+                  <p class="text-xl" id="tags-1080x1080">#EnergySavings #SwitchAndSave</p>
+                  <button class="ads-button text-white px-8 py-4 mt-4 rounded-lg text-2xl" id="cta-1080x1080">Shop now</button>
+                </div>
+              </div>
+            </div>
+
+            <!-- 1080x1920 -->
+            <div class="flex flex-col items-center" onclick="selectBanner('1080x1920')">
+              <div class="bg-yellow-400 font-bold px-4 py-2 mb-2">1080x1920 TikTok Vertical Ad</div>
+              <div
+                id="ad-container-1080x1920"
+                class="ad-container ring-1 ring-gray-300 relative p-4 flex flex-col justify-between items-center overflow-hidden"
+                style="width: 1080px; height: 1920px"
+              >
+                <div id="background-banner-1080x1920" class="absolute top-0 left-0 w-full h-full z-0 bg-gray-100"></div>
+                <img id="background-image-1080x1920" src="img/transparent-background-animated-gif.gif" alt="Ad Image" class="w-full h-full z-0 absolute top-0 left-0" />
+                <div class="absolute bottom-0 left-0 w-full h-2/3 z-10">
+                  <svg width="100%" height="100%" id="svg-1080x1920" viewBox="0 0 1580 1180" xmlns="http://www.w3.org/2000/svg">
+                    <path
+                      d="M0,1600 L0,800 C266.67,866.67 533.33,933.33 800,933.33 C1066.67,933.33 1333.33,800 1600,666.67 L1600,1600 Z"
+                      stroke="none"
+                      stroke-width="0"
+                      fill-opacity="0.53"
+                      class="path-one"
+                      id="path-one-1080x1920"
+                    ></path>
+                  </svg>
+                </div>
+                <div class="absolute bottom-0 left-0 w-full h-2/3 z-20">
+                  <svg width="100%" height="100%" id="svg-1080x1920" viewBox="0 0 1580 1180" xmlns="http://www.w3.org/2000/svg">
+                    <path
+                      d="M0,1600 L0,1066.67 C266.67,1000 533.33,933.33 800,933.33 C1066.67,933.33 1333.33,1066.67 1600,1200 L1600,1600 Z"
+                      stroke="none"
+                      stroke-width="0"
+                      fill-opacity="1"
+                      class="path-two"
+                      id="path-two-1080x1920"
+                    ></path>
+                  </svg>
+                </div>
+                <div id="logo-icon-1080x1920" class="text-4xl mt-4 flex flex-row gap-2 z-30">
+                  <i class="fa fa-box" aria-hidden="true"></i><a href="https://octopus.energy"> <span style="font-weight: 700">Octopus</span> Energy</a>
+                </div>
+                <img id="image-filter-1080x1920" src="img/filter-comic.png" alt="Ad Image" class="w-full h-full z-0 absolute top-0 left-0" />
+                <img id="image-1080x1920" src="img/energy_savings_2.png" alt="Ad Image" class="w-3/4 z-30 mt-8 mb-4" />
+
+                <div id="text-container-1080x1920" class="flex flex-col gap-4 w-3/4 items-center z-30 text-center">
+                  <h2 class="ads-title text-4xl font-bold" id="headline-1080x1920">Sunglasses Deals Up to 50% Off</h2>
+                  <p class="text-2xl" id="text-1080x1920">From Aviator Shades to Retro sunglasses. Check out our new collection</p>
+                  <p class="text-xl" id="tags-1080x1920">#EnergySavings #SwitchAndSave</p>
+                  <button class="ads-button text-white px-8 py-4 mt-4 rounded-lg text-2xl" id="cta-1080x1920">Shop now</button>
+                </div>
               </div>
             </div>
           </div>
-        </div>
+        </main>
 
-        <!-- 160x600 -->
-        <div class="flex flex-col items-center" onclick="selectBanner('160x600')">
-          <div class="bg-yellow-400 font-bold px-4 py-1 mb-2">160x600</div>
-          <div id="ad-container-160x600" class="ad-container ring-1 ring-gray-300 relative p-4 flex flex-col justify-between overflow-hidden" style="height: 600px; width: 160px">
-            <div class="absolute -bottom-40 left-0 w-full h-full z-10">
-              <svg width="160" height="600" id="svg-160x600" viewBox="5 105 190 480" xmlns="http://www.w3.org/2000/svg">
-                <path
-                  d="m1.11,438.89l0,-431.78c95.55,41.74 87.16,33 198.44,0l0,431.78l-198.44,0z"
-                  stroke="none"
-                  stroke-width="0"
-                  fill="rgba(250, 204, 21, 1)"
-                  fill-opacity="0.53"
-                  class="path-one"
-                  style="transition-property: all; transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1); transition-duration: 300ms; transition-delay: 150ms"
-                  id="path-one-160x600"
-                ></path>
-              </svg>
+        <div class="fixed lg:pr-[410px] min-w-full bottom-0 z-40 flex h-64 items-center gap-x-4 border-t border-gray-200 bg-white px-4 shadow-sm sm:gap-x-6 sm:px-6 lg:px-8">
+          <button type="button" class="-m-2.5 p-2.5 text-gray-700 lg:hidden">
+            <span class="sr-only">Open sidebar</span>
+            <i class="fas fa-bars"></i>
+          </button>
+
+          <!-- Separator -->
+
+          <div class="flex flex-1 gap-x-4 self-stretch lg:gap-x-6 h-full">
+            <div class="flex flex-col w-full gap-2">
+              <div id="slideNavigation" class="flex justify-between my-4 gap-2">
+                <button id="prevSlideButton" class="px-4 py-2 bg-gray-200 rounded truncate text-xs"></button>
+                <button id="currentSlideButton" class="px-4 py-2 bg-gray-300 rounded truncate font-bold text-xs"></button>
+                <button id="nextSlideButton" class="px-4 py-2 bg-gray-200 rounded truncate text-xs"></button>
+              </div>
+
+              <div class="flex flex-col xl:flex-row justify-between gap-2 w-full">
+                <div class="flex gap-2">
+                  <div class="flex gap-2">
+                    <button id="moveMarkerButton" class="px-2 py-1 rounded bg-gray-300 hover:bg-gray-400 focus:outline-none"><i class="fas fa-arrows-alt"></i></button>
+                    <button id="editSlideButton" class="px-2 py-1 bg-blue-500 text-white rounded"><i class="fas fa-edit"></i></button>
+                    <button id="addSlideButton" class="px-2 py-1 bg-green-500 text-white rounded"><i class="fas fa-plus"></i></button>
+                    <button id="openGalleryButton" class="px-2 py-1 bg-blue-500 text-white rounded"><i class="fas fa-images"></i></button>
+
+                    <button id="isLoopedButton" class="px-2 py-1 bg-blue-500 text-white rounded"><i class="fas fa-redo"></i></button>
+                    <button id="isEntryAnimatedButton" class="px-2 py-1 bg-blue-500 text-white rounded"><i class="fas fa-sign-in"></i></button>
+                    <button id="isExitAnimatedButton" class="px-2 py-1 bg-blue-500 text-white rounded"><i class="fas fa-sign-out"></i></button>
+                    `
+                    <button id="processImagesButton" class="px-4 py-2 bg-green-500 text-white rounded"><i class="fa-solid fa-wand-magic-sparkles"></i> Images</button>
+                  </div>
+                  <div class="flex gap-2"></div>
+                  <audio id="audioPlayer" src="" type="audio/aac"></audio>
+                  <div>
+                    <div class="flex items-center self-center gap-2 w-46">
+                      <div disabled id="timeCounter" class="text-center text-sm font-bold">00:00.000</div>
+                      -
+                      <div id="zoomIndicator" class="text-center text-sm">Zoom: 1x</div>
+                    </div>
+                  </div>
+                </div>
+                <div class="flex gap-6 justify-between">
+                  <div class="flex gap-2">
+                    <button id="restartAudioButton" class="px-2 py-1 rounded bg-green-500 text-white" onclick="restartAutoPlay()"><i class="fa-solid fa-rotate-left"></i></button>
+
+                    <div class="flex gap-2">
+                      <button class="px-2 py-1 rounded" onclick="previousAd()"><i class="fas fa-backward-step"></i></button>
+                      <button id="goBackButton" class="px-2 py-1 rounded bg-yellow-500 text-white" onclick="goBack(5)"><i class="fas fa-backward-step"></i> 5</button>
+                      <button id="goBackButton" class="px-2 py-1 rounded bg-yellow-500 text-white" onclick="goBack(2)"><i class="fas fa-backward-step"></i> 2</button>
+                      <button id="playAudioButton" class="px-2 py-1 rounded bg-blue-500 text-white" onclick="playFirstAudioAndRunSlides()"><i class="fas fa-play w-10"></i></button>
+                      <button id="goForwardButton" class="px-2 py-1 rounded bg-yellow-500 text-white" onclick="goForward(5)">5 <i class="fas fa-forward-step"></i></button>
+                      <button class="px-2 py-1 rounded" onclick="nextAd()"><i class="fas fa-forward-step"></i></button>
+                    </div>
+
+                    <button class="px-2 py-1 rounded bg-red-500 text-white" onclick="stopAutoPlay()"><i class="fas fa-stop"></i></button>
+                  </div>
+
+                  <div class="flex gap-2">
+                    <button id="zoomInButton" class="px-2 py-1 rounded bg-blue-500 text-white" onclick="zoomTimeline('in')"><i class="fas fa-search-plus"></i></button>
+                    <button id="zoomOutButton" class="px-2 py-1 rounded bg-blue-500 text-white" onclick="zoomTimeline('out')"><i class="fas fa-search-minus"></i></button>
+                    <button id="resetZoomButton" class="px-2 py-1 rounded bg-gray-500 text-white" onclick="resetTimelineZoom()"><i class="fas fa-undo"></i></button>
+                  </div>
+                </div>
+              </div>
+              <div class="flex flex-col w-full snap-center">
+                <div class="w-full mt-16 relative">
+                  <div class="timeline-container">
+                    <div id="timelineWrapper" class="relative" style="width: 100%; min-width: 100%">
+                      <div id="timelineMarkers" class="flex justify-between absolute w-full" style="top: -15px"></div>
+                      <input type="range" id="timelineSlider" class="w-full" min="0" max="100" value="0" />
+                    </div>
+                  </div>
+                </div>
+
+                <div class="relative h-4 mt-2 overflow-hidden">
+                  <div id="scrollContainer" class="absolute top-0 left-0 h-full" style="width: 100%">
+                    <div id="scrollContent" class="h-full bg-gray-200"></div>
+                  </div>
+                  <div id="scrollIndicator" class="absolute top-0 h-full bg-blue-500 opacity-50" style="width: 100%"></div>
+                </div>
+              </div>
             </div>
-            <div class="absolute -bottom-40 left-0 w-full h-full z-20">
-              <svg width="160" height="600" id="svg-160x600" viewBox="5 0 190 480" xmlns="http://www.w3.org/2000/svg">
-                <path
-                  d="m2.22,438.33l0,-248.23c66.94,-30.64 104.41,-9.89 195.11,0l0,248.23l-195.11,0z"
-                  stroke="none"
-                  stroke-width="0"
-                  fill="rgba(250, 204, 21, 1)"
-                  fill-opacity="1"
-                  class="path-two"
-                  style="transition-property: all; transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1); transition-duration: 300ms; transition-delay: 150ms"
-                  id="path-two-160x600"
-                ></path>
-              </svg>
-            </div>
-            <div id="logo-icon-160x600" class="text-sm mb-4 flex gap-1 items-center">
-              <i class="fa fa-box" aria-hidden="true"></i> <a href="https://octopus.energy"> <span style="font-weight: 700">Octopus</span>Energy</a>
-            </div>
-            <img id="image-160x600" src="img/energy_savings.jpg" alt="Ad Image" class="w-full mb-4 absolute right-0 top-10" />
-            <div id="text-container-160x600" class="relative z-20">
-              <h2 class="ads-title text-xl font-bold mb-2" id="headline-160x600">Sunglasses Deals Up to 50% Off</h2>
-              <p class="text-sm" id="text-160x600">Discover the latest collection of Men's sunglasses. Summer Sale Up to 50% Off</p>
-              <p class="text-sm" id="tags-160x600">#EnergySavings #SwitchAndSave</p>
-              <button class="ads-button text-white px-2 py-2 mt-2 rounded" id="cta-160x600">SHOP NOW</button>
-            </div>
-          </div>
-        </div>
-
-        <!-- 300x250 Text Ad -->
-        <div class="flex flex-col items-center" onclick="selectBanner('300x250-text')">
-          <div class="bg-yellow-400 font-bold px-4 py-1 mb-2">300x250 Text Ad</div>
-          <div id="ad-container-300x250-text" class="ad-container ring-1 ring-gray-300 p-4 flex flex-col justify-between overflow-hidden" style="width: 300px; height: 250px">
-            <div id="logo-icon-300x250-text" class="text-sm mb-4">
-              <i class="fa fa-box" aria-hidden="true"></i> <a href="https://octopus.energy"> <span style="font-weight: 700">Octopus</span>Energy</a>
-            </div>
-            <img id="image-300x250-text" src="img/energy_savings_2.png" alt="Ad Image" />
-            <div id="text-container-300x250-text" class="relative z-20">
-              <h2 class="ads-title text-xl font-bold mb-2" id="headline-300x250-text">Sunglasses Deals Up to 50% Off</h2>
-              <p class="text-sm" id="text-300x250-text">Discover the latest collection of Men's sunglasses. Summer Sale Up to 50% Off</p>
-              <p class="text-sm" id="tags-300x250-text">#EnergySavings #SwitchAndSave</p>
-              <button class="ads-button text-white px-4 py-2 mt-2 rounded" id="cta-300x250-text">SHOP NOW</button>
-            </div>
-          </div>
-        </div>
-      </div>
-      <!-- 728x90 -->
-      <div class="flex flex-col items-center" onclick="selectBanner('728x90')">
-        <div class="bg-yellow-400 font-bold px-4 py-1 mb-2">728x90</div>
-        <div
-          id="ad-container-728x90"
-          class="ad-container ring-1 ring-gray-300 relative p-4 flex flex-row justify-between items-center overflow-hidden"
-          style="width: 728px; height: 90px"
-        >
-          <div class="absolute -bottom-3 left-0 w-full h-full">
-            <svg width="100%" height="100%" id="svg-728x90" viewBox="0 0 1340 170" xmlns="http://www.w3.org/2000/svg">
-              <path
-                d="M 0,445 C 0,445 0,148 0,148 C 142.28571428571428,158.21428571428572 284.57142857142856,168.42857142857142 412,170 C 539.4285714285714,171.57142857142858 652,164.5 754,148 C 856,131.5 947.4285714285713,105.57142857142858 1060,104 C 1172.5714285714287,102.42857142857142 1306.2857142857142,125.21428571428571 1440,148 C 1440,148 1440,445 1440,445 Z"
-                stroke="none"
-                stroke-width="0"
-                fill="rgba(250, 204, 21, 1)"
-                fill-opacity="0.53"
-                class="path-one"
-                style="transition-property: all; transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1); transition-duration: 300ms; transition-delay: 150ms"
-                id="path-one-728x90"
-              ></path>
-              <path
-                d="M 0,533 C 0,533 0,355 0,355 C 126.78571428571428,377.3571428571429 253.57142857142856,399.7142857142857 357,390 C 460.42857142857144,380.2857142857143 540.4999999999999,338.5 668,336 C 795.5000000000001,333.5 970.4285714285716,370.2857142857143 1107,380 C 1243.5714285714284,389.7142857142857 1341.7857142857142,372.3571428571429 1440,355 C 1440,355 1440,533 1440,533 Z"
-                stroke="none"
-                stroke-width="0"
-                fill="rgba(250, 204, 21, 1)"
-                fill-opacity="1"
-                class="path-two"
-                style="transition-property: all; transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1); transition-duration: 300ms; transition-delay: 150ms"
-                id="path-two-728x90"
-              ></path>
-            </svg>
-          </div>
-          <div id="logo-icon-728x90" class="text-sm mr-4 flex flex-row gap-1 z-50">
-            <i class="fa fa-box" aria-hidden="true"></i><a href="https://octopus.energy"> <span style="font-weight: 700">Octopus</span> Energy</a>
-          </div>
-          <img id="image-728x90" src="img/energy_savings_2.png" alt="Ad Image" class="w-24 z-50 relative" />
-          <div id="text-container-728x90" class="flex justify-between w-2/3 ml-4 z-50 relative items-center">
-            <h2 class="ads-title text-lg font-bold" id="headline-728x90">Sunglasses Deals Up to 50% Off</h2>
-            <p class="hidden text-sm px-4" id="text-728x90">Discover the latest collection of Men's sunglasses. Summer Sale Up to 50% Off</p>
-            <p class="text-sm hidden" id="tags-728x90">#EnergySavings #SwitchAndSave</p>
-            <button class="ads-button text-white px-4 py-2 mt-2 rounded-full" id="cta-728x90">SHOP NOW</button>
-          </div>
-        </div>
-      </div>
-
-      <!-- Facebook Ad 1200x628 -->
-      <div class="flex flex-col items-center" onclick="selectBanner('1200x628')">
-        <div class="bg-yellow-400 font-bold px-4 py-1 mb-2">1200x628 Facebook Ad</div>
-        <div
-          id="ad-container-1200x628"
-          class="ad-container ring-1 ring-gray-300 relative p-4 flex flex-row justify-between items-center overflow-hidden"
-          style="width: 1200px; height: 628px"
-        >
-          <div class="absolute -bottom-3 left-0 w-full h-3/4 z-10">
-            <svg width="100%" height="100%" id="svg-1200x628" viewBox="0 0 1440 523" xmlns="http://www.w3.org/2000/svg">
-              <path
-                d="M 0,533 C 0,533 0,177 0,177 C 111.64285714285714,171.32142857142856 223.28571428571428,165.64285714285714 336,151 C 448.7142857142857,136.35714285714286 562.4999999999999,112.74999999999997 674,134 C 785.5000000000001,155.25000000000003 894.7142857142858,221.3571428571429 1022,236 C 1149.2857142857142,250.6428571428571 1294.642857142857,213.82142857142856 1440,177 C 1440,177 1440,533 1440,533 Z"
-                stroke="none"
-                stroke-width="0"
-                fill-opacity="0.53"
-                class="path-one"
-                style="transition-property: all; transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1); transition-duration: 300ms; transition-delay: 150ms"
-                id="path-one-1200x628"
-              ></path>
-            </svg>
-          </div>
-          <div class="absolute -bottom-3 left-0 w-full h-3/4 z-20">
-            <svg width="100%" height="100%" id="svg-1200x628" viewBox="0 0 1440 523" xmlns="http://www.w3.org/2000/svg">
-              <path
-                d="M 0,533 C 0,533 0,355 0,355 C 126.78571428571428,377.3571428571429 253.57142857142856,399.7142857142857 357,390 C 460.42857142857144,380.2857142857143 540.4999999999999,338.5 668,336 C 795.5000000000001,333.5 970.4285714285716,370.2857142857143 1107,380 C 1243.5714285714284,389.7142857142857 1341.7857142857142,372.3571428571429 1440,355 C 1440,355 1440,533 1440,533 Z"
-                stroke="none"
-                stroke-width="0"
-                fill-opacity="1"
-                class="path-two"
-                style="transition-property: all; transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1); transition-duration: 300ms; transition-delay: 150ms"
-                id="path-two-1200x628"
-              ></path>
-            </svg>
-          </div>
-          <div id="logo-icon-1200x628" class="text-xl mr-4 flex flex-row gap-1 z-30 absolute bottom-2">
-            <i class="fa fa-box" aria-hidden="true"></i><a href="https://octopus.energy"> <span style="font-weight: 700">Octopus</span> Energy</a>
-          </div>
-          <img id="image-1200x628" src="img/energy_savings_2.png" alt="Ad Image" class="w-1/3 relative ml-20" />
-          <div id="text-container-1200x628" class="flex flex-col gap-2 w-1/2 ml-4 items-start z-20 relative">
-            <h2 id="headline-1200x628" class="ads-title font-bold">Sunglasses Deals Up to 50% Off</h2>
-            <p class="hidden" id="text-1200x628">From Aviator Shades to Retro sunglasses. Check out our new collection</p>
-            <p class="text-sm" id="tags-1200x628">#EnergySavings #SwitchAndSave</p>
-            <button class="ads-button px-4 py-2 mt-2 rounded" id="cta-1200x628">Shop now</button>
-          </div>
-        </div>
-      </div>
-      <!-- Facebook Ad 1200x628-2 -->
-      <div class="flex flex-col items-center" onclick="selectBanner('1200x628-2')">
-        <div class="bg-yellow-400 font-bold px-4 py-1 mb-2">1200x628-2 Facebook Ad</div>
-        <div
-          id="ad-container-1200x628-2"
-          class="ad-container ring-1 ring-gray-300 relative p-4 flex flex-row justify-between items-center overflow-hidden"
-          style="width: 1200px; height: 628px"
-        >
-          <div class="absolute -bottom-3 left-0 w-full h-3/4 z-10">
-            <svg width="100%" height="100%" id="svg-1200x628-2" viewBox="0 0 1440 523" xmlns="http://www.w3.org/2000/svg">
-              <path
-                d="M 0,533 C 0,533 0,177 0,177 C 111.64285714285714,171.32142857142856 223.28571428571428,165.64285714285714 336,151 C 448.7142857142857,136.35714285714286 562.4999999999999,112.74999999999997 674,134 C 785.5000000000001,155.25000000000003 894.7142857142858,221.3571428571429 1022,236 C 1149.2857142857142,250.6428571428571 1294.642857142857,213.82142857142856 1440,177 C 1440,177 1440,533 1440,533 Z"
-                stroke="none"
-                stroke-width="0"
-                fill-opacity="0.53"
-                class="path-one"
-                style="transition-property: all; transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1); transition-duration: 300ms; transition-delay: 150ms"
-                id="path-one-1200x628-2"
-              ></path>
-            </svg>
-          </div>
-          <div class="absolute -bottom-3 left-0 w-full h-3/4 z-20">
-            <svg width="100%" height="100%" id="svg-1200x628-2" viewBox="0 0 1440 523" xmlns="http://www.w3.org/2000/svg">
-              <path
-                d="M 0,533 C 0,533 0,355 0,355 C 126.78571428571428,377.3571428571429 253.57142857142856,399.7142857142857 357,390 C 460.42857142857144,380.2857142857143 540.4999999999999,338.5 668,336 C 795.5000000000001,333.5 970.4285714285716,370.2857142857143 1107,380 C 1243.5714285714284,389.7142857142857 1341.7857142857142,372.3571428571429 1440,355 C 1440,355 1440,533 1440,533 Z"
-                stroke="none"
-                stroke-width="0"
-                fill-opacity="1"
-                class="path-two"
-                style="transition-property: all; transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1); transition-duration: 300ms; transition-delay: 150ms"
-                id="path-two-1200x628-2"
-              ></path>
-            </svg>
-          </div>
-
-          <div id="logo-icon-1200x628-2" class="text-sm mr-4 flex flex-row gap-1 z-30">
-            <i class="fa fa-box" aria-hidden="true"></i><a href="https://octopus.energy"> <span style="font-weight: 700">Octopus</span> Energy</a>
-          </div>
-          <img id="image-1200x628-2" src="img/energy_savings_2.png" alt="Ad Image" class="w-1/2 z-10 relative" />
-          <div id="text-container-1200x628-2" class="flex flex-col gap-2 w-1/3 ml-4 items-start z-10 relative">
-            <h2 class="ads-title text-3xl font-bold" id="headline-1200x628-2">Sunglasses Deals Up to 50% Off</h2>
-            <p class="hidden" id="text-1200x628-2">From Aviator Shades to Retro sunglasses. Check out our new collection</p>
-            <p class="text-sm" id="tags-1200x628-2">#EnergySavings #SwitchAndSave</p>
-            <button class="ads-button text-white px-4 py-2 mt-2 rounded" id="cta-1200x628-2">Shop now</button>
-          </div>
-        </div>
-      </div>
-
-      <!-- 1080x1080 -->
-      <div class="flex flex-col items-center" onclick="selectBanner('1080x1080')">
-        <div class="bg-yellow-400 font-bold px-4 py-1 mb-2">1080x1080 Facebook 1:1 Ad</div>
-        <div
-          id="ad-container-1080x1080"
-          class="ad-container ring-1 ring-gray-300 relative p-8 flex flex-col justify-between items-center overflow-hidden"
-          style="width: 1080px; height: 1080px"
-        >
-          <div class="absolute -bottom-3 left-0 w-full h-3/4 z-10">
-            <svg width="100%" height="100%" id="svg-1080x1080" viewBox="0 0 1580 1180" xmlns="http://www.w3.org/2000/svg">
-              <path
-                d="M0,1600 L0,800 C266.67,866.67 533.33,933.33 800,933.33 C1066.67,933.33 1333.33,800 1600,666.67 L1600,1600 Z"
-                stroke="none"
-                stroke-width="0"
-                fill-opacity="0.53"
-                class="path-one"
-                id="path-one-1080x1080"
-              ></path>
-            </svg>
-          </div>
-          <div class="absolute -bottom-3 left-0 w-full h-3/4 z-20">
-            <svg width="100%" height="100%" id="svg-1080x1080" viewBox="0 0 1580 1180" xmlns="http://www.w3.org/2000/svg">
-              <path
-                d="M0,1600 L0,1066.67 C266.67,1000 533.33,933.33 800,933.33 C1066.67,933.33 1333.33,1066.67 1600,1200 L1600,1600 Z"
-                stroke="none"
-                stroke-width="0"
-                fill-opacity="1"
-                class="path-two"
-                id="path-two-1080x1080"
-              ></path>
-            </svg>
-          </div>
-
-          <div id="logo-icon-1080x1080" class="text-4xl mb-8 flex flex-row gap-2 z-30">
-            <i class="fa fa-box" aria-hidden="true"></i><a href="https://octopus.energy"> <span style="font-weight: 700">Octopus</span> Energy</a>
-          </div>
-
-          <img id="image-1080x1080" src="img/energy_savings_2.png" alt="Ad Image" class="w-3/4 z-30 mb-8" />
-
-          <div id="text-container-1080x1080" class="flex flex-col gap-6 w-3/4 items-center z-30 text-center">
-            <h2 class="ads-title text-6xl font-bold" id="headline-1080x1080">Sunglasses Deals Up to 50% Off</h2>
-            <p class="text-2xl" id="text-1080x1080">From Aviator Shades to Retro sunglasses. Check out our new collection</p>
-            <p class="text-xl" id="tags-1080x1080">#EnergySavings #SwitchAndSave</p>
-            <button class="ads-button text-white px-8 py-4 mt-4 rounded-lg text-2xl" id="cta-1080x1080">Shop now</button>
           </div>
         </div>
       </div>

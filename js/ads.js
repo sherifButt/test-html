@@ -1,5 +1,5 @@
-let currentIndex = 0;
-let currentImageIndex = 0;
+let _currentAdIndex = 0;
+let _currentImageIndex = 0;
 let selectedElement = null;
 let autoPlayInterval = null;
 let currentAudioSrc = '';
@@ -10,7 +10,7 @@ let audioStarted = false;
 let pausedTime = 0;
 let pauseStartTime = null;
 let totalDuration = 0;
-let isMoveSlidesActive = false;
+let isMoveMarkerActive = false;
 let isShiftKeyDown = false;
 let isDragging = false;
 let draggedMarker = null;
@@ -39,15 +39,45 @@ let scrollContainerWidth = 0;
 let originalCounterValue = '';
 
 // time line to jump to marker location when clicked
+// update ads object
+let currentCampaignIndex = 0;
+
+// fix jumbig issue
+// fix jumping issue
+let isAutoPlayActive = false;
+
+// update animationTemplates array object
+const sizes = ["480x120", "300x250", "160x600", "300x250-text", "728x90", "1200x628", "1200x628-2", "1080x1080"];
+
+// implanting campaign object
+let ads = campaigns[currentCampaignIndex].ads.map(ad => {
+    return {
+        ...ad,
+        logo: campaigns[currentCampaignIndex].logo,
+        audio: campaigns[currentCampaignIndex].audio.url
+    }
+});
+
+let campaign = campaigns[currentCampaignIndex];
+delete campaign.ads;
+
+
 
 // Load settings from local storage or use default
 const storedBannerSettings = JSON.parse(localStorage.getItem('bannerSettings')) || bannerSettings;
 const storedAds = JSON.parse(localStorage.getItem('ads')) || ads;
 const storedImages = JSON.parse(localStorage.getItem('images')) || images;
+const storedCampaigns = JSON.parse(localStorage.getItem('campaigns')) || campaigns;
+const storedCampaign = JSON.parse(localStorage.getItem('campaign')) || campaign;
+const storedCurrentCampaignIndex = JSON.parse(localStorage.getItem('currentCampaignIndex')) || currentCampaignIndex;
+let currentAdIndex = JSON.parse(localStorage.getItem('currentAdIndex')) || 0;
+let currentImageIndex = JSON.parse(localStorage.getItem('currentImageIndex')) || 0;
 
 function getSelectedBanner() {
     return document.getElementById('bannerSelect').value;
 }
+
+
 
 // Add this function to apply all saved settings for a specific banner size
 function applyAllSavedSettings(size) {
@@ -148,6 +178,27 @@ function applyAllSavedSettings(size) {
     if (layoutSettings.backgroundImage !== undefined) {
         toggleBackground();
     }
+
+    // Apply settings for new elements
+    const textContainer = document.getElementById(`text-container-${size}`);
+    if (textContainer && layoutSettings.textContainerStyle) {
+        Object.assign(textContainer.style, layoutSettings.textContainerStyle);
+    }
+
+    const backgroundImage = document.getElementById(`background-image-${size}`);
+    if (backgroundImage && layoutSettings.backgroundImageStyle) {
+        Object.assign(backgroundImage.style, layoutSettings.backgroundImageStyle);
+    }
+
+    const imageFilter = document.getElementById(`image-filter-${size}`);
+    if (imageFilter && layoutSettings.imageFilterStyle) {
+        Object.assign(imageFilter.style, layoutSettings.imageFilterStyle);
+    }
+
+    const backgroundBanner = document.getElementById(`background-banner-${size}`);
+    if (backgroundBanner && layoutSettings.backgroundBannerStyle) {
+        Object.assign(backgroundBanner.style, layoutSettings.backgroundBannerStyle);
+    }
 }
 
 
@@ -187,8 +238,13 @@ function updateElementsList() {
         { id: `tags-${size}`, name: 'Tags' },
         { id: `cta-${size}`, name: 'CTA' },
         { id: `path-one-${size}`, name: 'SVG Wave 1' },
-        { id: `path-two-${size}`, name: 'SVG Wave 2' }
+        { id: `path-two-${size}`, name: 'SVG Wave 2' },
+        { id: `background-${size}`, name: 'Background' },
+        { id: `background-image-${size}`, name: 'Background Image' },
+        { id: `image-filter-${size}`, name: 'Image Filter' },
+        { id: `background-banner-${size}`, name: 'Background Banner' }
     ];
+
 
     elements.forEach(element => {
         const el = document.getElementById(element.id);
@@ -677,7 +733,6 @@ function applyElementPositions() {
     applyStoredColors();
 }
 
-
 function resetElement() {
     if (!selectedElement) return;
 
@@ -728,8 +783,6 @@ function resetElement() {
     console.log(`Element reset: ${selectedElement.id}`);
 }
 
-
-
 function updateCheckboxStates(size) {
     const settings = storedBannerSettings.find(setting => setting.size === size).settings.elements;
     const elements = {
@@ -739,7 +792,12 @@ function updateCheckboxStates(size) {
         'text': 'text',
         'tags': 'tags',
         'cta': 'cta',
-        'svg-wave': 'svgWave'
+        'svg-wave': 'svgWave',
+        'text-container': 'textContainer',
+        'background-image': 'backgroundImageImage',
+        'image-filter': 'imageFilter',
+        'background-banner': 'backgroundBanner'
+        
     };
 
     Object.keys(elements).forEach(element => {
@@ -848,6 +906,11 @@ function saveSettings() {
     localStorage.setItem('bannerSettings', JSON.stringify(storedBannerSettings));
     localStorage.setItem('ads', JSON.stringify(storedAds));
     localStorage.setItem('images', JSON.stringify(storedImages));
+    localStorage.setItem('campaigns', JSON.stringify(storedCampaigns));
+    localStorage.setItem('campaign', JSON.stringify(storedCampaign));
+    localStorage.setItem('currentCampaignIndex', JSON.stringify(currentCampaignIndex));
+    localStorage.setItem('currentAdIndex', JSON.stringify(currentAdIndex));
+    localStorage.setItem('currentImageIndex', JSON.stringify(currentImageIndex));
 }
 
 function toggleElement(element) {
@@ -865,9 +928,10 @@ function toggleElement(element) {
             el.style.display = el.style.display === 'none' ? 'block' : 'none';
         }
     }
+    if(!element) return;
     const settings = storedBannerSettings.find(setting => setting.size === size).settings.elements;
     const elementKey = {
-        'logo-icon': 'logoIcon',
+       'logo-icon': 'logoIcon',
         'svg-wave': 'svgWave',
         'path-one': 'pathOne',
         'path-two': 'pathTwo',
@@ -877,6 +941,12 @@ function toggleElement(element) {
         'tags': 'tags',
         'cta': 'cta',
         'background': 'backgroundImage',
+        'logo-title': 'logoTitle',
+        'text-container': 'textContainer',
+        'background-image': 'backgroundImageImage',
+        'image-filter': 'imageFilter',
+        'background-banner': 'backgroundBanner'
+
     }[element];
     settings[elementKey] = el.style.display !== 'none';
     saveSettings();
@@ -884,7 +954,8 @@ function toggleElement(element) {
 }
 
 
-function downloadSettings() {
+async function downloadSettings() {
+    await convertAllTimestampsToMinutes();
     const settingsToDownload = {
         ads: storedAds,
         bannerSettings: storedBannerSettings,
@@ -897,9 +968,10 @@ function downloadSettings() {
     document.body.appendChild(downloadAnchorNode);
     downloadAnchorNode.click();
     downloadAnchorNode.remove();
+    await convertAllTimestampsToMilliseconds();
 }
 
-function uploadSettings() {
+async function uploadSettings() {
     const input = document.createElement('input');
     input.type = 'file';
     input.accept = 'application/json';
@@ -983,7 +1055,7 @@ function updateTextLength() {
     const size = getSelectedBanner();
     const textElement = document.getElementById(`text-${size}`);
     const settings = storedBannerSettings.find(setting => setting.size === size).settings.layout;
-    const adTextArray = storedAds[currentIndex].text;
+    const adTextArray = storedAds[currentAdIndex].text;
 
     // Cycle through text lengths
     settings.textLength = (settings.textLength + 1) % adTextArray.length;
@@ -994,7 +1066,7 @@ function updateTextLength() {
 
 function updateLogo(size) {
     const logoIcon = document.getElementById(`logo-icon-${size}`);
-    const logo = storedAds[currentIndex].logo;
+    const logo = storedAds[currentAdIndex].logo;
     let iconHtml = '';
     if (logo.icon.startsWith('img/')) {
         iconHtml = `<img src="${logo.icon}" alt="Logo" style="width: 24px; height: 24px;">`;
@@ -1077,7 +1149,7 @@ function updateTextLength() {
     const size = getSelectedBanner();
     const textElement = document.getElementById(`text-${size}`);
     const settings = storedBannerSettings.find(setting => setting.size === size).settings.layout;
-    const adTextArray = storedAds[currentIndex].text;
+    const adTextArray = storedAds[currentAdIndex].text;
 
     // Cycle through text lengths
     settings.textLength = (settings.textLength + 1) % adTextArray.length;
@@ -1102,6 +1174,7 @@ function playFirstAudioAndRunSlides() {
         pauseAutoPlay();
         playButton.innerHTML = '<i class="fas fa-play w-10"></i>';
         playButton.classList.remove('active');
+        isAutoPlayActive = false;
     } else {
         // Play functionality
         if (!audioStarted) {
@@ -1118,7 +1191,7 @@ function playFirstAudioAndRunSlides() {
 
         // Update startTime and find the correct current index
         startTime = Date.now() - (sliderTime * 1000);
-        currentIndex = findAdIndexForTime(sliderTime * 1000);
+        currentAdIndex = findAdIndexForTime(sliderTime * 1000);
 
         audioPlayer.play().then(() => {
             audioStarted = true;
@@ -1126,9 +1199,12 @@ function playFirstAudioAndRunSlides() {
             startCounter();
             playButton.innerHTML = '<i class="fas fa-pause w-10"></i>';
             playButton.classList.add('active');
+            isAutoPlayActive = true;
+            updateTimelineMarkers(); // Update markers when playback starts
         }).catch(error => {
             console.log('Audio play error:', error);
             audioPlayer.pause();
+            isAutoPlayActive = false;
         });
     }
 }
@@ -1173,8 +1249,8 @@ function adjustPlaybackTime(newTimeInSeconds) {
     }
 
     // Update current index and ads if necessary
-    if (newIndex !== currentIndex) {
-        currentIndex = newIndex;
+    if (newIndex !== currentAdIndex) {
+        currentAdIndex = newIndex;
         updateAds();
     }
 
@@ -1191,7 +1267,6 @@ function adjustPlaybackTime(newTimeInSeconds) {
 
 
 function pauseAutoPlay() {
-    const audioPlayer = document.getElementById('audioPlayer');
     if (autoPlayTimeout) {
         clearTimeout(autoPlayTimeout);
         autoPlayTimeout = null;
@@ -1199,6 +1274,7 @@ function pauseAutoPlay() {
     audioPlayer.pause();
     stopCounter();
     pauseStartTime = Date.now();
+    isAutoPlayActive = false;
 }
 
 function startAutoPlay() {
@@ -1206,6 +1282,7 @@ function startAutoPlay() {
         pausedTime += Date.now() - pauseStartTime;
         pauseStartTime = null;
     }
+    isAutoPlayActive = true;
     if (!autoPlayTimeout) {
         scheduleNextAd();
     }
@@ -1224,6 +1301,7 @@ function stopAutoPlay() {
         }
     }
     stopCounter();
+    isAutoPlayActive = false;
 }
 
 function restartAutoPlay() {
@@ -1239,7 +1317,7 @@ function restartAutoPlay() {
     stopCounter();
 
     // Reset all variables
-    currentIndex = 0;
+    currentAdIndex = 0;
     startTime = Date.now();
     pausedTime = 0;
     pauseStartTime = null;
@@ -1276,6 +1354,7 @@ function updateCounter() {
     const currentTime = audioPlayer.currentTime * 1000; // Convert to milliseconds
     document.getElementById('timeCounter').innerText = formatTimestamp(currentTime);
     updateSliderPosition();
+    updateTimelineMarkers(); // Update markers continuously during playback
 }
 
 function scheduleNextAd() {
@@ -1287,16 +1366,26 @@ function scheduleNextAd() {
         return;
     }
 
-    if (currentIndex < storedAds.length - 1) {
-        const nextAdIndex = currentIndex + 1;
+    if (currentAdIndex < storedAds.length - 1) {
+        const nextAdIndex = currentAdIndex + 1;
         const nextAdTime = getCurrentAdTimestamp(nextAdIndex);
 
         const delay = nextAdTime - currentTime;
-        autoPlayTimeout = setTimeout(() => {
-            currentIndex = nextAdIndex;
-            updateAds();
-            scheduleNextAd();
-        }, Math.max(delay, 0));
+
+        if (isAutoPlayActive) {
+            const currentAd = storedAds[currentAdIndex];
+            const currentAnimation = currentAd.animation || {};
+            const currentTemplate = animationTemplates.find(t => t.id === currentAnimation.template);
+            const exitDuration = currentTemplate ? currentTemplate.exit.settings.duration + currentTemplate.exit.settings.delay : 0;
+
+            autoPlayTimeout = setTimeout(() => {
+                handleExitAnimations(() => {
+                    currentAdIndex = nextAdIndex;
+                    updateAds();
+                    scheduleNextAd();
+                });
+            }, Math.max(delay - exitDuration, 0));
+        }
     } else {
         // We're past the last ad, so just update the slider position
         autoPlayTimeout = setTimeout(() => {
@@ -1306,16 +1395,16 @@ function scheduleNextAd() {
     }
 }
 
-function toggleMoveSlides() {
-    const moveSlidesButton = document.getElementById('moveSlidesButton');
-    isMoveSlidesActive = !isMoveSlidesActive;
+function toggleMoveMarker() {
+    const moveMarkerButton = document.getElementById('moveMarkerButton');
+    isMoveMarkerActive = !isMoveMarkerActive;
 
-    if (isMoveSlidesActive) {
-        moveSlidesButton.classList.add('active', 'bg-blue-500', 'text-white');
-        moveSlidesButton.classList.remove('bg-gray-300');
+    if (isMoveMarkerActive) {
+        moveMarkerButton.classList.add('active', 'bg-blue-500', 'text-white');
+        moveMarkerButton.classList.remove('bg-gray-300');
     } else {
-        moveSlidesButton.classList.remove('active', 'bg-blue-500', 'text-white');
-        moveSlidesButton.classList.add('bg-gray-300');
+        moveMarkerButton.classList.remove('active', 'bg-blue-500', 'text-white');
+        moveMarkerButton.classList.add('bg-gray-300');
     }
 }
 
@@ -1345,7 +1434,12 @@ function resetTimelineZoom() {
 
 function updateTimelineZoom() {
     const timelineSlider = document.getElementById('timelineSlider');
-    const timelineMarkers = document.getElementById('timelineMarkers');
+
+    // Ensure zoomLevel is valid
+    if (!isFinite(zoomLevel) || zoomLevel <= 0) {
+        console.warn('Invalid zoom level, resetting to 1:', zoomLevel);
+        zoomLevel = 1;
+    }
 
     // Calculate new start and end times
     const visibleDuration = totalDuration / zoomLevel;
@@ -1362,21 +1456,15 @@ function updateTimelineZoom() {
     timelineSlider.min = startTime;
     timelineSlider.max = endTime;
 
-    // Update marker positions
-    const markers = timelineMarkers.children;
-    for (let i = 0; i < markers.length; i++) {
-        const marker = markers[i];
-        const markerTime = parseInt(marker.getAttribute('data-time'));
-        const markerPosition = ((markerTime - startTime) / (endTime - startTime)) * 100;
-        marker.style.left = `${markerPosition}%`;
-    }
+    console.log('Timeline zoom updated:', { startTime, endTime, totalDuration, zoomLevel, zoomCenter });
 
     // Ensure current time is within visible range
-    const currentTime = parseInt(timelineSlider.value);
+    const currentTime = parseFloat(timelineSlider.value);
     if (currentTime < startTime || currentTime > endTime) {
         timelineSlider.value = Math.min(Math.max(currentTime, startTime), endTime);
     }
 
+    updateTimelineMarkers();
     updateSliderPosition();
     updateZoomIndicator();
     updateScroller();
@@ -1416,7 +1504,7 @@ function initializeScroller() {
         const clickX = e.pageX - scrollContainer.offsetLeft;
         const scrollerWidth = scrollContainer.offsetWidth;
         const indicatorWidth = scrollIndicator.offsetWidth;
-        
+
         // Check if the click is on the left or right side of the scroller
         if (clickX < indicatorWidth || clickX > scrollerWidth - indicatorWidth) {
             const shiftAmount = totalDuration * 0.1; // Shift by 10% of total duration
@@ -1431,10 +1519,10 @@ function initializeScroller() {
 function updateTimelineFromScroller() {
     const scrollContainer = document.getElementById('scrollContainer');
     const scrollContent = document.getElementById('scrollContent');
-    
+
     const scrollPercentage = scrollContainer.scrollLeft / (scrollContent.offsetWidth - scrollContainer.offsetWidth);
     const newCenter = scrollPercentage * totalDuration;
-    
+
     zoomCenter = newCenter;
     updateTimelineZoom();
 }
@@ -1454,14 +1542,14 @@ function updateScroller() {
     const scrollContainer = document.getElementById('scrollContainer');
     const scrollContent = document.getElementById('scrollContent');
     const scrollIndicator = document.getElementById('scrollIndicator');
-    
+
     scrollContainerWidth = scrollContainer.offsetWidth;
     const contentWidth = scrollContainerWidth * zoomLevel;
     scrollContent.style.width = `${contentWidth}px`;
-    
+
     const indicatorWidth = (scrollContainerWidth / contentWidth) * 100;
     const indicatorLeft = (zoomCenter / totalDuration) * (100 - indicatorWidth);
-    
+
     scrollIndicator.style.width = `${indicatorWidth}%`;
     scrollIndicator.style.left = `${indicatorLeft}%`;
 }
@@ -1469,17 +1557,28 @@ function updateScroller() {
 function initializeTimeline() {
     const timelineSlider = document.getElementById('timelineSlider');
     const timelineMarkers = document.getElementById('timelineMarkers');
+    const audioPlayer = document.getElementById('audioPlayer');
 
     // Calculate total duration based on the last ad timestamp or audio duration, whichever is greater
     const lastAdTimestamp = Math.max(...storedAds.map(ad => ad.timestamp));
-    const audioPlayer = document.getElementById('audioPlayer');
-    totalDuration = Math.max(lastAdTimestamp, audioPlayer.duration * 1000);
+    const audioDuration = isFinite(audioPlayer.duration) ? audioPlayer.duration * 1000 : 0;
+    const campaignDuration = isFinite(storedCampaign.audio.duration) ? storedCampaign.audio.duration : 0;
 
-    console.log(`Last ad timestamp: ${lastAdTimestamp}, Audio duration: ${audioPlayer.duration * 1000}`);
+    totalDuration = Math.max(lastAdTimestamp, audioDuration, campaignDuration);
+
+    // Ensure totalDuration is a valid, finite number
+    if (!isFinite(totalDuration) || totalDuration <= 0) {
+        console.warn('Invalid total duration, using default:', totalDuration);
+        totalDuration = 60000; // Default to 1 minute if we can't determine a valid duration
+    }
+
+    console.log(`Last ad timestamp: ${lastAdTimestamp}, Audio duration: ${audioDuration}, Campaign duration: ${campaignDuration}`);
     console.log(`Total duration set to: ${totalDuration}`);
 
-    // Set slider max value
+    // Set initial slider values
+    timelineSlider.min = 0;
     timelineSlider.max = totalDuration;
+    timelineSlider.value = 0;
 
     // Clear existing markers
     timelineMarkers.innerHTML = '';
@@ -1498,19 +1597,52 @@ function initializeTimeline() {
     timelineSlider.addEventListener('input', handleSliderChange);
 }
 
-function convertAllTimestampsToMilliseconds() {
+function onAudioLoaded() {
+    const audioPlayer = document.getElementById('audioPlayer');
+    console.log('Audio loaded. Duration:', audioPlayer.duration);
+    console.log('Is duration finite?', isFinite(audioPlayer.duration));
+    console.log('Campaign audio duration:', storedCampaign.audio.duration);
+    console.log('Is campaign duration finite?', isFinite(storedCampaign.audio.duration));
+    initializeTimeline();
+    updateAds();
+}
+
+async function convertAllTimestampsToMilliseconds() {
     storedAds.forEach(ad => {
         if (typeof ad.timestamp === 'string') {
             const [minutes, seconds] = ad.timestamp.split(':').map(Number);
-            ad.timestamp = (minutes * 60 + seconds) * 1000;
+            ad.timestamp = Number(ad.timestamp.split(':')[0]) * 60 * 1000 + Number(ad.timestamp.split(':')[1]) * 1000;
         }
     });
+    if (typeof storedCampaign.audio.duration === 'string') {
+        const [minutes, seconds] = storedCampaign.audio.duration.split(':').map(Number);
+        storedCampaign.audio.duration = Number(storedCampaign.audio.duration.split(':')[0]) * 60 * 1000 + Number(storedCampaign.audio.duration.split(':')[1]) * 1000;
+    }
+
     saveSettings();
     console.log('All timestamps converted to milliseconds');
 }
 
+async function convertAllTimestampsToMinutes() {
+    storedAds.forEach(ad => {
+        if (typeof ad.timestamp === 'number') {
+            const minutes = Math.floor(ad.timestamp / 60000);
+            const seconds = Math.floor((ad.timestamp % 60000) / 1000);
+            ad.timestamp = `${padZero(minutes)}:${padZero(seconds)}`;
+        }
+    });
+    if (typeof storedCampaign.audio.duration === 'number') {
+        const minutes = Math.floor(storedCampaign.audio.duration / 60000);
+        const seconds = Math.floor((storedCampaign.audio.duration % 60000) / 1000);
+        storedCampaign.audio.duration = `${padZero(minutes)}:${padZero(seconds)}`;
+    }
+    saveSettings();
+    console.log('All timestamps converted back to minutes');
+}
+
+
 function handleMarkerClick(event, index) {
-    if (isMoveSlidesActive || isShiftKeyDown) {
+    if (isMoveMarkerActive || isShiftKeyDown) {
         moveSlideTimestamp(index);
     } else {
         const timestamp = getCurrentAdTimestamp(index);
@@ -1560,7 +1692,7 @@ function handleSliderChange() {
     startTime = Date.now() - sliderValue;
 
     // Find the correct ad index for the new time
-    currentIndex = findAdIndexForTime(sliderValue);
+    currentAdIndex = findAdIndexForTime(sliderValue);
 
     // Update ads
     updateAds();
@@ -1594,7 +1726,7 @@ function jumpToTime(timestamp) {
 
     // Update other elements
     updateSliderPosition();
-    currentIndex = findAdIndexForTime(timestamp);
+    currentAdIndex = findAdIndexForTime(timestamp);
     updateAds();
     updateCounter();
 
@@ -1609,10 +1741,41 @@ function updateSliderPosition() {
     const timelineSlider = document.getElementById('timelineSlider');
     const audioPlayer = document.getElementById('audioPlayer');
     const currentTime = audioPlayer.currentTime * 1000; // Convert to milliseconds
-    const visibleDuration = parseInt(timelineSlider.max) - parseInt(timelineSlider.min);
-    const sliderPosition = ((currentTime - parseInt(timelineSlider.min)) / visibleDuration) * 100;
+
+    // Ensure min and max are set and are finite numbers
+    let visibleStart = parseFloat(timelineSlider.min);
+    let visibleEnd = parseFloat(timelineSlider.max);
+
+    if (!isFinite(visibleStart) || !isFinite(visibleEnd)) {
+        console.warn('Slider min/max not set properly. Using default values.');
+        visibleStart = 0;
+        visibleEnd = totalDuration;
+        timelineSlider.min = visibleStart;
+        timelineSlider.max = visibleEnd;
+    }
+
+    const visibleDuration = visibleEnd - visibleStart;
+
+    // Debug logging
+    console.log('Current Time:', currentTime);
+    console.log('Visible Start:', visibleStart);
+    console.log('Visible End:', visibleEnd);
+    console.log('Visible Duration:', visibleDuration);
+    console.log('Total Duration:', totalDuration);
+
+    if (!isFinite(currentTime) || visibleDuration <= 0) {
+        console.error('Invalid values for slider position calculation');
+        return; // Exit the function to prevent further errors
+    }
+
+    const sliderPosition = ((currentTime - visibleStart) / visibleDuration) * 100;
+
+    // Ensure sliderPosition is within bounds
+    const boundedSliderPosition = Math.max(0, Math.min(100, sliderPosition));
+
     timelineSlider.value = currentTime;
-    console.log(`Updating slider position: ${sliderPosition}% (${currentTime}ms / ${visibleDuration}ms)`);
+
+    console.log(`Updating slider position: ${boundedSliderPosition.toFixed(2)}% (${currentTime.toFixed(3)}ms / ${visibleDuration}ms)`);
 }
 
 function updateSlideNavigationButtons() {
@@ -1620,29 +1783,45 @@ function updateSlideNavigationButtons() {
     const currentButton = document.getElementById('currentSlideButton');
     const nextButton = document.getElementById('nextSlideButton');
 
-    const prevIndex = Math.max(0, currentIndex - 1);
-    const nextIndex = Math.min(storedAds.length - 1, currentIndex + 1);
+    const prevIndex = Math.max(0, currentAdIndex - 1);
+    const nextIndex = Math.min(storedAds.length - 1, currentAdIndex + 1);
 
-    prevButton.textContent = storedAds[prevIndex].headline;
-    currentButton.textContent = storedAds[currentIndex].headline;
-    nextButton.textContent = storedAds[nextIndex].headline;
+    prevButton.innerHTML = '<i class="fas fa-backward-step"></i> ' + storedAds[prevIndex].headline;
+    currentButton.innerHTML = '<i class="fa-solid fa-arrows-rotate"></i> ' + storedAds[currentAdIndex].headline;
+    nextButton.innerHTML = storedAds[nextIndex].headline + ' <i class="fas fa-forward-step"></i>';
 
-    prevButton.onclick = () => jumpToAd(prevIndex);
-    currentButton.onclick = () => jumpToAd(currentIndex);
-    nextButton.onclick = () => jumpToAd(nextIndex);
+    prevButton.onclick = () => handleExitAnimations(()=> jumpToAd(prevIndex))
+    currentButton.onclick = () => jumpToAd(currentAdIndex);
+    nextButton.onclick = () => handleExitAnimations(()=>jumpToAd(nextIndex));
 }
 
 function updateTimelineMarkers() {
-    const markers = document.querySelectorAll('#timelineMarkers > div');
-    markers.forEach((marker, index) => {
-        if (index === currentIndex) {
-            marker.classList.remove('bg-blue-500');
-            marker.classList.add('bg-red-500');
+    const timelineSlider = document.getElementById('timelineSlider');
+    const timelineMarkers = document.getElementById('timelineMarkers');
+    const visibleStart = parseFloat(timelineSlider.min);
+    const visibleEnd = parseFloat(timelineSlider.max);
+    const visibleDuration = visibleEnd - visibleStart;
+
+    const markers = timelineMarkers.children;
+    for (let i = 0; i < markers.length; i++) {
+        const marker = markers[i];
+        const markerTime = parseInt(marker.getAttribute('data-time'));
+
+        if (markerTime >= visibleStart && markerTime <= visibleEnd) {
+            const markerPosition = ((markerTime - visibleStart) / visibleDuration) * 100;
+            marker.style.left = `${markerPosition}%`;
+            marker.style.display = 'block';
+
+            // Highlight the current marker
+            if (i === currentAdIndex) {
+                marker.classList.add('current-marker');
+            } else {
+                marker.classList.remove('current-marker');
+            }
         } else {
-            marker.classList.remove('bg-red-500');
-            marker.classList.add('bg-blue-500');
+            marker.style.display = 'none';
         }
-    });
+    }
 }
 
 function createDraggableMarker(index, timestamp) {
@@ -1669,7 +1848,7 @@ function handleMarkerInteraction(e) {
     const marker = e.target;
     const index = parseInt(marker.getAttribute('data-index'));
 
-    if (isMoveSlidesActive) {
+    if (isMoveMarkerActive) {
         moveSlideToCurrentTime(index);
     } else {
         startDragging(e);
@@ -1688,8 +1867,8 @@ function moveSlideToCurrentTime(index) {
     // Sort storedAds based on new timestamps
     storedAds.sort((a, b) => a.timestamp - b.timestamp);
 
-    // Update currentIndex
-    currentIndex = storedAds.findIndex(ad => ad.timestamp === currentTime);
+    // Update currentAdIndex
+    currentAdIndex = storedAds.findIndex(ad => ad.timestamp === currentTime);
 
     // Save changes and update UI
     saveSettings();
@@ -1735,14 +1914,14 @@ function drag(e) {
 
     const visibleDuration = parseInt(timelineSlider.max) - parseInt(timelineSlider.min);
     const pixelsPerMs = timelineRect.width / visibleDuration;
-    
+
     // Apply a damping factor to slow down the movement
-    const dampingFactor = 0.25 / zoomLevel;
+    const dampingFactor = .5 / zoomLevel;
     const timeDelta = (deltaX / pixelsPerMs) * dampingFactor;
 
     const originalTime = parseInt(draggedMarker.getAttribute('data-time'));
     let newTime = Math.max(parseInt(timelineSlider.min), Math.min(parseInt(timelineSlider.max), originalTime + timeDelta))
-    
+
 
     let newPosition = ((newTime - parseInt(timelineSlider.min)) / visibleDuration) * 100;
     newPosition = Math.max(0, Math.min(100, newPosition));
@@ -1770,8 +1949,8 @@ function stopDragging() {
     // Sort storedAds based on new timestamps
     storedAds.sort((a, b) => a.timestamp - b.timestamp);
 
-    // Update currentIndex
-    currentIndex = storedAds.findIndex(ad => ad.timestamp === newTimestamp);
+    // Update currentAdIndex
+    currentAdIndex = storedAds.findIndex(ad => ad.timestamp === newTimestamp);
 
     // Revert the counter to its original value
     document.getElementById('timeCounter').innerText = originalCounterValue;
@@ -1797,19 +1976,19 @@ function updateCounterDuringDrag(time) {
 
 function animateZoom(startZoom, endZoom, duration) {
     const startTime = Date.now();
-    
+
     function step() {
         const currentTime = Date.now();
         const progress = Math.min((currentTime - startTime) / duration, 1);
-        
+
         zoomLevel = startZoom + (endZoom - startZoom) * progress;
         updateTimelineZoom();
-        
+
         if (progress < 1) {
             requestAnimationFrame(step);
         }
     }
-    
+
     requestAnimationFrame(step);
 }
 
@@ -1834,8 +2013,8 @@ function addSlideAtCurrentTime() {
     // Insert the new slide
     storedAds.splice(insertIndex, 0, newSlide);
 
-    // Update currentIndex to point to the new slide
-    currentIndex = insertIndex;
+    // Update currentAdIndex to point to the new slide
+    currentAdIndex = insertIndex;
 
     // Save changes
     saveSettings();
@@ -1851,13 +2030,13 @@ function addSlideAtCurrentTime() {
 function updateTimelineWithNewMarker() {
     const timelineMarkers = document.getElementById('timelineMarkers');
     const newMarker = document.createElement('div');
-    const markerPosition = (getCurrentAdTimestamp(currentIndex) / totalDuration) * 100;
+    const markerPosition = (getCurrentAdTimestamp(currentAdIndex) / totalDuration) * 100;
 
     newMarker.className = 'absolute w-2.5 h-2.5 bg-green-500 rounded-full cursor-pointer transform -translate-x-1/2';
     newMarker.style.left = `${markerPosition}%`;
     newMarker.style.top = '-10px';
-    newMarker.title = formatTimestamp(getCurrentAdTimestamp(currentIndex));
-    newMarker.onclick = (event) => handleMarkerClick(event, currentIndex);
+    newMarker.title = formatTimestamp(getCurrentAdTimestamp(currentAdIndex));
+    newMarker.onclick = (event) => handleMarkerClick(event, currentAdIndex);
 
     timelineMarkers.appendChild(newMarker);
 
@@ -1869,76 +2048,145 @@ function updateTimelineWithNewMarker() {
 }
 
 function updateAds() {
-    const sizes = ["480x120", "300x250", "160x600", "300x250-text", "728x90", "1200x628", "1200x628-2", "1080x1080"];
+    
     sizes.forEach(size => {
-        const pathOne = document.getElementById(`path-one-${size}`);
-        const pathTwo = document.getElementById(`path-two-${size}`);
-        const headline = document.getElementById(`headline-${size}`);
-        const textContainer = document.getElementById(`text-container-${size}`);
-        const text = document.getElementById(`text-${size}`);
-        const tags = document.getElementById(`tags-${size}`);
-        const cta = document.getElementById(`cta-${size}`);
-        const image = document.getElementById(`image-${size}`);
-        const logoIcon = document.getElementById(`logo-icon-${size}`);
-        const logoTitle = document.getElementById(`logo-title-${size}`);
+        const elements = {
+            pathOne: document.getElementById(`path-one-${size}`),
+            pathTwo: document.getElementById(`path-two-${size}`),
+            headline: document.getElementById(`headline-${size}`),
+            text: document.getElementById(`text-${size}`),
+            tags: document.getElementById(`tags-${size}`),
+            cta: document.getElementById(`cta-${size}`),
+            image: document.getElementById(`image-${size}`),
+            logoIcon: document.getElementById(`logo-icon-${size}`),
+            backgroundBanner: document.getElementById(`background-banner-${size}`),
+            imageBackground: document.getElementById(`image-background-${size}`),
+            imageFilter: document.getElementById(`image-filter-${size}`)
+        };
         const settings = storedBannerSettings.find(setting => setting.size === size).settings;
 
-        const ad = storedAds[currentIndex];
+        const ad = storedAds[currentAdIndex];
         const animation = ad.animation || {};
 
-        if (headline) headline.innerText = ad.headline;
+        // Update content
+        if (elements.headline) elements.headline.innerText = ad.headline;
         const adTextArray = ad.text;
-        if (text) text.innerText = adTextArray[settings.layout.textLength] || adTextArray[0];
-        if (tags) tags.innerText = ad.tags;
-        if (cta && cta.innerText !== '>') {
-            cta.innerText = ad.cta;
+        if (elements.text) elements.text.innerText = adTextArray[settings.layout.textLength] || adTextArray[0];
+        if (elements.tags) elements.tags.innerText = ad.tags;
+        if (elements.cta && elements.cta.innerText !== '>') {
+            elements.cta.innerText = ad.cta;
         }
+
         updateLogo(size);
+        
+        // Update background banner
+        if (ad.img && elements.image) elements.image.src = ad.img; 
+        if (ad.imageBackground && elements.imageBackground) elements.imageBackground.src = ad.imageBackground;
+        if (ad.imageFilter && elements.imageFilter) elements.imageFilter.style.backgroundColor = ad.imageFilter;
+        
 
-        if (ad.img) {
-            if (image) image.src = ad.img;
+        // Apply visibility settings
+        Object.entries(elements).forEach(([key, element]) => {
+            if(key == 'pathOne' ||key == 'pathTwo'){
+                 if(elements.svgWave){
+                    elements.svgWave.style.display = settings.elements[key] ? 'block' : 'none';
+                }
+               
+            } else if (element) {
+                element.style.display = settings.elements[key] ? 'block' : 'none';
+
+            }
+        });
+
+        // Apply other settings
+        if (elements.image) elements.image.style.width = settings.layout.imageSize;
+        if (elements.headline) elements.headline.style.fontSize = settings.layout.titleSize;
+        if (elements.text) elements.text.style.fontSize = settings.layout.bodySize;
+        if (elements.logoIcon) elements.logoIcon.style.transform = `rotate(${settings.layout.logoRotation}deg)`;
+        if (elements.image) elements.image.style.zIndex = settings.layout.imageZIndex || 30;
+        
+
+
+        // Apply entry animations
+         if (animation.template && animation.isEntryAnimated) {
+            const template = animationTemplates.find(t => t.id === animation.template);
+            if (template) {
+                const { settings: animationSettings, elements: animationElements } = template.entry;
+                Object.entries(elements).forEach(([key, element]) => {
+                    if (element && animationElements[key]) {
+                        applyAnimation(element, animationElements[key], animationSettings);
+                    }
+                });
+            }
         }
-
-        if (pathOne) pathOne.style.display = settings.elements.svgWave ? 'block' : 'none';
-        if (pathTwo) pathTwo.style.display = settings.elements.svgWave ? 'block' : 'none';
-        if (headline) headline.style.display = settings.elements.headline ? 'block' : 'none';
-        if (text) text.style.display = settings.elements.text ? 'block' : 'none';
-        if (tags) tags.style.display = settings.elements.tags ? 'block' : 'none';
-        if (cta) cta.style.display = settings.elements.cta ? 'block' : 'none';
-        if (image) image.style.display = settings.elements.image ? 'block' : 'none';
-        if (logoIcon) logoIcon.style.display = settings.elements.logoIcon ? 'block' : 'none';
-
-        if (image) image.style.width = settings.layout.imageSize;
-        if (headline) headline.style.fontSize = settings.layout.titleSize;
-        if (text) text.style.fontSize = settings.layout.bodySize;
-
-        if (logoIcon) {
-            logoIcon.style.transform = `rotate(${settings.layout.logoRotation}deg)`;
-        }
-
-        if (image) image.style.zIndex = settings.layout.imageZIndex || 30;
-
-        if (pathOne) applyAnimation(pathOne, animation.pathOne || 'hidden-element');
-        if (pathTwo) applyAnimation(pathTwo, animation.pathTwo || 'hidden-element');
-        if (headline) applyAnimation(headline, animation.headline || 'hidden-element');
-        if (text) applyAnimation(text, animation.text || 'hidden-element');
-        if (tags) applyAnimation(tags, animation.tags || 'hidden-element');
-        if (cta) applyAnimation(cta, animation.cta || 'hidden-element');
-        if (image) applyAnimation(image, animation.image || 'hidden-element');
-        if (logoIcon) applyAnimation(logoIcon, animation.logoIcon || 'hidden-element');
     });
 
     updateSlideNavigationButtons();
     updateTimelineMarkers();
 }
 
-function applyAnimation(element, animationClass) {
+function applyAnimation(element, animationClass, settings) {
     if (element && animationClass) {
+        // Remove existing and entering animation classes by getting the classList from animationTemplates array .entry.elements object and exit.elements object 
+        const animationClasses = Object.values(animationTemplates).reduce((acc, template) => {
+            const entryClasses = Object.values(template.entry.elements);
+            const exitClasses = Object.values(template.exit.elements);
+            return [...acc, ...entryClasses, ...exitClasses];
+        }
+        , []);
+
+        element.classList.remove(...animationClasses);
+
+        // Set animation properties
+        element.style.animationDuration = `${settings.duration}ms`;
+        element.style.animationDelay = `${settings.delay}ms`;
+        element.style.animationTimingFunction = settings.easing;
+
+        // Force a reflow
+        void element.offsetWidth;
+
+        // Add the animation class
         element.classList.add(animationClass);
-        setTimeout(() => {
-            element.classList.remove(animationClass);
-        }, 1750); // Duration of the animation
     }
+}
+
+function handleExitAnimations(callback) {
+    
+    const animationPromises = [];
+
+    sizes.forEach(size => {
+        const elements = {
+            pathOne: document.getElementById(`path-one-${size}`),
+            pathTwo: document.getElementById(`path-two-${size}`),
+            headline: document.getElementById(`headline-${size}`),
+            text: document.getElementById(`text-${size}`),
+            tags: document.getElementById(`tags-${size}`),
+            cta: document.getElementById(`cta-${size}`),
+            image: document.getElementById(`image-${size}`),
+            logoIcon: document.getElementById(`logo-icon-${size}`)
+        };
+
+        const ad = storedAds[currentAdIndex];
+        const animation = ad.animation || {};
+
+        if (animation.template && animation.isExitAnimated) {
+            const template = animationTemplates.find(t => t.id === animation.template);
+            if (template) {
+                const { settings, elements: animationElements } = template.exit;
+                Object.entries(elements).forEach(([key, element]) => {
+                    if (element && animationElements[key]) {
+                        const promise = new Promise(resolve => {
+                            applyAnimation(element, animationElements[key], settings);
+                            setTimeout(resolve, settings.duration + settings.delay);
+                        });
+                        animationPromises.push(promise);
+                    }
+                });
+            }
+        }
+    });
+
+    Promise.all(animationPromises).then(callback);
 }
 
 let counterInterval = null;
@@ -1962,22 +2210,29 @@ function padZero(num, places = 2) {
 }
 
 function nextAd() {
-    if (currentIndex < storedAds.length - 1) {
-        currentIndex++;
-        jumpToAd(currentIndex);
+    if (currentAdIndex < storedAds.length - 1) {
+        handleExitAnimations(() => {
+            currentAdIndex++;
+            jumpToAd(currentAdIndex);
+        });
     }
+    saveSettings();
 }
 
 function previousAd() {
-    if (currentIndex > 0) {
-        currentIndex--;
-        jumpToAd(currentIndex);
+    if (currentAdIndex > 0) {
+        handleExitAnimations(() => {
+            currentAdIndex--;
+            jumpToAd(currentAdIndex);
+        });
     }
+    saveSettings();
 }
 
 function jumpToAd(index) {
     const audioPlayer = document.getElementById('audioPlayer');
     const timestamp = getCurrentAdTimestamp(index);
+
     jumpToTime(timestamp);
 
     // Update the startTime to reflect the new position
@@ -1988,8 +2243,13 @@ function jumpToAd(index) {
     audioPlayer.currentTime = timestamp / 1000; // Convert to seconds
 
     // Update ads
-    currentIndex = index;
-    updateAds();
+    currentAdIndex = index;
+    
+    
+      updateAds();  
+    
+
+    saveSettings();
 
     // Clear existing timeout and schedule next ad
     if (autoPlayTimeout) {
@@ -2006,6 +2266,7 @@ function previousImage() {
         currentImageIndex--;
         updateImages();
     }
+    saveSettings();
 }
 
 function nextImage() {
@@ -2013,6 +2274,7 @@ function nextImage() {
         currentImageIndex++;
         updateImages();
     }
+    saveSettings();
 }
 
 function resizeImage(action) {
@@ -2113,8 +2375,9 @@ function toggleCtaStyle() {
     const size = getSelectedBanner();
     const cta = document.getElementById(`cta-${size}`);
     const settings = storedBannerSettings.find(setting => setting.size === size).settings.layout;
+
     if (cta.innerText === '>') {
-        cta.innerText = storedAds[currentIndex].cta;
+        cta.innerText = storedAds[currentAdIndex].cta;
         cta.style.padding = '5px 12px';
         cta.style.borderRadius = '4px';
         settings.ctaStyle = 'default';
@@ -2131,12 +2394,13 @@ function toggleTextLength() {
     const size = getSelectedBanner();
     const textElement = document.getElementById(`text-${size}`);
     const currentText = textElement.innerText;
-    const adTextArray = storedAds[currentIndex].text;
+    const adTextArray = storedAds[currentAdIndex].text;
     if (adTextArray.length > 1) {
-        const currentIndex = adTextArray.indexOf(currentText);
-        const nextIndex = currentIndex === adTextArray.length - 1 ? 0 : currentIndex + 1;
+        const currentAdIndex = adTextArray.indexOf(currentText);
+        const nextIndex = currentAdIndex === adTextArray.length - 1 ? 0 : currentAdIndex + 1;
         textElement.innerText = adTextArray[nextIndex];
     }
+    saveSettings();
 }
 
 function highlightSelectedBanner() {
@@ -2205,15 +2469,19 @@ function convertImageToBase64(url, callback) {
     xhr.send();
 }
 
-function downloadAds() {
+async function downloadAds() {
+    await convertAllTimestampsToMinutes();
     const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(storedAds));
+    await convertAllTimestampsToMilliseconds();
     const downloadAnchorNode = document.createElement('a');
     downloadAnchorNode.setAttribute("href", dataStr);
-    downloadAnchorNode.setAttribute("download", "ads.json");
+    downloadAnchorNode.setAttribute("download", "slides.json");
     document.body.appendChild(downloadAnchorNode);
     downloadAnchorNode.click();
     downloadAnchorNode.remove();
 }
+
+
 
 function uploadAds() {
     const input = document.createElement('input');
@@ -2232,6 +2500,40 @@ function uploadAds() {
     }
     input.click();
 }
+
+async function downloadCampaign() {
+    const campaign = { ...storedCampaign, slides: storedAds };
+    await convertAllTimestampsToMinutes();
+    const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(campaign));
+    await convertAllTimestampsToMilliseconds();
+    const downloadAnchorNode = document.createElement('a');
+    downloadAnchorNode.setAttribute("href", dataStr);
+    downloadAnchorNode.setAttribute("download", "campaign.json");
+    document.body.appendChild(downloadAnchorNode);
+    downloadAnchorNode.click();
+    downloadAnchorNode.remove();
+}
+
+function uploadCampaign() {
+    const input = document.createElement('input');
+    input.type = 'file';
+    input.accept = 'application/json';
+    input.onchange = e => {
+        const file = e.target.files[0];
+        const reader = new FileReader();
+        reader.readAsText(file, 'UTF-8');
+        reader.onload = readerEvent => {
+            const content = readerEvent.target.result;
+            const parsed = JSON.parse(content);
+            // delete parsed.ads;
+            localStorage.setItem('campaign', JSON.stringify(parsed));
+            localStorage.setItem('ads', JSON.stringify(parsed.ads));
+            location.reload(); // reload to apply the new settings
+        }
+    }
+    input.click();
+}
+
 
 function downloadImages() {
     const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(storedImages));
@@ -2337,6 +2639,78 @@ function updateImageUrls() {
     });
 }
 
+function openImageGallery() {
+    const modal = document.getElementById('imageGalleryModal');
+    const grid = document.getElementById('imageGalleryGrid');
+    const banners = document.getElementById('banners');
+
+    grid.innerHTML = ''; // Clear existing images
+
+    // load images from constant variable images array and store them in storedImages by only adding new oneses
+    images.forEach(image => {
+        if (!storedImages.includes(image)) {
+            storedImages.push(image);
+        }
+    });
+
+    // Populate the grid with images from storedImages
+    storedImages.forEach((imageUrl, index) => {
+        const imgContainer = document.createElement('div');
+        imgContainer.className = 'relative cursor-pointer hover:opacity-75';
+
+        const img = document.createElement('img');
+        img.src = imageUrl;
+        img.alt = `Image ${index + 1}`;
+        img.className = 'w-32  object-cover';
+
+        // add image file name under the image
+        const fileName = imageUrl.split('/').pop();
+        const fileNameElement = document.createElement('p');
+        fileNameElement.className = 'text-xs text-center';
+        fileNameElement.textContent = fileName;
+
+
+
+        imgContainer.appendChild(img);
+        imgContainer.appendChild(fileNameElement);
+        imgContainer.onclick = () => selectGalleryImage(imageUrl);
+
+        grid.appendChild(imgContainer);
+    });
+
+    modal.classList.remove('hidden');
+    banners.classList.add('hidden');
+}
+
+function closeImageGallery() {
+    const modal = document.getElementById('imageGalleryModal');
+    const banners = document.getElementById('banners');
+    modal.classList.add('hidden');
+    banners.classList.remove('hidden');
+}
+
+function selectGalleryImage(imageUrl) {
+    // Update the current slide's image URL
+    storedAds[currentAdIndex].img = imageUrl;
+
+    // Update the image in all ad containers
+    const sizes = ["160x600", "480x120", "300x250", "300x250-text", "728x90", "1200x628", "1200x628-2", "1080x1080"];
+    sizes.forEach(size => {
+        const img = document.getElementById(`image-${size}`);
+        if (img) {
+            img.src = imageUrl;
+        }
+    });
+
+    // Save the changes
+    saveSettings();
+
+    // Close the gallery
+    closeImageGallery();
+}
+
+
+
 function openEditModal() {
     const modal = document.getElementById('editSlideModal');
     const form = document.getElementById('editSlideForm');
@@ -2344,7 +2718,7 @@ function openEditModal() {
     const banners = document.getElementById('banners');
 
 
-    const currentSlide = storedAds[currentIndex];
+    const currentSlide = storedAds[currentAdIndex];
 
     // Populate form fields
     form.timestamp.value = currentSlide.timestamp;
@@ -2363,7 +2737,7 @@ function openEditModal() {
     banners.classList.add('hidden');
 
     // If this is a new slide, highlight the new marker
-    if (currentIndex === storedAds.length - 1 || storedAds[currentIndex].timestamp !== storedAds[currentIndex + 1].timestamp) {
+    if (currentAdIndex === storedAds.length - 1 || storedAds[currentAdIndex].timestamp !== storedAds[currentAdIndex + 1].timestamp) {
         updateTimelineWithNewMarker();
     }
 }
@@ -2396,13 +2770,13 @@ function handleEditFormSubmit(event) {
     };
 
     // Update the current slide in storedAds
-    storedAds[currentIndex] = updatedSlide;
+    storedAds[currentAdIndex] = updatedSlide;
 
     // Sort the storedAds array based on timestamps
     storedAds.sort((a, b) => a.timestamp - b.timestamp);
 
-    // Update the currentIndex to reflect the new position of the edited slide
-    currentIndex = storedAds.findIndex(slide => slide.timestamp === updatedSlide.timestamp);
+    // Update the currentAdIndex to reflect the new position of the edited slide
+    currentAdIndex = storedAds.findIndex(slide => slide.timestamp === updatedSlide.timestamp);
 
     // Save changes
     saveSettings();
@@ -2417,6 +2791,8 @@ function handleEditFormSubmit(event) {
 
 // Initialize ads and images
 document.addEventListener('DOMContentLoaded', () => {
+
+    convertAllTimestampsToMilliseconds();
 
     // Apply saved settings for all banner sizes
     storedBannerSettings.forEach(bannerSetting => {
@@ -2457,15 +2833,27 @@ document.addEventListener('DOMContentLoaded', () => {
         updateAds();
     });
 
+    // Initialize the image gallery
+    const openGalleryButton = document.getElementById('openGalleryButton');
+    const closeGalleryButton = document.getElementById('closeGalleryButton');
+
+    if (openGalleryButton) {
+        openGalleryButton.addEventListener('click', openImageGallery);
+    }
+
+    if (closeGalleryButton) {
+        closeGalleryButton.addEventListener('click', closeImageGallery);
+    }
+
     // Initialize image URLs container
     const imageUrlsContainer = document.getElementById('imageUrlsContainer');
     storedImages.forEach((image, index) => {
         const inputField = document.createElement('div');
-        inputField.classList.add('flex', 'items-center', 'mb-2');
+        inputField.classList.add('flex', 'items-center');
         inputField.innerHTML = `
-            <label for="imageUrl-${index}" class="mr-2 w-24">Image ${index + 1}:</label>
-            <input type="text" id="imageUrl-${index}" class="imageUrlInput flex-grow px-2 py-1 border rounded" value="${image}">
-            <a onclick="deleteImageUrlInputField(${index})" class="p-2 cursor-pointer"><i class="fas fa-times"></i></a>
+            <label for="imageUrl-${index}" class="flex items-center mr-2"><i class="fa-solid fa-image p-1"></i> ${index + 1}</label>
+            <input type="text" id="imageUrl-${index}" class="imageUrlInput flex-grow px-2 py-1 border rounded snap-center" value="${image}">
+            <a onclick="deleteImageUrlInputField(${index})" class="p-1 cursor-pointer"><i class="fas fa-trash"></i></a>
         `;
         imageUrlsContainer.appendChild(inputField);
     });
@@ -2479,8 +2867,8 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('editSlideForm').addEventListener('submit', handleEditFormSubmit);
 
     // move slider
-    const moveSlidesButton = document.getElementById('moveSlidesButton');
-    moveSlidesButton.addEventListener('click', toggleMoveSlides);
+    const moveMarkerButton = document.getElementById('moveMarkerButton');
+    moveMarkerButton.addEventListener('click', toggleMoveMarker);
 
     // Event Listener for the new Add Slide button
     document.getElementById('addSlideButton').addEventListener('click', addSlideAtCurrentTime);
@@ -2542,4 +2930,26 @@ document.addEventListener('keydown', (event) => {
 });
 
 document.addEventListener('DOMContentLoaded', initializeEnhancedTimeline);
+
+document.getElementById('processImagesButton').addEventListener('click', () => {
+    fetch('/api/process-images', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ ads: storedAds }),
+    })
+        .then(response => response.json())
+        .then(data => {
+            console.log('Success:', data);
+            // Refresh the ads here
+            updateAds();
+        })
+        .catch((error) => {
+            console.error('Error:', error);
+        });
+});
+
+// Add this event listener to your audio element
+document.getElementById('audioPlayer').addEventListener('loadedmetadata', onAudioLoaded);
 

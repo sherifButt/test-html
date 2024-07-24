@@ -8,7 +8,7 @@ ads.html:
   cat: "test-html"
   - author
   - readingTime
-  images: ["img/energy_savings_2.png","img/energy_savings.jpg"]
+  images: ["https://tailwindui.com/img/logos/mark.svg?color=indigo&shade=600","img/energy_savings_2.png","img/energy_savings.jpg"]
   internalLinks: ["https://octopus.energy"]
   externalLinks: ["https://octopus.energy"]
 ads4.html:
@@ -326,14 +326,19 @@ img:
   - leads7.webp
   - leads8.webp
   - leads9.webp
+  - loyalleads-logo.png
+  - man.png
+  - overcoming_barriers.webp
   - podcast_intro.webp
   - sherif.png
   - sherif2.webp
   - spinner.gif
+  - transparent-background-animated-gif.gif
   - tree.png
   - tree2.png
   - tree3.png
   - tree4.webp
+  - tree5.png
   - umbrella.jpg
   - umbrella.png
   - umbrella.webp
@@ -370,6 +375,7 @@ lead-generation.html:
   images: ["/img/marketing.jpg"]
   internalLinks: ["https://octopus.energy"]
   externalLinks: ["https://octopus.energy"]
+- server.js
 - sitemap.xml
 - styles-rtl.css
 - styles.css

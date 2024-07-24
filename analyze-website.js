@@ -617,7 +617,7 @@ async function writeSiteMap() {
 async function generateImagesJsFile() {
     console.log('Generating images.js file...');
     const images = await fs.readdir(imagesDir);
-    const imageFiles = images.filter(file => /\.(png|webp)$/i.test(file));
+    const imageFiles = images.filter(file => /\.(png|webp|gif)$/i.test(file));
     const imagePaths = imageFiles.map(file => `/img/${file}`);
     const imagesJsContent = `const images = [\n${imagePaths.map(img => `    "${img}"`).join(',\n')}\n];\n`;
     await fs.writeFile(imagesJsFile, imagesJsContent);
@@ -924,7 +924,7 @@ async function generateCatsJsFile() {
                 };
 
                 const imageEntries = await fs.readdir(filePath);
-                const imageFile = imageEntries.find(file => /\.(jpg|jpeg|png|webp)$/i.test(file));
+                const imageFile = imageEntries.find(file => /\.(jpg|jpeg|png|webp|gif)$/i.test(file));
                 if (imageFile) {
                     category.image = `${category.url}/${imageFile}`;
                 }

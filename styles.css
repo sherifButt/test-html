@@ -99,7 +99,7 @@
 main {
   display: flex;
   flex-direction: column;
-  min-height: 81vh;
+  /* min-height: 81vh; */
   animation: slideFromTopSmall .8s ease 1 backwards;
 }
 
@@ -245,7 +245,7 @@ footer {
   color: var(--sjs-general-forecolor);
 }
 
-.ads-title {
+.ads-title { 
   font-family: "Tajawal", "Oswald", sans-serif !important;
 }
 
@@ -313,7 +313,7 @@ a:active {
   color: var(--sjs-general-forecolor);
 }
 
-ul,
+/* ul,
 ol {
   padding: 0;
   margin: 0 0 1em 2em;
@@ -339,13 +339,13 @@ ul li {
 
 ol li {
   padding-left: 1em;
-}
+} */
 
-ul li::before {
-  /* content: '•'; */
+/* ul li::before {
+   content: '•'; 
   font-size: 1.2em;
   color: var(--sjs-primary-backcolor-dark);
-}
+} */
 
 table {
   border-collapse: collapse;
@@ -403,19 +403,19 @@ ul {
   padding: 0;
 }
 
-li {
+/* li {
   padding: 0.5rem;
-}
+} */
 
 ol {
   list-style-type: decimal;
   padding: 0;
 }
 
-nav ul {
+/* nav ul {
   display: flex;
   justify-content: space-between;
-}
+} */
 
 nav ul li {
   /* padding: 1rem; */
@@ -1066,9 +1066,40 @@ aside{
   }
 }
 
+@keyframes fadeOut {
+  from {
+    opacity: 1;
+  }
+  to{
+    opacity: 0;
+  }
+}
+
 @keyframes slideFromBottom {
   from {
     transform: translateY(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes slideToBottom {
+  from {
+    transform: translateY(0);
+    opacity: 1;
+  }
+  to {
+    transform: translateY(100%);
+    opacity: 0;
+  }
+}
+
+@keyframes slideFromBottomSmall {
+  from {
+    transform: translateY(30px);
     opacity: 0;
   }
   to {
@@ -1085,6 +1116,17 @@ aside{
   to {
     transform: translateX(0);
     opacity: 1;
+  }
+}
+
+@keyframes slideToLeft {
+  from {
+    transform: translateX(0);
+    opacity: 1;
+  }
+  to {
+    transform: translateX(-100%);
+    opacity: 0;
   }
 }
 
@@ -1110,6 +1152,17 @@ aside{
   }
 }
 
+@keyframes slideToTop {
+  from {
+    transform: translateY(0);
+    opacity: 1;
+  }
+  to {
+    transform: translateY(-100%);
+    opacity: 0;
+  }
+}
+
 @keyframes slideFromTopSmall {
   from {
     transform: translateY(-30px);
@@ -1129,6 +1182,17 @@ aside{
   to {
     transform: translateX(0);
     opacity: 1;
+  }
+}
+
+@keyframes slideToRight {
+  from {
+    transform: translateX(0);
+    opacity: 1;
+  }
+  to {
+    transform: translateX(100%);
+    opacity: 0;
   }
 }
 
@@ -1155,34 +1219,113 @@ aside{
   }
 }
 
+@keyframes zoomInSmall {
+  from {
+    transform: scale(0.5);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
 
+@keyframes zoomOut {
+  from {
+    transform: scale(1);
+    opacity: 1;
+  }
+  to {
+    transform: scale(0);
+    opacity: 0;
+  }
+}
+
+@keyframes zoomOutSmall {
+  from {
+    transform: scale(1);
+    opacity: 1;
+  }
+  to {
+    transform: scale(0.5);
+    opacity: 0;
+  }
+}
 
 .hidden-element {
   opacity: 0;
 }
 
-.fadeIn {
-  animation: fadeIn 0.5s ease-out forwards;
+.fade-in {
+  animation: fadeIn 2s ease-out forwards;
+}
+
+.fade-out {
+  animation: fadeOut 2s ease-out forwards;
 }
 
 .slide-from-bottom {
-  animation: slideFromBottom 0.5s ease-out forwards;
+  animation: slideFromBottom 1s ease-out forwards;
+}
+
+.slide-to-bottom {
+  animation: slideToBottom 1s ease-out forwards;
+} 
+
+.slide-from-bottom-small {
+  animation: slideFromBottomSmall 1s ease-out forwards;
 }
 
 .slide-from-left {
-  animation: slideFromLeft 0.5s ease-out forwards;
+  animation: slideFromLeft 1s ease-out forwards;
+}
+
+.slide-to-left {
+  animation: slideToLeft 1s ease-out forwards;
+}
+
+.slide-from-left-small {
+  animation: slideFromLeftSmall 1s ease-out forwards;
 }
 
 .slide-from-top {
-  animation: slideFromTop 0.5s ease-out forwards;
+  animation: slideFromTop 1s ease-out forwards;
+}
+
+.slide-to-top {
+  animation: slideToTop 1s ease-out forwards;
+}
+
+.slide-from-top-small {
+  animation: slideFromTopSmall 1s ease-out forwards;
 }
 
 .slide-from-right {
-  animation: slideFromRight 0.5s ease-out forwards;
+  animation: slideFromRight 1s ease-out forwards;
+}
+
+.slide-from-right-small {
+  animation: slideFromRightSmall 1s ease-out forwards;
+}
+
+.slide-to-right {
+  animation: slideToRight 1s ease-out forwards;
 }
 
 .zoom-in {
-  animation: zoomIn 0.5s ease-out forwards;
+  animation: zoomIn 1s ease-out forwards;
+}
+
+.zoom-in-small {
+  animation: zoomInSmall 1s ease-out forwards;
+}
+
+.zoom-out {
+  animation: zoomOut 1s ease-out forwards;
+}
+
+.zoom-out-small {
+  animation: zoomOutSmall 1s ease-out forwards;
 }
 
 .ad-container {
@@ -1191,12 +1334,26 @@ aside{
   background-color: var(--sjs-general-backcolor);
 }
 
-.path-one,
-.path-two {
+
+
+.path-one, .path-two {
   position: absolute;
-  bottom: 0;
-  z-index: 1; /* Ensure SVG paths are behind other elements */
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.path-one {
   fill: var(--sjs-general-backcolor-dark);
+  opacity: 0.5;
+}
+
+.path-two {
+  fill: var(--sjs-general-backcolor-dark);
+  opacity: 0.3;
 }
 
 .blob {
@@ -1217,6 +1374,7 @@ aside{
 .hidden-element {
   opacity: 0;
   z-index: 1; /* Ensure hidden elements have lower z-index */
+  visibility: hidden;
 }
 
 .logo-icon {
@@ -1311,11 +1469,12 @@ aside{
 
 #timelineMarkers {
   position: relative;
-    width: 96%;
-    height: 0;
-    margin-left: auto;
-    margin-right: auto;
+  width: auto;
+  height: 0;
+  margin-left: 9px;
+  margin-right: 10px;
 }
+
 
 .timeline-marker {
   transition: all 0.2s ease-out;
@@ -1333,3 +1492,8 @@ aside{
   cursor: grabbing;
 }
 
+.current-marker {
+  background-color: #ff0000 !important;
+  transform: scale(1.2); 
+  transition: all 0.3s ease;
+}
