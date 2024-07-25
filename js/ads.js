@@ -47,7 +47,9 @@ let currentCampaignIndex = 0;
 let isAutoPlayActive = false;
 
 // update animationTemplates array object
-const sizes = ["480x120", "300x250", "160x600", "300x250-text", "728x90", "1200x628", "1200x628-2", "1080x1080"];
+const sizes = ["480x120", "300x250", "160x600", "300x250-text", "728x90", "1200x628", "1200x628-2", "1080x1080","1080x1920"];
+
+let currentImageType = 'main';
 
 // implanting campaign object
 let ads = campaigns[currentCampaignIndex].ads.map(ad => {
@@ -67,6 +69,7 @@ delete campaign.ads;
 const storedBannerSettings = JSON.parse(localStorage.getItem('bannerSettings')) || bannerSettings;
 const storedAds = JSON.parse(localStorage.getItem('ads')) || ads;
 const storedImages = JSON.parse(localStorage.getItem('images')) || images;
+const storedFilters = JSON.parse(localStorage.getItem('filters')) || filters;
 const storedCampaigns = JSON.parse(localStorage.getItem('campaigns')) || campaigns;
 const storedCampaign = JSON.parse(localStorage.getItem('campaign')) || campaign;
 const storedCurrentCampaignIndex = JSON.parse(localStorage.getItem('currentCampaignIndex')) || currentCampaignIndex;
@@ -82,6 +85,7 @@ function getSelectedBanner() {
 // Add this function to apply all saved settings for a specific banner size
 function applyAllSavedSettings(size) {
     const settings = storedBannerSettings.find(setting => setting.size === size).settings;
+    
     const layoutSettings = settings.layout;
     const elementSettings = settings.elements;
 
@@ -185,17 +189,17 @@ function applyAllSavedSettings(size) {
         Object.assign(textContainer.style, layoutSettings.textContainerStyle);
     }
 
-    const backgroundImage = document.getElementById(`background-image-${size}`);
+    const backgroundImage = document.getElementById(`backdrop-${size}`);
     if (backgroundImage && layoutSettings.backgroundImageStyle) {
         Object.assign(backgroundImage.style, layoutSettings.backgroundImageStyle);
     }
 
-    const imageFilter = document.getElementById(`image-filter-${size}`);
-    if (imageFilter && layoutSettings.imageFilterStyle) {
-        Object.assign(imageFilter.style, layoutSettings.imageFilterStyle);
+    const filter = document.getElementById(`filter-${size}`);
+    if (filter && layoutSettings.filterStyle) {
+        Object.assign(filter.style, layoutSettings.filterStyle);
     }
 
-    const backgroundBanner = document.getElementById(`background-banner-${size}`);
+    const backgroundBanner = document.getElementById(`backbanner-${size}`);
     if (backgroundBanner && layoutSettings.backgroundBannerStyle) {
         Object.assign(backgroundBanner.style, layoutSettings.backgroundBannerStyle);
     }
@@ -240,9 +244,9 @@ function updateElementsList() {
         { id: `path-one-${size}`, name: 'SVG Wave 1' },
         { id: `path-two-${size}`, name: 'SVG Wave 2' },
         { id: `background-${size}`, name: 'Background' },
-        { id: `background-image-${size}`, name: 'Background Image' },
-        { id: `image-filter-${size}`, name: 'Image Filter' },
-        { id: `background-banner-${size}`, name: 'Background Banner' }
+        { id: `backdrop-${size}`, name: 'Backdrop' },
+        { id: `filter-${size}`, name: 'Filter' },
+        { id: `backbanner-${size}`, name: 'backbanner' }
     ];
 
 
@@ -383,13 +387,17 @@ function changeElementColor(color) {
         settings.colors = {};
     }
 
-    const elementType = selectedElement.id.split('-').slice(0, 2).join('-');
-    console.log('elementType:', selectedElement.tagName.toLowerCase());
+    const elementType = selectedElement.id.split('-')[0];
+    console.log('elementType:-->', elementType);
 
     if (elementType === 'path-one' || elementType === 'path-two') {
         selectedElement.setAttribute('fill', color);
         selectedElement.classList.remove('path-one', 'path-two');
         settings.colors[elementType.replace('-', '')] = color; // Convert 'path-one' to 'pathOne'
+    } else if (elementType.split('-')[0] === 'backbanner') {
+        console.log("backbanner")
+        selectedElement.style.backgroundColor = color;
+        settings.colors[elementType] = color;
     } else {
         selectedElement.style.color = color;
         settings.colors[elementType] = color;
@@ -517,6 +525,8 @@ function applyStoredColors() {
                     if (elementType === 'pathtwo') {
                         element.classList.remove('path-two');
                     }
+                } else if (elementType.split('-')[0] === 'backbanner') {
+                    element.style.backgroundColor = color;
                 } else {
                     element.style.color = color;
                 }
@@ -794,10 +804,10 @@ function updateCheckboxStates(size) {
         'cta': 'cta',
         'svg-wave': 'svgWave',
         'text-container': 'textContainer',
-        'background-image': 'backgroundImageImage',
-        'image-filter': 'imageFilter',
-        'background-banner': 'backgroundBanner'
-        
+        'backdrop': 'backdrop',
+        'filter': 'filter',
+        'backbanner': 'backbanner'
+
     };
 
     Object.keys(elements).forEach(element => {
@@ -832,15 +842,17 @@ function updateCheckboxStates(size) {
 
 function selectBanner(size) {
     const selectedBanner = document.getElementById(`ad-container-${size}`);
+    document.getElementById('bannerSelect').value = size;
     if (selectedBanner.classList.contains('border-blue-500')) {
         selectedBanner.classList.remove('border-blue-500', 'shadow-xl', 'ring-4', 'ring-blue-300');
         document.getElementById('bannerSelect').value = '';
     } else {
-        document.getElementById('bannerSelect').value = size;
         document.querySelectorAll('.border-blue-500').forEach(el => el.classList.remove('border-blue-500', 'shadow-xl', 'ring-4', 'ring-blue-300'));
         selectedBanner.classList.add('border-blue-500', 'shadow-xl', 'ring-4', 'ring-blue-300');
 
-        applyAllSavedSettings(size);
+       
+    } applyAllSavedSettings(size);
+
         updateSliderValues(size);
         updateCheckboxStates(size);
         updateElementsList();
@@ -848,8 +860,9 @@ function selectBanner(size) {
         selectedElement = null;
         highlightSelectedElement();
         deselectElement();
-    }
 }
+
+
 
 function updateSliderValues(size) {
     const settings = storedBannerSettings.find(setting => setting.size === size).settings.layout;
@@ -906,6 +919,7 @@ function saveSettings() {
     localStorage.setItem('bannerSettings', JSON.stringify(storedBannerSettings));
     localStorage.setItem('ads', JSON.stringify(storedAds));
     localStorage.setItem('images', JSON.stringify(storedImages));
+    localStorage.setItem('filters', JSON.stringify(storedFilters));
     localStorage.setItem('campaigns', JSON.stringify(storedCampaigns));
     localStorage.setItem('campaign', JSON.stringify(storedCampaign));
     localStorage.setItem('currentCampaignIndex', JSON.stringify(currentCampaignIndex));
@@ -928,10 +942,10 @@ function toggleElement(element) {
             el.style.display = el.style.display === 'none' ? 'block' : 'none';
         }
     }
-    if(!element) return;
+    if (!element) return;
     const settings = storedBannerSettings.find(setting => setting.size === size).settings.elements;
     const elementKey = {
-       'logo-icon': 'logoIcon',
+        'logo-icon': 'logoIcon',
         'svg-wave': 'svgWave',
         'path-one': 'pathOne',
         'path-two': 'pathTwo',
@@ -943,9 +957,9 @@ function toggleElement(element) {
         'background': 'backgroundImage',
         'logo-title': 'logoTitle',
         'text-container': 'textContainer',
-        'background-image': 'backgroundImageImage',
-        'image-filter': 'imageFilter',
-        'background-banner': 'backgroundBanner'
+        'backdrop': 'backdrop',
+        'filter': 'filter',
+        'backbanner': 'backbanner'
 
     }[element];
     settings[elementKey] = el.style.display !== 'none';
@@ -1083,10 +1097,73 @@ function updateLogo(size) {
     `;
 }
 
+function changeElementZIndex(elementType, action) {
+    const size = getSelectedBanner();
+    if (!size) {
+        console.warn('No banner selected');
+        return;
+    }
+
+    const elementMap = {
+        'logo-icon': 'logoIcon',
+        'svg-wave': 'svgWave',
+        'path-one': 'pathOne',
+        'path-two': 'pathTwo',
+        'image': 'image',
+        'headline': 'headline',
+        'text': 'text',
+        'tags': 'tags',
+        'cta': 'cta',
+        'background': 'backgroundImage',
+        'logo-title': 'logoTitle',
+        'text-container': 'textContainer',
+        'backdrop': 'backdrop',
+        'filter': 'filter',
+        'backbanner': 'backbanner'
+    };
+
+    const elementId = `${elementType}-${size}`;
+    const element = document.getElementById(elementId);
+
+    if (!element) {
+        console.warn(`Element not found: ${elementId}`);
+        return;
+    }
+
+    let zIndex = parseInt(window.getComputedStyle(element).zIndex, 10);
+    zIndex = isNaN(zIndex) ? 10 : zIndex;
+
+    if (action === 'increase') {
+        zIndex += 10;
+    } else if (action === 'decrease') {
+        zIndex = Math.max(1, zIndex - 10);
+    } else {
+        console.warn('Invalid action. Use "increase" or "decrease".');
+        return;
+    }
+
+    element.style.zIndex = zIndex;
+
+    const settings = storedBannerSettings.find(setting => setting.size === size).settings.layout;
+    const settingKey = `${elementMap[elementType]}ZIndex`;
+    settings[settingKey] = zIndex;
+    saveSettings();
+
+    console.log(`${action === 'increase' ? 'Increased' : 'Decreased'} z-index for ${elementType} to ${zIndex}`);
+}
+
+// TODO: delete this 2 functions
+
 // Functions to control image z-index
 function increaseImageZIndex() {
     const size = getSelectedBanner();
     const image = document.getElementById(`image-${size}`);
+
+    if (!image) {
+        console.warn(`Image element not found for size: ${size}`);
+        return;
+    }
+
     let zIndex = parseInt(window.getComputedStyle(image).zIndex, 10);
     zIndex = isNaN(zIndex) ? 10 : zIndex + 10;
     image.style.zIndex = zIndex;
@@ -1094,11 +1171,21 @@ function increaseImageZIndex() {
     const settings = storedBannerSettings.find(setting => setting.size === size).settings.layout;
     settings.imageZIndex = zIndex;
     saveSettings();
+
+    console.log(`Increased z-index for ${size} image to ${zIndex}`);
 }
+
+
 
 function decreaseImageZIndex() {
     const size = getSelectedBanner();
     const image = document.getElementById(`image-${size}`);
+
+    if (!image) {
+        console.warn(`Image element not found for size: ${size}`);
+        return;
+    }
+
     let zIndex = parseInt(window.getComputedStyle(image).zIndex, 10);
     zIndex = isNaN(zIndex) ? 10 : Math.max(1, zIndex - 10);
     image.style.zIndex = zIndex;
@@ -1106,6 +1193,8 @@ function decreaseImageZIndex() {
     const settings = storedBannerSettings.find(setting => setting.size === size).settings.layout;
     settings.imageZIndex = zIndex;
     saveSettings();
+
+    console.log(`Decreased z-index for ${size} image to ${zIndex}`);
 }
 
 function updateTitleSize() {
@@ -1790,9 +1879,9 @@ function updateSlideNavigationButtons() {
     currentButton.innerHTML = '<i class="fa-solid fa-arrows-rotate"></i> ' + storedAds[currentAdIndex].headline;
     nextButton.innerHTML = storedAds[nextIndex].headline + ' <i class="fas fa-forward-step"></i>';
 
-    prevButton.onclick = () => handleExitAnimations(()=> jumpToAd(prevIndex))
+    prevButton.onclick = () => handleExitAnimations(() => jumpToAd(prevIndex))
     currentButton.onclick = () => jumpToAd(currentAdIndex);
-    nextButton.onclick = () => handleExitAnimations(()=>jumpToAd(nextIndex));
+    nextButton.onclick = () => handleExitAnimations(() => jumpToAd(nextIndex));
 }
 
 function updateTimelineMarkers() {
@@ -2048,7 +2137,7 @@ function updateTimelineWithNewMarker() {
 }
 
 function updateAds() {
-    
+
     sizes.forEach(size => {
         const elements = {
             pathOne: document.getElementById(`path-one-${size}`),
@@ -2059,9 +2148,11 @@ function updateAds() {
             cta: document.getElementById(`cta-${size}`),
             image: document.getElementById(`image-${size}`),
             logoIcon: document.getElementById(`logo-icon-${size}`),
-            backgroundBanner: document.getElementById(`background-banner-${size}`),
-            imageBackground: document.getElementById(`image-background-${size}`),
-            imageFilter: document.getElementById(`image-filter-${size}`)
+            logoTitle: document.getElementById(`logo-title-${size}`),
+            textContainer: document.getElementById(`text-container-${size}`),
+            backdrop: document.getElementById(`backdrop-${size}`),
+            // filter: document.getElementById(`filter-${size}`),
+            backbanner: document.getElementById(`backbanner-${size}`)
         };
         const settings = storedBannerSettings.find(setting => setting.size === size).settings;
 
@@ -2078,20 +2169,20 @@ function updateAds() {
         }
 
         updateLogo(size);
-        
+
         // Update background banner
-        if (ad.img && elements.image) elements.image.src = ad.img; 
+        if (ad.img && elements.image) elements.image.src = ad.img;
         if (ad.imageBackground && elements.imageBackground) elements.imageBackground.src = ad.imageBackground;
-        if (ad.imageFilter && elements.imageFilter) elements.imageFilter.style.backgroundColor = ad.imageFilter;
-        
+        if (ad.filter && elements.filter) elements.filter.style.backgroundColor = ad.filter;
+
 
         // Apply visibility settings
         Object.entries(elements).forEach(([key, element]) => {
-            if(key == 'pathOne' ||key == 'pathTwo'){
-                 if(elements.svgWave){
+            if (key == 'pathOne' || key == 'pathTwo') {
+                if (elements.svgWave) {
                     elements.svgWave.style.display = settings.elements[key] ? 'block' : 'none';
                 }
-               
+
             } else if (element) {
                 element.style.display = settings.elements[key] ? 'block' : 'none';
 
@@ -2104,11 +2195,11 @@ function updateAds() {
         if (elements.text) elements.text.style.fontSize = settings.layout.bodySize;
         if (elements.logoIcon) elements.logoIcon.style.transform = `rotate(${settings.layout.logoRotation}deg)`;
         if (elements.image) elements.image.style.zIndex = settings.layout.imageZIndex || 30;
-        
+
 
 
         // Apply entry animations
-         if (animation.template && animation.isEntryAnimated) {
+        if (animation.template && animation.isEntryAnimated) {
             const template = animationTemplates.find(t => t.id === animation.template);
             if (template) {
                 const { settings: animationSettings, elements: animationElements } = template.entry;
@@ -2133,7 +2224,7 @@ function applyAnimation(element, animationClass, settings) {
             const exitClasses = Object.values(template.exit.elements);
             return [...acc, ...entryClasses, ...exitClasses];
         }
-        , []);
+            , []);
 
         element.classList.remove(...animationClasses);
 
@@ -2151,7 +2242,7 @@ function applyAnimation(element, animationClass, settings) {
 }
 
 function handleExitAnimations(callback) {
-    
+
     const animationPromises = [];
 
     sizes.forEach(size => {
@@ -2163,7 +2254,13 @@ function handleExitAnimations(callback) {
             tags: document.getElementById(`tags-${size}`),
             cta: document.getElementById(`cta-${size}`),
             image: document.getElementById(`image-${size}`),
-            logoIcon: document.getElementById(`logo-icon-${size}`)
+            logoIcon: document.getElementById(`logo-icon-${size}`),
+            logoTitle: document.getElementById(`logo-title-${size}`),
+            textContainer: document.getElementById(`text-container-${size}`),
+            backdrop: document.getElementById(`backdrop-${size}`),
+            filter: document.getElementById(`filter-${size}`),
+            backbanner: document.getElementById(`backbanner-${size}`)
+
         };
 
         const ad = storedAds[currentAdIndex];
@@ -2244,10 +2341,10 @@ function jumpToAd(index) {
 
     // Update ads
     currentAdIndex = index;
-    
-    
-      updateAds();  
-    
+
+
+    updateAds();
+
 
     saveSettings();
 
@@ -2324,6 +2421,10 @@ function resizeBody(action) {
 
 function toggleBackground() {
     const size = getSelectedBanner();
+    if (!size) {
+        console.error('No banner selected');
+        return;
+    }
     const container = document.getElementById(`ad-container-${size}`);
     const image = document.getElementById(`image-${size}`);
     const settings = storedBannerSettings.find(setting => setting.size === size).settings.layout;
@@ -2639,37 +2740,56 @@ function updateImageUrls() {
     });
 }
 
-function openImageGallery() {
+function openBackdropGallery() {
+    currentImageType = 'backdrop';
+    openImageGallery();
+}
+
+function openFilterGallery() {
+    currentImageType = 'filter';
+    openImageGallery('filter');
+}
+
+function openImageGallery(type = 'main') {
     const modal = document.getElementById('imageGalleryModal');
     const grid = document.getElementById('imageGalleryGrid');
-    const banners = document.getElementById('banners');
 
     grid.innerHTML = ''; // Clear existing images
 
-    // load images from constant variable images array and store them in storedImages by only adding new oneses
-    images.forEach(image => {
-        if (!storedImages.includes(image)) {
-            storedImages.push(image);
-        }
-    });
-
     // Populate the grid with images from storedImages
-    storedImages.forEach((imageUrl, index) => {
+    if (type === 'filter') storedFilters.forEach((imageUrl, index) => {
         const imgContainer = document.createElement('div');
         imgContainer.className = 'relative cursor-pointer hover:opacity-75';
 
         const img = document.createElement('img');
         img.src = imageUrl;
         img.alt = `Image ${index + 1}`;
-        img.className = 'w-32  object-cover';
+        img.className = 'w-32 object-cover';
 
-        // add image file name under the image
         const fileName = imageUrl.split('/').pop();
         const fileNameElement = document.createElement('p');
         fileNameElement.className = 'text-xs text-center';
         fileNameElement.textContent = fileName;
 
+        imgContainer.appendChild(img);
+        imgContainer.appendChild(fileNameElement);
+        imgContainer.onclick = () => selectGalleryImage(imageUrl);
 
+        grid.appendChild(imgContainer);
+    })
+    else storedImages.forEach((imageUrl, index) => {
+        const imgContainer = document.createElement('div');
+        imgContainer.className = 'relative cursor-pointer hover:opacity-75';
+
+        const img = document.createElement('img');
+        img.src = imageUrl;
+        img.alt = `Image ${index + 1}`;
+        img.className = 'w-32 object-cover';
+
+        const fileName = imageUrl.split('/').pop();
+        const fileNameElement = document.createElement('p');
+        fileNameElement.className = 'text-xs text-center';
+        fileNameElement.textContent = fileName;
 
         imgContainer.appendChild(img);
         imgContainer.appendChild(fileNameElement);
@@ -2679,34 +2799,51 @@ function openImageGallery() {
     });
 
     modal.classList.remove('hidden');
-    banners.classList.add('hidden');
 }
 
 function closeImageGallery() {
     const modal = document.getElementById('imageGalleryModal');
-    const banners = document.getElementById('banners');
     modal.classList.add('hidden');
-    banners.classList.remove('hidden');
 }
 
 function selectGalleryImage(imageUrl) {
-    // Update the current slide's image URL
-    storedAds[currentAdIndex].img = imageUrl;
-
-    // Update the image in all ad containers
     const sizes = ["160x600", "480x120", "300x250", "300x250-text", "728x90", "1200x628", "1200x628-2", "1080x1080"];
+
     sizes.forEach(size => {
-        const img = document.getElementById(`image-${size}`);
-        if (img) {
-            img.src = imageUrl;
+        let imgElement;
+        switch (currentImageType) {
+            case 'backdrop':
+                imgElement = document.getElementById(`backdrop-${size}`);
+                break;
+            case 'filter':
+                imgElement = document.getElementById(`filter-${size}`);
+                break;
+            default:
+                imgElement = document.getElementById(`image-${size}`);
+        }
+
+        if (imgElement) {
+            imgElement.src = imageUrl;
         }
     });
+
+    // Update the current slide's image URL in storedAds
+    if (currentImageType === 'main') {
+        storedAds[currentAdIndex].img = imageUrl;
+    } else if (currentImageType === 'backdrop') {
+        storedAds[currentAdIndex].backdrop = imageUrl;
+    } else if (currentImageType === 'filter') {
+        storedAds[currentAdIndex].filter = imageUrl;
+    }
 
     // Save the changes
     saveSettings();
 
     // Close the gallery
     closeImageGallery();
+
+    // Reset the currentImageType
+    currentImageType = 'main';
 }
 
 
@@ -2884,6 +3021,11 @@ document.addEventListener('DOMContentLoaded', () => {
             isShiftKeyDown = false;
         }
     });
+    
+    // Select an initial banner (e.g., the first one in storedBannerSettings)
+  if (storedBannerSettings.length > 0) {
+    selectBanner(storedBannerSettings[0].size);
+  }
 
     initializeTimeline();
 
@@ -2953,3 +3095,46 @@ document.getElementById('processImagesButton').addEventListener('click', () => {
 // Add this event listener to your audio element
 document.getElementById('audioPlayer').addEventListener('loadedmetadata', onAudioLoaded);
 
+document.addEventListener('DOMContentLoaded', function () {
+    const elementSelector = document.getElementById('elementSelector');
+    const increaseButton = document.getElementById('increaseZIndex');
+    const decreaseButton = document.getElementById('decreaseZIndex');
+
+    function updateArrowVisibility() {
+        const isElementSelected = elementSelector.value !== "";
+        increaseButton.style.visibility = isElementSelected ? 'visible' : 'hidden';
+        decreaseButton.style.visibility = isElementSelected ? 'visible' : 'hidden';
+    }
+
+    elementSelector.addEventListener('change', updateArrowVisibility);
+
+    increaseButton.addEventListener('click', function () {
+        if (elementSelector.value) {
+            changeElementZIndex(elementSelector.value, 'increase');
+        }
+    });
+
+    decreaseButton.addEventListener('click', function () {
+        if (elementSelector.value) {
+            changeElementZIndex(elementSelector.value, 'decrease');
+        }
+    });
+
+    // Initial update of arrow visibility
+    updateArrowVisibility();
+});
+
+
+window.onload = function() {
+    // Apply settings for all banners
+    storedBannerSettings.forEach(bannerSetting => {
+      applyAllSavedSettings(bannerSetting.size);
+    });
+  
+    // Select and highlight an initial banner (e.g., the first one)
+    const initialBanner = storedBannerSettings[0].size;
+    selectBanner(initialBanner);
+    highlightSelectedBanner();
+  };
+  
+  

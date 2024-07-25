@@ -100,7 +100,7 @@ main {
   display: flex;
   flex-direction: column;
   /* min-height: 81vh; */
-  animation: slideFromTopSmall .8s ease 1 backwards;
+  animation: slideFromTopSmall 0.8s ease 1 backwards;
 }
 
 html {
@@ -158,19 +158,19 @@ button,
   box-shadow: var(--sjs-shadow-medium) !important;
 }
 
-audio{
-    color: var(--sjs-primary-backcolor) !important;
-    background-color: rgb(241 243 244) !important;
-    border: 2px solid var(--sjs-primary-backcolor) !important;
-    margin: 0.25rem 0;
-    display: inline-block;
-    border-radius: var(--sjs-editorpanel-cornerRadius, var(--sjs-corner-radius, 4px));
-    text-align: start;
-    cursor: pointer;
-    transition: var(--sjs-transition-duration, 150ms);
-    font-size: 1.1rem;
-    box-shadow: var(--sjs-shadow-medium) !important;
-    /* width: 55%; */
+audio {
+  color: var(--sjs-primary-backcolor) !important;
+  background-color: rgb(241 243 244) !important;
+  border: 2px solid var(--sjs-primary-backcolor) !important;
+  margin: 0.25rem 0;
+  display: inline-block;
+  border-radius: var(--sjs-editorpanel-cornerRadius, var(--sjs-corner-radius, 4px));
+  text-align: start;
+  cursor: pointer;
+  transition: var(--sjs-transition-duration, 150ms);
+  font-size: 1.1rem;
+  box-shadow: var(--sjs-shadow-medium) !important;
+  /* width: 55%; */
 }
 
 audio:hover {
@@ -179,10 +179,10 @@ audio:hover {
   transform: translateY(-3px);
 }
 
-audio:active{
-    transition: 0.25s !important;
-    transform: translateY(0px);
-    box-shadow: var(--sjs-shadow-small-reset) !important;
+audio:active {
+  transition: 0.25s !important;
+  transform: translateY(0px);
+  box-shadow: var(--sjs-shadow-small-reset) !important;
 }
 
 button:hover,
@@ -245,7 +245,7 @@ footer {
   color: var(--sjs-general-forecolor);
 }
 
-.ads-title { 
+.ads-title {
   font-family: "Tajawal", "Oswald", sans-serif !important;
 }
 
@@ -257,42 +257,99 @@ h5,
 h6 {
   color: var(--sjs-general-forecolor);
   font-family: "Tajawal", "Gabarito", ReithSans, Helvetica, Roboto, sans-serif;
+ 
 }
 
 h1 {
   font-size: var(--sjs-article-font-xx-large-lineHeight);
   font-weight: var(--sjs-article-font-xx-large-fontWeight);
   line-height: 1.3;
+  text-shadow: 
+  var(--sjs-secondary-forecolor) -10px -10px 0px,
+   var(--sjs-secondary-forecolor) 10px -10px 0px,
+    var(--sjs-secondary-forecolor) -10px 10px 0px,
+     var(--sjs-secondary-forecolor) 10px 10px 0px,
+      var(--sjs-secondary-forecolor) -10px 0px 0px,
+       var(--sjs-secondary-forecolor) 0px -10px 0px,
+        var(--sjs-secondary-forecolor) 0px 10px 0px,
+         var(--sjs-secondary-forecolor) 10px 0px 0px,
+          var(--sjs-secondary-forecolor) 10px -4px 0px,
+           var(--sjs-secondary-forecolor) 10px 6px 0px
 }
 
 h2 {
   font-size: var(--sjs-article-font-x-large-lineHeight);
   font-weight: var(--sjs-article-font-x-large-fontWeight);
   line-height: 1.3;
+  text-shadow: 
+  var(--sjs-secondary-forecolor) -8px -8px 0px,
+   var(--sjs-secondary-forecolor) 8px -8px 0px,
+    var(--sjs-secondary-forecolor) -8px 8px 0px,
+     var(--sjs-secondary-forecolor) 8px 8px 0px,
+      var(--sjs-secondary-forecolor) -8px 0px 0px,
+       var(--sjs-secondary-forecolor) 0px -8px 0px,
+        var(--sjs-secondary-forecolor) 0px 8px 0px,
+         var(--sjs-secondary-forecolor) 8px 0px 0px;
 }
 
 h3 {
   font-size: var(--sjs-article-font-large-lineHeight);
   font-weight: var(--sjs-article-font-large-fontWeight);
   line-height: 1.3;
+  text-shadow: 
+  var(--sjs-secondary-forecolor) -6px -6px 0px,
+   var(--sjs-secondary-forecolor) 6px -6px 0px,
+    var(--sjs-secondary-forecolor) -6px 6px 0px,
+     var(--sjs-secondary-forecolor) 6px 6px 0px,
+      var(--sjs-secondary-forecolor) -6px 0px 0px,
+       var(--sjs-secondary-forecolor) 0px -6px 0px, 
+        var(--sjs-secondary-forecolor) 0px 6px 0px, 
+         var(--sjs-secondary-forecolor) 6px 0px 0px;
 }
 
 h4 {
   font-size: var(--sjs-article-font-medium-lineHeight);
   font-weight: var(--sjs-article-font-medium-fontWeight);
   line-height: 1.3;
+  text-shadow: 
+  var(--sjs-secondary-forecolor) -4px -4px 0px,
+   var(--sjs-secondary-forecolor) 4px -4px 0px,
+    var(--sjs-secondary-forecolor) -4px 4px 0px,
+     var(--sjs-secondary-forecolor) 4px 4px 0px,
+      var(--sjs-secondary-forecolor) -4px 0px 0px,
+       var(--sjs-secondary-forecolor) 0px -4px 0px, 
+        var(--sjs-secondary-forecolor) 0px 4px 0px, 
+         var(--sjs-secondary-forecolor) 4px 0px 0px;
 }
 
 h5 {
   font-size: var(--sjs-article-font-default-lineHeight);
   font-weight: var(--sjs-article-font-default-fontWeight);
   line-height: 1.3;
+  text-shadow: 
+  var(--sjs-secondary-forecolor) -3px -3px 0px,
+   var(--sjs-secondary-forecolor) 3px -3px 0px,
+    var(--sjs-secondary-forecolor) -3px 3px 0px,
+     var(--sjs-secondary-forecolor) 3px 3px 0px,
+      var(--sjs-secondary-forecolor) -3px 0px 0px,
+       var(--sjs-secondary-forecolor) 0px -3px 0px, 
+        var(--sjs-secondary-forecolor) 0px 3px 0px, 
+         var(--sjs-secondary-forecolor) 3px 0px 0px;
 }
 
 h6 {
   font-size: 1rem;
   font-weight: 700;
   line-height: 1.3;
+  text-shadow: 
+  var(--sjs-secondary-forecolor) -2px -2px 0px,
+  var(--sjs-secondary-forecolor) 2px -2px 0px,
+  var(--sjs-secondary-forecolor) -2px 2px 0px,
+   var(--sjs-secondary-forecolor) 2px 2px 0px,
+   var(--sjs-secondary-forecolor) -2px 0px 0px,
+   var(--sjs-secondary-forecolor) 0px -2px 0px, 
+   var(--sjs-secondary-forecolor) 0px 2px 0px, 
+   var(--sjs-secondary-forecolor) 2px 0px 0px;
 }
 
 a {
@@ -565,34 +622,33 @@ nav :first-of-type li a {
   /* transform: translateY(-10px) scale(1.1); */
 }
 
-aside{
-  position:relative;
+aside {
+  position: relative;
   width: 300px;
 }
 
 .toc {
   /* position:sticky; */
   /* top:0px; */
-  display: flex; 
+  display: flex;
   flex-wrap: wrap;
   /* flex-direction: column;  */
   /* gap: 15px; */
   overflow: scroll;
   /* scroll-behavior: smooth; */
-/* height: 100vh; */
-/* padding-bottom: 20px; */
+  /* height: 100vh; */
+  /* padding-bottom: 20px; */
 }
 
-.ad-banner{
-  position:sticky;
+.ad-banner {
+  position: sticky;
   top: 15px;
 }
 
-.related-articles{
+.related-articles {
   display: flex;
   flex-direction: column;
   gap: 18px;
-
 }
 
 .content-wrapper {
@@ -1061,7 +1117,7 @@ aside{
   from {
     opacity: 0;
   }
-  to{
+  to {
     opacity: 1;
   }
 }
@@ -1070,7 +1126,7 @@ aside{
   from {
     opacity: 1;
   }
-  to{
+  to {
     opacity: 0;
   }
 }
@@ -1207,7 +1263,6 @@ aside{
   }
 }
 
-
 @keyframes zoomIn {
   from {
     transform: scale(0);
@@ -1270,7 +1325,7 @@ aside{
 
 .slide-to-bottom {
   animation: slideToBottom 1s ease-out forwards;
-} 
+}
 
 .slide-from-bottom-small {
   animation: slideFromBottomSmall 1s ease-out forwards;
@@ -1334,9 +1389,8 @@ aside{
   background-color: var(--sjs-general-backcolor);
 }
 
-
-
-.path-one, .path-two {
+.path-one,
+.path-two {
   position: absolute;
   width: 100%;
   height: 100%;
@@ -1435,7 +1489,7 @@ aside{
   background: #ddd;
   outline: none;
   opacity: 0.7;
-  transition: opacity .2s;
+  transition: opacity 0.2s;
   /* margin-top:15px; */
   margin: 0;
   padding: 0;
@@ -1454,7 +1508,7 @@ aside{
   appearance: none;
   width: 15px;
   height: 15px;
-  background: #4CAF50;
+  background: #4caf50;
   cursor: pointer;
   border-radius: 50%;
 }
@@ -1462,7 +1516,7 @@ aside{
 #timelineSlider::-moz-range-thumb {
   width: 10px;
   height: 10px;
-  background: #4CAF50;
+  background: #4caf50;
   cursor: pointer;
   border-radius: 50%;
 }
@@ -1474,7 +1528,6 @@ aside{
   margin-left: 9px;
   margin-right: 10px;
 }
-
 
 .timeline-marker {
   transition: all 0.2s ease-out;
@@ -1494,6 +1547,6 @@ aside{
 
 .current-marker {
   background-color: #ff0000 !important;
-  transform: scale(1.2); 
+  transform: scale(1.2);
   transition: all 0.3s ease;
 }
