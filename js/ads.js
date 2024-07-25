@@ -137,11 +137,46 @@ function applyAllSavedSettings(size) {
     if (layoutSettings.opacities) {
         Object.entries(layoutSettings.opacities).forEach(([elementType, opacity]) => {
             const element = document.getElementById(`${elementType}-${size}`);
-            if (element) {
+            if(elementType === 'backdrop'){
+                const backdropImage = document.getElementById(`backdropimage-${size}`);
+                if(backdropImage){
+                    backdropImage.style.opacity = opacity;
+                }
+            } else if (elementType === 'frontdrop'){
+                const frontdropImage = document.getElementById(`frontdropimage-${size}`);
+                if(frontdropImage){
+                    frontdropImage.style.opacity = opacity;
+                }
+            } else if (element) {
                 element.style.opacity = opacity;
             }
         });
     }
+
+    // Apply filters
+    if (layoutSettings.filters) {
+        Object.entries(layoutSettings.filters).forEach(([elementType, filter]) => {
+            const element = document.getElementById(`${elementType}-${size}`);
+            if (elementType === 'backdrop') {
+                const backdropImage = document.getElementById(`backdropimage-${size}`);
+                
+                if (backdropImage) {
+                    backdropImage.style.filter = filter;
+                }
+            } else if (elementType === 'frontdrop') {
+                const frontdropImage = document.getElementById(`frontdropimage-${size}`);
+
+                if (frontdropImage) {
+                    frontdropImage.style.filter = filter;
+                }
+            } else if (element) {
+                element.style.filter = filter;
+            }
+        });
+    }
+
+
+                
 
     // Apply SVG opacities
     if (layoutSettings.opacities) {
@@ -231,7 +266,7 @@ function updateElementsList() {
     }
 
     elementsList.innerHTML = '';
-
+    // Define elements to display
     const elements = [
         { id: `logo-icon-${size}`, name: 'Logo' },
         { id: `logo-title-${size}`, name: 'Logo Title' },
@@ -245,11 +280,14 @@ function updateElementsList() {
         { id: `path-two-${size}`, name: 'SVG Wave 2' },
         { id: `background-${size}`, name: 'Background' },
         { id: `backdrop-${size}`, name: 'Backdrop' },
+        { id: `backdropimage-${size}`, name: 'Backdropimage' },
+        { id: `frontdrop-${size}`, name: 'Frontdrop' },
+        { id: `frontdropimage-${size}`, name: 'Frontdropimage' },
         { id: `filter-${size}`, name: 'Filter' },
         { id: `backbanner-${size}`, name: 'backbanner' }
     ];
 
-
+    // Add buttons for each element
     elements.forEach(element => {
         const el = document.getElementById(element.id);
         if (el && (el.style.display !== 'none' || element.name.startsWith('SVG Wave'))) {
@@ -267,7 +305,7 @@ function updateElementsList() {
 
 function selectElement(elementId) {
     const clickedElement = document.getElementById(elementId);
-
+    //  console.log('Clicked element:', clickedElement);
     if (selectedElement) {
         const currentZIndex = parseInt(window.getComputedStyle(selectedElement).zIndex) || 0;
         const colorPicker = document.getElementById('element-color');
@@ -278,7 +316,7 @@ function selectElement(elementId) {
             colorPicker.value = rgbToHex(computedColor);
         }
     }
-
+    //  console.log('Selected element:', selectedElement);
     if (selectedElement === clickedElement) {
         deselectElement();
     } else {
@@ -2807,13 +2845,12 @@ function closeImageGallery() {
 }
 
 function selectGalleryImage(imageUrl) {
-    const sizes = ["160x600", "480x120", "300x250", "300x250-text", "728x90", "1200x628", "1200x628-2", "1080x1080"];
 
     sizes.forEach(size => {
         let imgElement;
         switch (currentImageType) {
             case 'backdrop':
-                imgElement = document.getElementById(`backdrop-${size}`);
+                imgElement = document.getElementById(`backdropimage-${size}`);
                 break;
             case 'filter':
                 imgElement = document.getElementById(`filter-${size}`);
@@ -2942,6 +2979,114 @@ function toggleSideBar() {
 
 }
 
+// Function to scale banners
+let isZoomed = true; // Start with zoomed (scaled) mode
+
+function toggleZoom() {
+    isZoomed = !isZoomed;
+    if (isZoomed) {
+        scaleBanners();
+    } else {
+        resetBanners();
+    }
+    updateZoomButtonText();
+}
+
+function scaleBanners() {
+    const banners = document.querySelectorAll('.ad-container');
+    const sidebar = document.getElementById('sideBar');
+    const isSidebarVisible = window.innerWidth >= 1024 && getComputedStyle(sidebar).display !== 'none';
+    const sidebarWidth = isSidebarVisible ? sidebar.offsetWidth : 0;
+    const viewportWidth = window.innerWidth - sidebarWidth;
+    const viewportHeight = window.innerHeight;
+
+    banners.forEach(banner => {
+        const originalWidth = parseInt(banner.getAttribute('data-original-width'));
+        const originalHeight = parseInt(banner.getAttribute('data-original-height'));
+        
+        const widthScale = (viewportWidth * 0.95) / originalWidth;
+        const heightScale = (viewportHeight * 0.7) / originalHeight;
+        const scaleFactor = Math.min(widthScale, heightScale, 1);
+
+        banner.style.transform = `scale(${scaleFactor})`;
+        banner.style.width = `${originalWidth}px`;
+        banner.style.height = `${originalHeight}px`;
+
+        const marginHorizontal = (viewportWidth - (originalWidth * scaleFactor)) / 2;
+        const marginVertical = (viewportHeight - (originalHeight * scaleFactor)) / 2;
+        banner.style.margin = `${marginVertical}px ${marginHorizontal}px`;
+    });
+}
+
+function resetBanners() {
+    const banners = document.querySelectorAll('.ad-container');
+    banners.forEach(banner => {
+        banner.style.transform = 'scale(1)';
+        banner.style.margin = '0';
+        banner.style.width = `${banner.getAttribute('data-original-width')}px`;
+        banner.style.height = `${banner.getAttribute('data-original-height')}px`;
+    });
+}
+
+function storeOriginalSizes() {
+    const banners = document.querySelectorAll('.ad-container');
+    banners.forEach(banner => {
+        if (!banner.hasAttribute('data-original-width')) {
+            banner.setAttribute('data-original-width', banner.offsetWidth);
+            banner.setAttribute('data-original-height', banner.offsetHeight);
+        }
+    });
+}
+
+function updateZoomButtonText() {
+    const zoomButton = document.getElementById('zoomToggleButton');
+    if (zoomButton) {
+        zoomButton.innerHTML = isZoomed ? '<i class="fa-solid fa-up-right-and-down-left-from-center"></i> <span class="text-xs"></span>' : '<i class="fa-solid fa-down-left-and-up-right-to-center"></i><span class="text-xs"></span>';
+    }
+}
+
+function createAndInsertZoomButton() {
+    const existingButton = document.getElementById('zoomToggleButton');
+    if (existingButton) {
+        return; // Button already exists, no need to create a new one
+    }
+
+    const zoomButton = document.createElement('button');
+    zoomButton.id = 'zoomToggleButton';
+    zoomButton.className = 'px-1 py-1  hover:bg-sky-100 rounded-md cursor-pointer';
+    zoomButton.onclick = toggleZoom;
+
+    // Try to insert the button in the preferred location
+    const buttonContainer = document.querySelector('.flex.gap-2');
+    
+        // Fallback: Insert the button as a fixed element if preferred location is not found
+        zoomButton.style.position = 'fixed';
+        zoomButton.style.top = '20px';
+        zoomButton.style.right = '20px';
+        zoomButton.style.zIndex = '40';
+        document.body.appendChild(zoomButton);
+    
+
+    updateZoomButtonText();
+}
+
+function initScaling() {
+    storeOriginalSizes();
+    scaleBanners();
+    createAndInsertZoomButton();
+    window.addEventListener('resize', () => {
+        if (isZoomed) {
+            scaleBanners();
+        }
+    });
+}
+
+// Ensure initScaling runs after DOM is loaded
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initScaling);
+} else {
+    initScaling();
+}
 // Initialize ads and images
 document.addEventListener('DOMContentLoaded', () => {
 
