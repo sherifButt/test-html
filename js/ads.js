@@ -2926,6 +2926,22 @@ function handleEditFormSubmit(event) {
     closeEditModal();
 }
 
+function toggleSideBar() {
+    // <div id="sideBar" class="hidden lg:fixed lg:inset-y-0 lg:z-50 lg:flex lg:w-96 lg:flex-col">
+    const sidebar = document.getElementById('sideBar');
+    if(sidebar.classList.contains('hidden')) {
+        sidebar.classList.remove('hidden',);
+    sidebar.classList.add('fixed', 'inset-y-0', 'z-50', 'flex','w-full', 'flex-col')
+
+       
+    } else {
+        sidebar.classList.add('hidden');
+        sidebar.classList.remove('fixed', 'inset-y-0', 'z-50', 'flex','w-full', 'flex-col')
+    }
+
+
+}
+
 // Initialize ads and images
 document.addEventListener('DOMContentLoaded', () => {
 

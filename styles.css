@@ -1109,6 +1109,21 @@ aside {
   #decoration {
     display: none;
   }
+
+  .sceneline-player button {
+    color: var(--sjs-primary-backcolor) !important;
+    /* background-color: unset; */
+    border: 2px solid var(--sjs-primary-backcolor) !important;
+    padding: 0.35rem;
+    margin: 0.2rem 0;
+    display: inline-flex;
+    /* border-radius: var(--sjs-editorpanel-cornerRadius, var(--sjs-corner-radius, 4px)); */
+    /* text-align: start; */
+    cursor: pointer;
+    transition: var(--sjs-transition-duration, 150ms);
+    font-size: 1.1rem;
+    box-shadow: var(--sjs-shadow-medium) !important;
+  }
 }
 
 /* ads animation */

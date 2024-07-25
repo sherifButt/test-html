@@ -21,17 +21,22 @@
   </head>
   <body class="h-full">
     <div class="relative">
-      <button type="button" class="-m-2.5 p-2.5 text-gray-700 lg:hidden fixed top-6 left-6 z-50">
+      <button type="button" onclick="toggleSideBar()" class="-m-2.5 p-2.5 text-gray-700 lg:hidden fixed top-6 left-6 z-50">
         <span class="sr-only">Open sidebar</span>
         <i class="fas fa-bars"></i>
       </button>
-    
+
       <!-- Static sidebar for desktop -->
-      <div class="hidden lg:fixed lg:inset-y-0 lg:z-50 lg:flex lg:w-96 lg:flex-col">
+      <div id="sideBar" class="hidden lg:fixed lg:inset-y-0 lg:z-50 lg:flex lg:w-96 lg:flex-col">
         <!-- Sidebar component, swap this element with another sidebar if you like -->
         <div class="flex grow flex-col gap-y-5 overflow-y-auto border-r border-gray-200 bg-white px-6 pb-4">
-          <div class="flex h-16 shrink-0 items-center">
+          <div class="flex h-16 shrink-0 items-center justify-between">
             <img class="h-8 w-auto" src="/img/loyalleads-logo.png" alt="Your Company" />
+            <button type="button" onclick="toggleSideBar()" class="-m-2.5 p-2.5 text-gray-700 lg:hidden z-50">
+              <span class="sr-only">Close sidebar</span>
+              <i class="fas fa-times"></i>
+              
+            </button>
           </div>
           <nav class="flex flex-1 flex-col">
             <div class="sidebar sticky h-full max-h-screen overflow-y-auto scroll-auto">
@@ -314,147 +319,6 @@
                 <div id="imageUrlsContainer" class="h-full max-h-screen overflow-y-auto scroll-auto"></div>
                 <button id="saveImagesButton" class="px-2">Save</button>
               </details>
-              <!-- Edit Slide Modal -->
-              <div id="editSlideModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50 hidden">
-                <div class="relative top-20 mx-auto p-5 border w-96 lg:w-[800px] shadow-lg rounded-md bg-white">
-                  <h3 class="text-lg font-bold mb-4">Edit Slide</h3>
-                  <form id="editSlideForm">
-                    <div class="flex">
-                      <div class="mb-4">
-                        <label class="block text-gray-700 text-sm font-bold mb-2" for="editTimestamp">Timestamp (ms)</label>
-                        <input
-                          type="number"
-                          id="editTimestamp"
-                          name="timestamp"
-                          class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                        />
-                      </div>
-                      <div>
-                        <label for="formattedTime" class="block text-sm font-medium text-gray-700">Formatted Time (mm:ss)</label>
-                        <input type="text" id="formattedTime" name="formattedTime" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm bg-gray-100" disabled />
-                      </div>
-                    </div>
-                    <div class="mb-4">
-                      <label class="block text-gray-700 text-sm font-bold mb-2" for="editAudio">Audio Source</label>
-                      <input
-                        type="text"
-                        id="editAudio"
-                        name="audio"
-                        class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                      />
-                    </div>
-
-                    <div class="flex gap-4">
-                      <div class="mb-4 w-full">
-                        <label class="block text-gray-700 text-sm font-bold mb-2" for="editLogoIcon">Logo Icon</label>
-                        <input
-                          type="text"
-                          id="editLogoIcon"
-                          name="logoIcon"
-                          class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                        />
-                      </div>
-                      <div class="mb-4 w-1/2">
-                        <label class="block text-gray-700 text-sm font-bold mb-2" for="editLogoFirstWord">Logo First Word</label>
-                        <input
-                          type="text"
-                          id="editLogoFirstWord"
-                          name="logoFirstWord"
-                          class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                        />
-                      </div>
-                      <div class="mb-4 w-1/2">
-                        <label class="block text-gray-700 text-sm font-bold mb-2" for="editLogoSecondWord">Logo Second Word</label>
-                        <input
-                          type="text"
-                          id="editLogoSecondWord"
-                          name="logoSecondWord"
-                          class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                        />
-                      </div>
-                    </div>
-                    <div class="mb-4">
-                      <label class="block text-gray-700 text-sm font-bold mb-2" for="editHeadline">Headline</label>
-                      <input
-                        type="text"
-                        id="editHeadline"
-                        name="headline"
-                        class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                      />
-                    </div>
-                    <div class="mb-4">
-                      <label class="block text-gray-700 text-sm font-bold mb-2" for="editText">Text</label>
-                      <textarea
-                        id="editText"
-                        name="text"
-                        class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                        rows="3"
-                      ></textarea>
-                    </div>
-                    <div class="mb-4">
-                      <label class="block text-gray-700 text-sm font-bold mb-2" for="editTags">Tags</label>
-                      <input
-                        type="text"
-                        id="editTags"
-                        name="tags"
-                        class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                      />
-                    </div>
-                    <div class="mb-4">
-                      <label class="block text-gray-700 text-sm font-bold mb-2" for="editImg">Image URL</label>
-                      <input
-                        type="text"
-                        id="editImg"
-                        name="img"
-                        class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                      />
-                    </div>
-                    <div class="mb-4">
-                      <label class="block text-gray-700 text-sm font-bold mb-2" for="editCta">CTA</label>
-                      <input
-                        type="text"
-                        id="editCta"
-                        name="cta"
-                        class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                      />
-                    </div>
-                    <div class="mb-4">
-                      <label class="block text-gray-700 text-sm font-bold mb-2" for="editAnimations">Animations (JSON)</label>
-                      <textarea
-                        id="editAnimations"
-                        name="animations"
-                        class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                        rows="5"
-                      ></textarea>
-                    </div>
-                    <div class="flex items-center justify-between">
-                      <button type="submit" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
-                        Save Changes
-                      </button>
-                      <button type="button" id="cancelEdit" class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
-                        Cancel
-                      </button>
-                    </div>
-                  </form>
-                </div>
-              </div>
-
-              <!-- Image Gallery Modal -->
-              <div id="imageGalleryModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50 hidden">
-                <div class="flex flex-col relative top-20 mx-auto p-5 border w-11/12 lg:w-3/4 shadow-lg rounded-md bg-white h-4/5">
-                  <div class="flex justify-between items-center">
-                    <h3 class="text-lg font-bold">Image Gallery</h3>
-                    <div class="flex justify-end">
-                      <button id="closeGalleryButton" class="bg-red-500 text-white rounded-full"><i class="fas fa-times mr-0"></i></button>
-                    </div>
-                  </div>
-                  <div class="h-full max-h-full overflow-y-auto scroll-auto">
-                    <div id="imageGalleryGrid" class="grid grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
-                      <!-- Images will be dynamically added here -->
-                    </div>
-                  </div>
-                </div>
-              </div>
             </div>
           </nav>
         </div>
@@ -896,10 +760,8 @@
         </main>
 
         <div
-          class="fixed lg:pr-[410px] min-w-full bottom-0 z-40 flex h-72 2xl:h-64 items-center gap-x-4 border-t border-gray-200 bg-white px-4 shadow-sm sm:gap-x-6 sm:px-6 lg:px-8"
+          class="sceneline-player fixed lg:pr-[410px] min-w-full bottom-0 z-40 flex h-86 2xl:h-64 items-center gap-x-4 border-t border-gray-200 bg-white px-4 shadow-sm sm:gap-x-6 sm:px-6 lg:px-8"
         >
-          
-
           <!-- Separator -->
 
           <div class="flex flex-1 gap-x-4 self-stretch lg:gap-x-6 h-full">
@@ -914,7 +776,6 @@
                 <div class="flex gap-2">
                   <div class="flex flex-col xl:flex-row gap-2">
                     <div class="flex gap-2">
-                      
                       <button id="moveMarkerButton" class="px-2 py-1 rounded bg-gray-300 hover:bg-gray-400 focus:outline-none"><i class="fas fa-arrows-alt"></i></button>
                       <button id="editSlideButton" class="px-2 py-1 bg-blue-500 text-white rounded"><i class="fas fa-edit"></i></button>
                       <button id="addSlideButton" class="px-2 py-1 bg-green-500 text-white rounded"><i class="fas fa-plus"></i></button>
@@ -923,13 +784,17 @@
                       <button id="changeBackdropButton" class="px-2 py-1 bg-purple-500 text-white rounded" onclick="openBackdropGallery()">
                         <i class="fas fa-image"></i><span class="text-xs">Backdrop</span>
                       </button>
-                      <button id="changeFilterButton" class="px-2 py-1 bg-indigo-500 text-white rounded" onclick="openFilterGallery()"><i class="fas fa-filter"></i><span class="text-xs">Filter</span></button>
+                      <button id="changeFilterButton" class="px-2 py-1 bg-indigo-500 text-white rounded" onclick="openFilterGallery()">
+                        <i class="fas fa-filter"></i><span class="text-xs">Filter</span>
+                      </button>
                     </div>
                     <div class="flex gap-2">
                       <button id="isLoopedButton" class="px-2 py-1 bg-blue-500 text-white rounded"><i class="fas fa-redo"></i></button>
                       <button id="isEntryAnimatedButton" class="px-2 py-1 bg-blue-500 text-white rounded"><i class="fas fa-sign-in"></i></button>
                       <button id="isExitAnimatedButton" class="px-2 py-1 bg-blue-500 text-white rounded"><i class="fas fa-sign-out"></i></button>
-                      <button id="processImagesButton" class="px-4 py-2 bg-green-500 text-white rounded"><i class="fa-solid fa-wand-magic-sparkles"></i> Images</button>
+                      <button id="processImagesButton" class="px-4 py-2 bg-green-500 text-white rounded">
+                        <i class="fa-solid fa-wand-magic-sparkles"></i><span class="text-xs">Images</span>
+                      </button>
                     </div>
                   </div>
                   <div class="flex gap-2"></div>
@@ -948,10 +813,16 @@
 
                     <div class="flex gap-2">
                       <button class="px-2 py-1 rounded" onclick="previousAd()"><i class="fas fa-backward-step"></i></button>
-                      <button id="goBackButton" class="px-2 py-1 rounded bg-yellow-500 text-white" onclick="goBack(5)"><i class="fas fa-backward-step"></i> 5</button>
-                      <button id="goBackButton" class="px-2 py-1 rounded bg-yellow-500 text-white" onclick="goBack(2)"><i class="fas fa-backward-step"></i> 2</button>
+                      <button id="goBackButton" class="px-2 py-1 rounded bg-yellow-500 text-white" onclick="goBack(5)">
+                        <i class="fas fa-backward-step"></i> <span class="text-xs">5</span>
+                      </button>
+                      <button id="goBackButton" class="px-2 py-1 rounded bg-yellow-500 text-white" onclick="goBack(2)">
+                        <i class="fas fa-backward-step"></i> <span class="text-xs">2</span>
+                      </button>
                       <button id="playAudioButton" class="px-2 py-1 rounded bg-blue-500 text-white" onclick="playFirstAudioAndRunSlides()"><i class="fas fa-play w-10"></i></button>
-                      <button id="goForwardButton" class="px-2 py-1 rounded bg-yellow-500 text-white" onclick="goForward(5)">5 <i class="fas fa-forward-step"></i></button>
+                      <button id="goForwardButton" class="px-2 py-1 rounded bg-yellow-500 text-white" onclick="goForward(5)">
+                        <span class="text-xs">5</span> <i class="fas fa-forward-step"></i>
+                      </button>
                       <button class="px-2 py-1 rounded" onclick="nextAd()"><i class="fas fa-forward-step"></i></button>
                     </div>
 
@@ -965,8 +836,8 @@
                   </div>
                 </div>
               </div>
-              <div class="flex flex-col w-full">
-                <div class="w-full mt-16 relative">
+              <div class="flex flex-col w-full mt-10 mb-6">
+                <div class="w-full relative">
                   <div class="timeline-container">
                     <div id="timelineWrapper" class="relative" style="width: 100%; min-width: 100%">
                       <div id="timelineMarkers" class="flex justify-between absolute w-full" style="top: -15px"></div>
@@ -986,8 +857,145 @@
           </div>
         </div>
       </div>
-   
-  
+      <!-- Edit Slide Modal -->
+      <div id="editSlideModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50 hidden">
+        <div class="relative top-0 lg:top-20 mx-auto p-5 border w-full lg:w-[800px] shadow-lg lg:rounded-md bg-white">
+          <h3 class="text-lg font-bold mb-4">Edit Slide</h3>
+          <form id="editSlideForm">
+            <div class="flex">
+              <div class="mb-4">
+                <label class="block text-gray-700 text-sm font-bold mb-2" for="editTimestamp">Timestamp (ms)</label>
+                <input
+                  type="number"
+                  id="editTimestamp"
+                  name="timestamp"
+                  class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                />
+              </div>
+              <div>
+                <label for="formattedTime" class="block text-sm font-medium text-gray-700">Formatted Time (mm:ss)</label>
+                <input type="text" id="formattedTime" name="formattedTime" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm bg-gray-100" disabled />
+              </div>
+            </div>
+            <div class="mb-4">
+              <label class="block text-gray-700 text-sm font-bold mb-2" for="editAudio">Audio Source</label>
+              <input
+                type="text"
+                id="editAudio"
+                name="audio"
+                class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+              />
+            </div>
+
+            <div class="flex gap-4">
+              <div class="mb-4 w-full">
+                <label class="block text-gray-700 text-sm font-bold mb-2" for="editLogoIcon">Logo Icon</label>
+                <input
+                  type="text"
+                  id="editLogoIcon"
+                  name="logoIcon"
+                  class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                />
+              </div>
+              <div class="mb-4 w-1/2">
+                <label class="block text-gray-700 text-sm font-bold mb-2" for="editLogoFirstWord">Logo First Word</label>
+                <input
+                  type="text"
+                  id="editLogoFirstWord"
+                  name="logoFirstWord"
+                  class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                />
+              </div>
+              <div class="mb-4 w-1/2">
+                <label class="block text-gray-700 text-sm font-bold mb-2" for="editLogoSecondWord">Logo Second Word</label>
+                <input
+                  type="text"
+                  id="editLogoSecondWord"
+                  name="logoSecondWord"
+                  class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                />
+              </div>
+            </div>
+            <div class="mb-4">
+              <label class="block text-gray-700 text-sm font-bold mb-2" for="editHeadline">Headline</label>
+              <input
+                type="text"
+                id="editHeadline"
+                name="headline"
+                class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+              />
+            </div>
+            <div class="mb-4">
+              <label class="block text-gray-700 text-sm font-bold mb-2" for="editText">Text</label>
+              <textarea
+                id="editText"
+                name="text"
+                class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                rows="3"
+              ></textarea>
+            </div>
+            <div class="mb-4">
+              <label class="block text-gray-700 text-sm font-bold mb-2" for="editTags">Tags</label>
+              <input
+                type="text"
+                id="editTags"
+                name="tags"
+                class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+              />
+            </div>
+            <div class="mb-4">
+              <label class="block text-gray-700 text-sm font-bold mb-2" for="editImg">Image URL</label>
+              <input
+                type="text"
+                id="editImg"
+                name="img"
+                class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+              />
+            </div>
+            <div class="mb-4">
+              <label class="block text-gray-700 text-sm font-bold mb-2" for="editCta">CTA</label>
+              <input
+                type="text"
+                id="editCta"
+                name="cta"
+                class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+              />
+            </div>
+            <div class="mb-4">
+              <label class="block text-gray-700 text-sm font-bold mb-2" for="editAnimations">Animations (JSON)</label>
+              <textarea
+                id="editAnimations"
+                name="animations"
+                class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                rows="5"
+              ></textarea>
+            </div>
+            <div class="flex items-center justify-between">
+              <button type="submit" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">Save Changes</button>
+              <button type="button" id="cancelEdit" class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
+                Cancel
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <!-- Image Gallery Modal -->
+      <div id="imageGalleryModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50 hidden">
+        <div class="flex flex-col relative top-0 lg:top-20 mx-auto p-5 border w-full lg:w-3/4 shadow-lg rounded-md bg-white h-full lg:h-4/5">
+          <div class="flex justify-between items-center">
+            <h3 class="text-lg font-bold">Image Gallery</h3>
+            <div class="flex justify-end">
+              <button id="closeGalleryButton" class="bg-red-500 text-white rounded-full"><i class="fas fa-times mr-0"></i></button>
+            </div>
+          </div>
+          <div class="h-full max-h-full overflow-y-auto scroll-auto">
+            <div id="imageGalleryGrid" class="grid grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
+              <!-- Images will be dynamically added here -->
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   </body>
 </html>
