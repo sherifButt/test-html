@@ -20,7 +20,7 @@ const images = [
     "/img/filter-279.png",
     "/img/filter-32499109_7963948.png",
     "/img/filter-34294033_dotted_background.png",
-    "/img/filter-comic.png",
+    "/img/backdrop-large-production-studio.webp",
     "/img/flat-design-black-white-halftone.png",
     "/img/frontdrop-studio-inside_03.png",
     "/img/google-ads-responsive-ad-example.png.webp",

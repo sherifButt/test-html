@@ -51,6 +51,7 @@ const sizes = ["480x120", "300x250", "160x600", "300x250-text", "728x90", "1200x
 
 let currentImageType = 'main';
 
+
 // implanting campaign object
 let ads = campaigns[currentCampaignIndex].ads.map(ad => {
     return {
@@ -1317,9 +1318,8 @@ function updateTextLength() {
 }
 
 function updateImages() {
-    const sizes = ["160x600", "480x120", "300x250", "300x250-text", "728x90", "1200x628", "1200x628-2", "1080x1080"];
     sizes.forEach(size => {
-        document.getElementById(`image-${size}`).src = storedImages[currentImageIndex];
+        document.getElementById(`image-${size}`).src = storedImages[currentImageIndex];    
     });
 }
 
@@ -2221,11 +2221,11 @@ function updateAds() {
             logoTitle: document.getElementById(`logo-title-${size}`),
             textContainer: document.getElementById(`textcontainer-${size}`),
             backdrop: document.getElementById(`backdrop-${size}`),
-            // backdropImage: document.getElementById(`backdropimage-${size}`),
+            backdropImage: document.getElementById(`backdropimage-${size}`),
             filter: document.getElementById(`filter-${size}`),
-            // filterImage: document.getElementById(`filterimage-${size}`),
+            filterImage: document.getElementById(`filterimage-${size}`),
             frontdrop: document.getElementById(`frontdrop-${size}`),
-            // frontdropImage: document.getElementById(`frontdropimage-${size}`),
+            frontdropImage: document.getElementById(`frontdropimage-${size}`),
             backbanner: document.getElementById(`backbanner-${size}`)
         };
         const settings = storedBannerSettings.find(setting => setting.size === size).settings;
@@ -2249,9 +2249,9 @@ function updateAds() {
         if (ad.imageBackground && elements.imageBackground) elements.imageBackground.src = ad.imageBackground;
         if (ad.filter && elements.filter) elements.filter.style.backgroundColor = ad.filter;
 
-        // if (ad.filterImage && elements.filterImage) elements.filterImage.src = ad.filterImage;
-        // if (ad.backdropImage && elements.backdropImage) elements.backdropImage.src = ad.backdropImage;
-        // if (ad.frontdropImage && elements.frontdropImage) elements.frontdropImage.src = ad.frontdropImage;
+        if (ad.filter && elements.filterImage) elements.filterImage.src = ad.filter;
+        if (ad.backdrop && elements.backdropImage) elements.backdropImage.src = ad.backdrop;
+        if (ad.frontdrop && elements.frontdropImage) elements.frontdropImage.src = ad.frontdrop;
         
 
 
@@ -2262,7 +2262,7 @@ function updateAds() {
                     elements.svgWave.style.display = settings.elements[key] ? 'block' : 'none';
                 }
 
-            } else if (element) {
+            } else if (element && key !== 'backdropImage' && key !== 'filterImage' && key !== 'frontdropImage') {
                 element.style.display = settings.elements[key] ? 'block' : 'none';
 
             }
@@ -2275,8 +2275,6 @@ function updateAds() {
         if (elements.logoIcon) elements.logoIcon.style.transform = `rotate(${settings.layout.logoRotation}deg)`;
         if (elements.image) elements.image.style.zIndex = settings.layout.imageZIndex || 30;
 
-
-
         // Apply entry animations
         if (animation.template && animation.isEntryAnimated) {
             const template = animationTemplates.find(t => t.id === animation.template);
@@ -2284,7 +2282,10 @@ function updateAds() {
                 const { settings: animationSettings, elements: animationElements } = template.entry;
                 Object.entries(elements).forEach(([key, element]) => {
                     if (element && animationElements[key]) {
-                        applyAnimation(element, animationElements[key], animationSettings);
+                        if (element && animationElements[key] && 
+                            !['frontdropImage', 'backdropImage', 'filterImage'].includes(key)) {
+                            applyAnimation(element, animationElements[key], animationSettings);
+                        }
                     }
                 });
             }
@@ -2839,7 +2840,7 @@ function openImageGallery(type = 'main') {
     const grid = document.getElementById('imageGalleryGrid');
     grid.innerHTML = ''; // Clear existing images
 
-    const imageSource = type === 'filter' ? storedFilters : storedImages;
+    const imageSource =storedImages;
 
     const filteredImages = imageSource.filter(imageUrl => {
         const fileName = imageUrl.split('/').pop().toLowerCase();
@@ -2898,7 +2899,7 @@ function selectGalleryImage(imageUrl) {
                 imgElement = document.getElementById(`backdropimage-${size}`);
                 break;
             case 'filter':
-                imgElement = document.getElementById(`filter-${size}`);
+                imgElement = document.getElementById(`filterimage-${size}`);
                 break;
             default:
                 imgElement = document.getElementById(`image-${size}`);
@@ -3060,7 +3061,7 @@ function scaleBanners() {
         banner.style.height = `${originalHeight}px`;
 
         const marginHorizontal = (viewportWidth - (originalWidth * scaleFactor)) / 2;
-        const marginVertical = (viewportHeight - (originalHeight * scaleFactor)) / 2;
+        const marginVertical = (viewportHeight - (originalHeight * scaleFactor)) / 12;
         banner.style.margin = `${marginVertical}px ${marginHorizontal}px`;
     });
 }

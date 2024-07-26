@@ -476,7 +476,7 @@ const animationTemplates_ = [
 const animationTemplates = [
     {
         "id": "none",
-        "name": "fade-in",
+        "name": "none",
         "entry": {
             "settings": {
                 "duration": 0,
@@ -543,6 +543,7 @@ const animationTemplates = [
                 "logo-title": "fade-in",
                 // "text-container": "fade-in",
                 "backdrop": "fade-in",
+                "filter": "fade-in",
                 "frontdrop": "fade-in",
                 "backbanner": "fade-in"
             }
@@ -565,6 +566,7 @@ const animationTemplates = [
                 "logo-title": "fade-out",
                 // "text-container": "fade-out",
                 "backdrop": "fade-out",
+                "filter": "fade-out",
                 "frontdrop": "fade-out",
                 "backbanner": "fade-out"
             }
@@ -1369,7 +1371,7 @@ const campaigns_design_x = [
 
     }
 ]
-const campaigns = [
+const campaigns_05_x = [
     {
         "title": "how to inhace your business",
         "description": "this is a description",
@@ -1907,7 +1909,7 @@ const campaigns = [
 
     }
 ]
-const campaigns_04 = [
+const campaigns = [
     {
         "title": "how to inhace your business",
         "description": "this is a description",
