@@ -147,27 +147,35 @@ function applyAllSavedSettings(size) {
                 if(frontdropImage){
                     frontdropImage.style.opacity = opacity;
                 }
+            } else if (elementType === 'filter'){
+                const filterImage = document.getElementById(`filterimage-${size}`);
+                if(filterImage){
+                    filterImage.style.opacity = opacity;
+                }
             } else if (element) {
                 element.style.opacity = opacity;
             }
         });
     }
 
-    // Apply filters
+    // Apply blur filters
     if (layoutSettings.filters) {
         Object.entries(layoutSettings.filters).forEach(([elementType, filter]) => {
             const element = document.getElementById(`${elementType}-${size}`);
             if (elementType === 'backdrop') {
                 const backdropImage = document.getElementById(`backdropimage-${size}`);
-                
                 if (backdropImage) {
                     backdropImage.style.filter = filter;
                 }
             } else if (elementType === 'frontdrop') {
                 const frontdropImage = document.getElementById(`frontdropimage-${size}`);
-
                 if (frontdropImage) {
                     frontdropImage.style.filter = filter;
+                }
+            } else if (elementType === 'filter') {
+                const filterImage = document.getElementById(`filterimage-${size}`);
+                if (filterImage) {
+                    filterImage.style.filter = filter;
                 }
             } else if (element) {
                 element.style.filter = filter;
@@ -219,25 +227,42 @@ function applyAllSavedSettings(size) {
     }
 
     // Apply settings for new elements
-    const textContainer = document.getElementById(`text-container-${size}`);
-    if (textContainer && layoutSettings.textContainerStyle) {
-        Object.assign(textContainer.style, layoutSettings.textContainerStyle);
-    }
-
-    const backgroundImage = document.getElementById(`backdrop-${size}`);
-    if (backgroundImage && layoutSettings.backgroundImageStyle) {
-        Object.assign(backgroundImage.style, layoutSettings.backgroundImageStyle);
-    }
-
-    const filter = document.getElementById(`filter-${size}`);
-    if (filter && layoutSettings.filterStyle) {
-        Object.assign(filter.style, layoutSettings.filterStyle);
-    }
-
     const backgroundBanner = document.getElementById(`backbanner-${size}`);
     if (backgroundBanner && layoutSettings.backgroundBannerStyle) {
         Object.assign(backgroundBanner.style, layoutSettings.backgroundBannerStyle);
     }
+}
+
+function changeElementBlur(value) {
+    if (!selectedElement) return;
+    const size = getSelectedBanner();
+    const elementType = selectedElement.id.split('-')[0];
+    const blurValue = `blur(${value}px)`;
+    
+    if (elementType === 'backdrop') {
+        const backdropImage = document.getElementById(`backdropimage-${size}`);
+        if (backdropImage) {
+            backdropImage.style.filter = blurValue;
+        }
+    } else if (elementType === 'frontdrop') {
+        const frontdropImage = document.getElementById(`frontdropimage-${size}`);
+        if (frontdropImage) {
+            frontdropImage.style.filter = blurValue;
+        }
+    } else if (elementType === 'filter') {
+        const filterImage = document.getElementById(`filterimage-${size}`);
+        if (filterImage) {
+            filterImage.style.filter = blurValue;
+        }
+    } else {
+        selectedElement.style.filter = blurValue;
+    }
+
+    // Save the blur setting
+    const settings = storedBannerSettings.find(setting => setting.size === size).settings.layout;
+    if (!settings.filters) settings.filters = {};
+    settings.filters[elementType] = blurValue;
+    saveSettings();
 }
 
 
@@ -272,7 +297,7 @@ function updateElementsList() {
         { id: `logo-title-${size}`, name: 'Logo Title' },
         { id: `image-${size}`, name: 'Image' },
         { id: `headline-${size}`, name: 'Headline' },
-        { id: `text-container-${size}`, name: 'Text Container' },
+        { id: `textcontainer-${size}`, name: 'TextContainer' },
         { id: `text-${size}`, name: 'Text' },
         { id: `tags-${size}`, name: 'Tags' },
         { id: `cta-${size}`, name: 'CTA' },
@@ -284,6 +309,7 @@ function updateElementsList() {
         { id: `frontdrop-${size}`, name: 'Frontdrop' },
         { id: `frontdropimage-${size}`, name: 'Frontdropimage' },
         { id: `filter-${size}`, name: 'Filter' },
+        { id: `filterimage-${size}`, name: 'Filterimage' },
         { id: `backbanner-${size}`, name: 'backbanner' }
     ];
 
@@ -315,6 +341,12 @@ function selectElement(elementId) {
             const computedColor = window.getComputedStyle(selectedElement).color;
             colorPicker.value = rgbToHex(computedColor);
         }
+
+        // Set blur slider value
+        const blurSlider = document.getElementById('element-blur');
+        const currentFilter = window.getComputedStyle(selectedElement).filter;
+        const blurMatch = currentFilter.match(/blur\((\d+)px\)/);
+        blurSlider.value = blurMatch ? blurMatch[1] : 0;
     }
     //  console.log('Selected element:', selectedElement);
     if (selectedElement === clickedElement) {
@@ -581,47 +613,44 @@ function moveElement(direction, step = 5) {
     const settings = storedBannerSettings.find(setting => setting.size === size).settings.layout;
 
     if (selectedElement.tagName.toLowerCase() === 'path') {
+        // SVG path handling remains the same
         const currentTransform = selectedElement.getAttribute('transform') || '';
         let currentX = 0;
         let currentY = 0;
-
         const match = currentTransform.match(/translate\((-?\d+\.?\d*),\s*(-?\d+\.?\d*)\)/);
         if (match) {
             currentX = parseFloat(match[1]);
             currentY = parseFloat(match[2]);
         }
-
         switch (direction) {
             case 'up': currentY -= step; break;
             case 'down': currentY += step; break;
             case 'left': currentX -= step; break;
             case 'right': currentX += step; break;
         }
-
         const newTransform = `translate(${currentX}, ${currentY})`;
         selectedElement.setAttribute('transform', newTransform);
-
         if (!settings.positions) settings.positions = {};
         settings.positions[elementType] = newTransform;
     } else {
-        const currentTop = parseInt(selectedElement.style.top) || 0;
-        const currentLeft = parseInt(selectedElement.style.left) || 0;
-        let newTop = currentTop;
-        let newLeft = currentLeft;
-
+        // Non-SVG element handling
+        const computedStyle = window.getComputedStyle(selectedElement);
+        let currentTop = parseInt(selectedElement.style.top) || parseInt(computedStyle.top) || 0;
+        let currentLeft = parseInt(selectedElement.style.left) || parseInt(computedStyle.left) || 0;
+        
         switch (direction) {
-            case 'up': newTop -= step; break;
-            case 'down': newTop += step; break;
-            case 'left': newLeft -= step; break;
-            case 'right': newLeft += step; break;
+            case 'up': currentTop -= step; break;
+            case 'down': currentTop += step; break;
+            case 'left': currentLeft -= step; break;
+            case 'right': currentLeft += step; break;
         }
 
-        selectedElement.style.top = `${newTop}px`;
-        selectedElement.style.left = `${newLeft}px`;
-        selectedElement.style.position = 'relative';
+        selectedElement.style.position = 'absolute';
+        selectedElement.style.top = `${currentTop}px`;
+        selectedElement.style.left = `${currentLeft}px`;
 
         if (!settings.positions) settings.positions = {};
-        settings.positions[elementType] = { top: `${newTop}px`, left: `${newLeft}px` };
+        settings.positions[elementType] = { top: `${currentTop}px`, left: `${currentLeft}px` };
     }
 
     saveSettings();
@@ -841,9 +870,10 @@ function updateCheckboxStates(size) {
         'tags': 'tags',
         'cta': 'cta',
         'svg-wave': 'svgWave',
-        'text-container': 'textContainer',
+        'textcontainer': 'textContainer',
         'backdrop': 'backdrop',
         'filter': 'filter',
+        'frontdrop': 'frontdrop',
         'backbanner': 'backbanner'
 
     };
@@ -994,7 +1024,8 @@ function toggleElement(element) {
         'cta': 'cta',
         'background': 'backgroundImage',
         'logo-title': 'logoTitle',
-        'text-container': 'textContainer',
+        'textcontainer': 'textContainer',
+        'frontdrop': 'frontdrop',
         'backdrop': 'backdrop',
         'filter': 'filter',
         'backbanner': 'backbanner'
@@ -1154,9 +1185,10 @@ function changeElementZIndex(elementType, action) {
         'cta': 'cta',
         'background': 'backgroundImage',
         'logo-title': 'logoTitle',
-        'text-container': 'textContainer',
+        'textcontainer': 'textContainer',
         'backdrop': 'backdrop',
         'filter': 'filter',
+        'frontdrop': 'frontdrop',
         'backbanner': 'backbanner'
     };
 
@@ -2187,9 +2219,13 @@ function updateAds() {
             image: document.getElementById(`image-${size}`),
             logoIcon: document.getElementById(`logo-icon-${size}`),
             logoTitle: document.getElementById(`logo-title-${size}`),
-            textContainer: document.getElementById(`text-container-${size}`),
+            textContainer: document.getElementById(`textcontainer-${size}`),
             backdrop: document.getElementById(`backdrop-${size}`),
-            // filter: document.getElementById(`filter-${size}`),
+            // backdropImage: document.getElementById(`backdropimage-${size}`),
+            filter: document.getElementById(`filter-${size}`),
+            // filterImage: document.getElementById(`filterimage-${size}`),
+            frontdrop: document.getElementById(`frontdrop-${size}`),
+            // frontdropImage: document.getElementById(`frontdropimage-${size}`),
             backbanner: document.getElementById(`backbanner-${size}`)
         };
         const settings = storedBannerSettings.find(setting => setting.size === size).settings;
@@ -2212,6 +2248,11 @@ function updateAds() {
         if (ad.img && elements.image) elements.image.src = ad.img;
         if (ad.imageBackground && elements.imageBackground) elements.imageBackground.src = ad.imageBackground;
         if (ad.filter && elements.filter) elements.filter.style.backgroundColor = ad.filter;
+
+        // if (ad.filterImage && elements.filterImage) elements.filterImage.src = ad.filterImage;
+        // if (ad.backdropImage && elements.backdropImage) elements.backdropImage.src = ad.backdropImage;
+        // if (ad.frontdropImage && elements.frontdropImage) elements.frontdropImage.src = ad.frontdropImage;
+        
 
 
         // Apply visibility settings
@@ -2294,8 +2335,9 @@ function handleExitAnimations(callback) {
             image: document.getElementById(`image-${size}`),
             logoIcon: document.getElementById(`logo-icon-${size}`),
             logoTitle: document.getElementById(`logo-title-${size}`),
-            textContainer: document.getElementById(`text-container-${size}`),
+            textContainer: document.getElementById(`textcontainer-${size}`),
             backdrop: document.getElementById(`backdrop-${size}`),
+            frontdrop: document.getElementById(`frontdrop-${size}`),
             filter: document.getElementById(`filter-${size}`),
             backbanner: document.getElementById(`backbanner-${size}`)
 
@@ -2782,6 +2824,10 @@ function openBackdropGallery() {
     currentImageType = 'backdrop';
     openImageGallery();
 }
+function openFrontdropGallery() {
+    currentImageType = 'frontdrop';
+    openImageGallery();
+}
 
 function openFilterGallery() {
     currentImageType = 'filter';
@@ -2791,31 +2837,27 @@ function openFilterGallery() {
 function openImageGallery(type = 'main') {
     const modal = document.getElementById('imageGalleryModal');
     const grid = document.getElementById('imageGalleryGrid');
-
     grid.innerHTML = ''; // Clear existing images
 
-    // Populate the grid with images from storedImages
-    if (type === 'filter') storedFilters.forEach((imageUrl, index) => {
-        const imgContainer = document.createElement('div');
-        imgContainer.className = 'relative cursor-pointer hover:opacity-75';
+    const imageSource = type === 'filter' ? storedFilters : storedImages;
 
-        const img = document.createElement('img');
-        img.src = imageUrl;
-        img.alt = `Image ${index + 1}`;
-        img.className = 'w-32 object-cover';
+    const filteredImages = imageSource.filter(imageUrl => {
+        const fileName = imageUrl.split('/').pop().toLowerCase();
+        switch (type) {
+            case 'backdrop':
+                return fileName.includes('backdrop');
+            case 'frontdrop':
+                return fileName.includes('frontdrop');
+            case 'filter':
+                return fileName.includes('filter');
+            case 'main':
+            default:
+                // Exclude backdrop, frontdrop, and filter images for 'main' and any unrecognized type
+                return !['backdrop', 'frontdrop', 'filter'].some(t => fileName.includes(t));
+        }
+    });
 
-        const fileName = imageUrl.split('/').pop();
-        const fileNameElement = document.createElement('p');
-        fileNameElement.className = 'text-xs text-center';
-        fileNameElement.textContent = fileName;
-
-        imgContainer.appendChild(img);
-        imgContainer.appendChild(fileNameElement);
-        imgContainer.onclick = () => selectGalleryImage(imageUrl);
-
-        grid.appendChild(imgContainer);
-    })
-    else storedImages.forEach((imageUrl, index) => {
+    filteredImages.forEach((imageUrl, index) => {
         const imgContainer = document.createElement('div');
         imgContainer.className = 'relative cursor-pointer hover:opacity-75';
 
@@ -2835,7 +2877,7 @@ function openImageGallery(type = 'main') {
 
         grid.appendChild(imgContainer);
     });
-
+ currentImageType = type;
     modal.classList.remove('hidden');
 }
 
@@ -2849,6 +2891,9 @@ function selectGalleryImage(imageUrl) {
     sizes.forEach(size => {
         let imgElement;
         switch (currentImageType) {
+            case 'frontdrop':
+                imgElement = document.getElementById(`frontdropimage-${size}`);
+                break;
             case 'backdrop':
                 imgElement = document.getElementById(`backdropimage-${size}`);
                 break;
@@ -2871,6 +2916,8 @@ function selectGalleryImage(imageUrl) {
         storedAds[currentAdIndex].backdrop = imageUrl;
     } else if (currentImageType === 'filter') {
         storedAds[currentAdIndex].filter = imageUrl;
+    } else if (currentImageType === 'frontdrop') {
+        storedAds[currentAdIndex].frontdrop = imageUrl;
     }
 
     // Save the changes

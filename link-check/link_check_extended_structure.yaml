@@ -8,7 +8,7 @@ ads.html:
   cat: "test-html"
   - author
   - readingTime
-  images: ["https://tailwindui.com/img/logos/mark.svg?color=indigo&shade=600","img/transparent-background-animated-gif.gif","img/filter-comic.png","img/energy_savings_2.png","img/energy_savings.jpg"]
+  images: ["/img/loyalleads-logo.png","img/transparent-background-animated-gif.gif","img/filter-comic.png","img/energy_savings_2.png","img/energy_savings.jpg","img/frontdrop-studio-inside_03.png"]
   internalLinks: ["https://octopus.energy"]
   externalLinks: ["https://octopus.energy"]
 ads4.html:
@@ -301,6 +301,12 @@ img:
   - 18ct-yellow-gold-and-floating-diamond-solitaire-ring-810-1-p.png
   - S37-S3BBmzUKJsuy8kFU2-bg-removed.png
   - audience_understanding.webp
+  backdrop:
+    - backdrop-podcast-studio-04.webp
+    - backdrop-studio-inside-02.png
+    - backdrop-studio-inside-03.png
+    - backdrop-studio-inside.png
+  - backdrop-podcast-studio-04.webp
   - backdrop-studio-inside-02.png
   - backdrop-studio-inside-03.png
   - backdrop-studio-inside.png
@@ -319,6 +325,16 @@ img:
   - energy_savings_3.png
   - energy_savings_3.webp
   - episode_start.webp
+  filter:
+    - filter-10308569_18448119.png
+    - filter-279.png
+    - filter-32499109_7963948.png
+    - filter-34294033_dotted_background.png
+    - filter-comic-2.jpg
+    - filter-comic-3.jpg
+    - filter-comic.png
+    - flat-design-black-white-halftone.jpg
+    - flat-design-black-white-halftone.png
   - filter-10308569_18448119.png
   - filter-279.png
   - filter-32499109_7963948.png
@@ -328,6 +344,12 @@ img:
   - filter-comic.png
   - flat-design-black-white-halftone.jpg
   - flat-design-black-white-halftone.png
+  frontdrop:
+    - frontdrop-studio-inside_03.png
+  - frontdrop-studio-inside_03.png
+  gif:
+    - spinner.gif
+    - transparent-background-animated-gif.gif
   - google-ads-responsive-ad-example.png.webp
   - guest_intro.webp
   - lead_generation.webp
