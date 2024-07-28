@@ -55,6 +55,7 @@ cache:
   - images.js
 - favicon.ico
 img:
+  - 00_car3.png
   - 01-banner_1200x628.jpg
   - 01x01.png
   - 18ct-yellow-gold-and-floating-diamond-solitaire-ring-810-1-p-transformed.png
@@ -66,16 +67,19 @@ img:
     - backdrop-studio-inside-02.png
     - backdrop-studio-inside-03.png
     - backdrop-studio-inside.png
+  - backdrop-large-production-studio.webp
   - backdrop-podcast-studio-04.webp
   - backdrop-studio-inside-02.png
   - backdrop-studio-inside-03.png
+  - backdrop-studio-inside-04.png
   - backdrop-studio-inside.png
+  - backdrop-transparent-background-animated-gif.gif
   - banner_300x250.jpg
   - banner_300x250_2.jpg
   - car.jpg
   - car.png
+  - car3 2.png
   - car3.jpg
-  - car3.png
   - clock.webp
   - common_obstacles.webp
   - energy_savings.jpg
@@ -107,6 +111,9 @@ img:
   frontdrop:
     - frontdrop-studio-inside_03.png
   - frontdrop-studio-inside_03.png
+  - frontdrop-studio-inside_04_n.png
+  - frontdrop-studio-inside_05_n.png
+  - frontdrop-studio-inside_06_n.png
   gif:
     - spinner.gif
     - transparent-background-animated-gif.gif

@@ -493,7 +493,7 @@ const animationTemplates = [
                 "pathTwo": "hidden-element",
                 "pathOne": "hidden-element",
                 "logo-title": "fade-in",
-                // "text-container": "fade-in",
+                "text-container": "fade-in",
                 "backdrop": "fade-in",
                 "frontdrop": "fade-in",
                 "backbanner": "fade-in"
@@ -515,9 +515,59 @@ const animationTemplates = [
                 "pathTwo": "hidden-element",
                 "pathOne": "hidden-element",
                 "logo-title": "fade-out",
-                // "text-container": "fade-out",
+                "text-container": "fade-out",
                 "backdrop": "fade-out",
                 "frontdrop": "fade-out",
+                "backbanner": "fade-out"
+            }
+        }
+    },
+    {
+        "id": "dramatic-entry",
+        "name": "dramatic-entry",
+        "entry": {
+            "settings": {
+                "duration": 2000,
+                "delay": 0,
+                "easing": "ease-in-out"
+            },
+            "elements": {
+                "image": "zoom-in-twist-small",
+                "cta": "fade-in",
+                "tags": "fade-in",
+                "text": "fade-in",
+                "headline": "fade-in",
+                "logoIcon": "fade-in",
+                "pathTwo": "hidden-element",
+                "pathOne": "hidden-element",
+                "logo-title": "fade-in",
+                "text-container": "fade-in",
+                "backdrop": "fade-in",
+                "filter": "zoom-out-small-stay",
+                "frontdrop": "zoom-out-small-stay",
+                "backbanner": "fade-in"
+            }
+        },
+        "exit": {
+            "settings": {
+                "duration": 1000,
+                "delay": 0,
+                "easing": "ease-in-out"
+            },
+            "elements": {
+                "image": "zoom-out-twist-small",
+                "cta": "fade-out",
+                "tags": "fade-out",
+                "text": "fade-out",
+                "headline": "fade-out",
+                "logoIcon": "fade-out",
+                "pathTwo": "hidden-element",
+                "pathOne": "hidden-element",
+                "logo-title": "fade-out",
+                "text-container": "fade-out",
+                "backdrop": "fade-out",
+                "filter": "zoom-in-small-go",
+                "frontdrop": "zoom-in-small-go",
                 "backbanner": "fade-out"
             }
         }
@@ -541,7 +591,7 @@ const animationTemplates = [
                 "pathTwo": "hidden-element",
                 "pathOne": "hidden-element",
                 "logo-title": "fade-in",
-                // "text-container": "fade-in",
+                "text-container": "fade-in",
                 "backdrop": "fade-in",
                 "filter": "fade-in",
                 "frontdrop": "fade-in",
@@ -564,11 +614,61 @@ const animationTemplates = [
                 "pathTwo": "hidden-element",
                 "pathOne": "hidden-element",
                 "logo-title": "fade-out",
-                // "text-container": "fade-out",
+                "text-container": "fade-out",
                 "backdrop": "fade-out",
                 "filter": "fade-out",
                 "frontdrop": "fade-out",
                 "backbanner": "fade-out"
+            }
+        }
+    },
+    {
+        "id": "only-text",
+        "name": "only-text",
+        "entry": {
+            "settings": {
+                "duration": 1000,
+                "delay": 0,
+                "easing": "ease-in-out"
+            },
+            "elements": {
+                "image": "none",
+                "cta": "none",
+                "tags": "none",
+                "text": "bounce-from-left",
+                "headline": "bounce-from-left",
+                "logoIcon": "none",
+                "pathTwo": "none",
+                "pathOne": "none",
+                "logo-title": "none",
+                "text-container": "none",
+                "backdrop": "none",
+                "filter": "none",
+                "frontdrop": "none",
+                "backbanner": "none"
+            }
+        },
+        "exit": {
+            "settings": {
+                "duration": 1000,
+                "delay": 0,
+                "easing": "ease-in-out"
+            },
+            "elements": {
+                "image": "none",
+                "cta": "none",
+                "tags": "none",
+                "text": "bounce-to-left",
+                "headline": "bounce-to-left",
+                "logoIcon": "none",
+                "pathTwo": "none",
+                "pathOne": "none",
+                "logo-title": "none",
+                "text-container": "none",
+                "backdrop": "none",
+                "filter": "none",
+                "frontdrop": "none",
+                "backbanner": "none"
             }
         }
     },
@@ -593,7 +693,10 @@ const animationTemplates = [
                 "logo-title": "slide-from-left",
                 "text-container": "slide-from-left",
                 "backdrop": "fade-in",
+                "filter": "fade-in",
+                "frontdrop": "fade-in",
                 "backbanner": "fade-in"
+
             }
         },
         "exit": {
@@ -614,6 +717,8 @@ const animationTemplates = [
                 "logo-title": "slide-to-left",
                 "text-container": "slide-to-left",
                 "backdrop": "fade-out",
+                "filter": "fade-out",
+                "frontdrop": "fade-out",
                 "backbanner": "fade-out"
             }
         }
@@ -639,6 +744,8 @@ const animationTemplates = [
                 "logo-title": "slide-from-left",
                 "text-container": "slide-from-left",
                 "backdrop": "fade-in",
+                "filter": "fade-in",
+                "frontdrop": "fade-in",
                 "backbanner": "fade-in"
             }
         },
@@ -660,6 +767,8 @@ const animationTemplates = [
                 "logo-title": "slide-to-right",
                 "text-container": "slide-to-right",
                 "backdrop": "fade-out",
+                "filter": "fade-out",
+                "frontdrop": "fade-out",
                 "backbanner": "fade-out"
             }
         }
@@ -685,6 +794,8 @@ const animationTemplates = [
                 "logo-title": "slide-from-left",
                 "text-container": "slide-from-left",
                 "backdrop": "fade-in",
+                "filter": "fade-in",
+                "frontdrop": "fade-in",
                 "backbanner": "fade-in"
             }
         },
@@ -731,6 +842,8 @@ const animationTemplates = [
                 "logo-title": "slide-from-right",
                 "text-container": "slide-from-right",
                 "backdrop": "fade-in",
+                "filter": "fade-in",
+                "frontdrop": "fade-in",
                 "backbanner": "slide-from-right"
             }
         },
@@ -944,14 +1057,14 @@ const animationTemplates = [
 ]
 const bannerTemplates = [
     {
-        "id":"480x120",
-        "name":"480x120",
-        "width":480,
-        "height":120,
-        "path":"/img/banners/480x120/",
-        "direction":"horizontal",
-        "description":"this is a description for the banner template",
-        "images":[
+        "id": "480x120",
+        "name": "480x120",
+        "width": 480,
+        "height": 120,
+        "path": "/img/banners/480x120/",
+        "direction": "horizontal",
+        "description": "this is a description for the banner template",
+        "images": [
             "banner-01.jpg",
             "banner-02.jpg",
             "banner-03.jpg",
@@ -963,24 +1076,24 @@ const bannerTemplates = [
             "banner-09.jpg",
             "banner-10.jpg"
         ],
-        "tags":["#banner", "#480x120", "#marketing"],
-        "category":"marketing",
-        "type":"banner",
-        "date":"2022-01-01",
-        "author":"john doe",
-        
-        "cta":"Learn More",
-        "ctaUrl":"#",
-        "logo":{
-            "icon":"fa-brands fa-octopus-deploy",
-            "firstWord":"octopus",
-            "secondWord":"energy"
+        "tags": ["#banner", "#480x120", "#marketing"],
+        "category": "marketing",
+        "type": "banner",
+        "date": "2022-01-01",
+        "author": "john doe",
+
+        "cta": "Learn More",
+        "ctaUrl": "#",
+        "logo": {
+            "icon": "fa-brands fa-octopus-deploy",
+            "firstWord": "octopus",
+            "secondWord": "energy"
         },
-        "animation":{
-            "isLooped":false,
-            "isExitAnimated":true,
-            "isEntryAnimated":true,
-            "template":"fade-in"
+        "animation": {
+            "isLooped": false,
+            "isExitAnimated": true,
+            "isEntryAnimated": true,
+            "template": "fade-in"
         }
     },
 ]
@@ -1026,14 +1139,14 @@ const campaigns_design_x = [
                             "height": "100%",
                             "object-fit": "cover"
                         }
-                        
+
                     }
                 ],
                 "headline": "Podcast Starts",
                 "text": ["Welcome back to another episode of Marketing Insights, the podcast where we explore the latest trends, challenges, and opportunities in the world of marketing and business growth. I'm your host, Mike Sanshase, and today, we have a special guest with us, Sherif Butt, who has over 10 years of experience in the field. Welcome, Sherif!"],
                 "tags": "#MarketingInsights #PodcastIntro",
                 "img": "/img/episode_start.webp",
-                "filter":"/img/episode_start.webp",
+                "filter": "/img/episode_start.webp",
                 "imgDescription": "A 3D sketch style drawing of a podcast studio viewed from a slightly elevated angle, showing the top and one side. The design is minimalistic, featuring clean lines with two accents: black and #ffd84d (bright yellow). The podcast studio should appear modern and abstract, set against a strictly white background.",
                 "cta": "Stay Tuned",
                 "animation": {
@@ -1390,7 +1503,7 @@ const campaigns_05_x = [
             "url": "/audio/02-pod-cast.aac",
             "duration": "04:50:000",
         },
-    ],
+        ],
         "logo": {
             "icon": "fa-brands fa-octopus-deploy",
             "firstWord": "octopus",
@@ -1447,7 +1560,7 @@ const campaigns_05_x = [
             },
             {
                 "timestamp": "00:15:000",
-                "audio":0,
+                "audio": 0,
                 "logo": {
                     "icon": "fa-brands fa-octopus-deploy",
                     "firstWord": "octopus",
@@ -1909,6 +2022,578 @@ const campaigns_05_x = [
 
     }
 ]
+const campaigns_expermntal = [
+    {
+        "title": "how to inhace your business",
+        "description": "this is a description",
+        "img": "/img/leads.png",
+        "parentUrl": "/blog/leads",
+        "tags": [
+            "#leads",
+            "#business"
+        ],
+        "category": "business",
+        "date": "2022-01-01",
+        "author": "john doe",
+        "type": "blog",
+        "audio": {
+            "url": "/audio/01-pod-cast.aac",
+            "duration": "04:50"
+        },
+        "logo": {
+            "icon": "fa-brands fa-octopus-deploy",
+            "firstWord": "octopus",
+            "secondWord": "energy"
+        },
+        "slides": [
+            {
+                "timestamp": "00:00",
+                "audio": "/audio/01-pod-cast.aac",
+                "logo": {
+                    "icon": "fa-brands fa-octopus-deploy",
+                    "firstWord": "octopus",
+                    "secondWord": "energy"
+                },
+                "headline": "Podcast Starts",
+                "text": [
+                    "Welcome back to another episode of Marketing Insights, the podcast where we explore the latest trends, challenges, and opportunities in the world of marketing and business growth. I'm your host, Mike Sanshase, and today, we have a special guest with us, Sherif Butt, who has over 10 years of experience in the field. Welcome, Sherif!"
+                ],
+                "tags": "#MarketingInsights #PodcastIntro",
+                "img": "/img/clock.webp",
+                "filter": "/img/filter-32499109_7963948.png",
+                "backdrop": "/img/backdrop-studio-inside-04.png",
+                "frontdrop": "/img/frontdrop-studio-inside_04_n.png",
+                "imgDescription": "A 3D sketch style drawing of a podcast studio viewed from a slightly elevated angle, showing the top and one side. The design is minimalistic, featuring clean lines with two accents: black and #ffd84d (bright yellow). The podcast studio should appear modern and abstract, set against a strictly white background.",
+                "cta": "Stay Tuned",
+                "animation": {
+                    "template": "dramatic-entry",
+                    "isEntryAnimated": true,
+                    "isExitAnimated": true
+                }
+            },
+            {
+                "timestamp": "00:10",
+                "audio": "/audio/01-pod-cast.aac",
+                "logo": {
+                    "icon": "fa-brands fa-octopus-deploy",
+                    "firstWord": "octopus",
+                    "secondWord": "energy"
+                },
+                "headline": "Guest Introduction",
+                "text": [
+                    "Thanks, Mike! It's great to be here."
+                ],
+                "tags": "#MarketingInsights #GuestIntro",
+                "img": "/img/episode_start.webp",
+                "filter": "/img/filter-comic-3.jpg",
+                "backdrop": "/img/backdrop-studio-inside-03.png",
+                "frontdrop": "/img/frontdrop-studio-inside_03.png",
+                "imgDescription": "A 3D sketch style drawing of a guest speaker viewed from a slightly elevated angle, showing the top and one side. The design is minimalistic, featuring clean lines with two accents: black and #ffd84d (bright yellow). The guest speaker should appear modern and abstract, set against a strictly white background.",
+                "cta": "Meet Sherif",
+                "animation": {
+                    "isLooped": false,
+                    "isExitAnimated": true,
+                    "isEntryAnimated": true,
+                    "template": "slide-from-left-some-to-right"
+                }
+            },
+            {
+                "timestamp": "00:15",
+                "audio": "/audio/01-pod-cast.aac",
+                "logo": {
+                    "icon": "fa-brands fa-octopus-deploy",
+                    "firstWord": "octopus",
+                    "secondWord": "energy"
+                },
+                "headline": "Lead Generation Hesitation",
+                "text": [
+                    "Today, we're diving into a topic that many businesses grapple with: Why Businesses Hesitate to Implement Lead Generation. Sherif, you've worked with numerous businesses over the years. Why do you think there's so much hesitation around lead generation?"
+                ],
+                "tags": "#LeadGeneration #Marketing",
+                "img": "/img/episode_start.webp",
+                "filter": "/img/filter-comic-3.jpg",
+                "backdrop": "/img/backdrop-studio-inside-03.png",
+                "frontdrop": "/img/frontdrop-studio-inside_03.png",
+                "imgDescription": "A 3D sketch style drawing of a business team discussing strategies viewed from a slightly elevated angle, showing the top and one side. The design is minimalistic, featuring clean lines with two accents: black and #ffd84d (bright yellow). The business team should appear modern and abstract, set against a strictly white background.",
+                "cta": "Discover More",
+                "animation": {
+                    "isLooped": false,
+                    "isExitAnimated": true,
+                    "isEntryAnimated": true,
+                    "template": "slide-from-left-to-right"
+                }
+            },
+            {
+                "timestamp": "00:30",
+                "audio": "/audio/01-pod-cast.aac",
+                "logo": {
+                    "icon": "fa-brands fa-octopus-deploy",
+                    "firstWord": "octopus",
+                    "secondWord": "energy"
+                },
+                "headline": "Misconceptions",
+                "text": [
+                    "That's a great question, Mike. There are several reasons businesses hesitate. One of the biggest misconceptions is that lead generation is overly complex and requires a significant amount of time and resources to be effective. While it's true that it requires a well-thought-out strategy and consistent effort, it doesn't have to be overwhelming."
+                ],
+                "tags": "#LeadGeneration #Misconceptions",
+                "img": "/img/episode_start.webp",
+                "filter": "/img/filter-comic-3.jpg",
+                "backdrop": "/img/backdrop-studio-inside-03.png",
+                "frontdrop": "/img/frontdrop-studio-inside_03.png",
+                "imgDescription": "A 3D sketch style drawing of a confused businessperson viewed from a slightly elevated angle, showing the top and one side. The design is minimalistic, featuring clean lines with two accents: black and #ffd84d (bright yellow). The businessperson should appear modern and abstract, set against a strictly white background.",
+                "cta": "Learn More",
+                "animation": {
+                    "isLooped": false,
+                    "isExitAnimated": true,
+                    "isEntryAnimated": true,
+                    "template": "slide-from-left"
+                }
+            },
+            {
+                "timestamp": "00:50",
+                "audio": "/audio/01-pod-cast.aac",
+                "logo": {
+                    "icon": "fa-brands fa-octopus-deploy",
+                    "firstWord": "octopus",
+                    "secondWord": "energy"
+                },
+                "headline": "Immediate Results",
+                "text": [
+                    "That makes sense. So, what would you say to businesses that believe lead generation doesn't yield immediate results?"
+                ],
+                "tags": "#LeadGeneration #Results",
+                "img": "/img/episode_start.webp",
+                "filter": "/img/filter-comic-3.jpg",
+                "backdrop": "/img/backdrop-studio-inside-03.png",
+                "frontdrop": "/img/frontdrop-studio-inside_03.png",
+                "imgDescription": "A 3D sketch style drawing of a graph showing rapid results viewed from a slightly elevated angle, showing the top and one side. The design is minimalistic, featuring clean lines with two accents: black and #ffd84d (bright yellow). The graph should appear modern and abstract, set against a strictly white background.",
+                "cta": "See Results",
+                "animation": {
+                    "isLooped": false,
+                    "isExitAnimated": true,
+                    "isEntryAnimated": true,
+                    "template": "slide-from-left"
+                }
+            },
+            {
+                "timestamp": "01:00",
+                "audio": "/audio/01-pod-cast.aac",
+                "logo": {
+                    "icon": "fa-brands fa-octopus-deploy",
+                    "firstWord": "octopus",
+                    "secondWord": "energy"
+                },
+                "headline": "Effective Strategies",
+                "text": [
+                    "It's important to understand that the effectiveness of lead generation can vary based on the approach and the industry. Some strategies might take time to build momentum, but others, like targeted online ads or email campaigns, can start showing results relatively quickly. The key is to set realistic expectations and have a solid plan."
+                ],
+                "tags": "#LeadGeneration #Strategies",
+                "img": "/img/episode_start.webp",
+                "filter": "/img/filter-comic-3.jpg",
+                "backdrop": "/img/backdrop-studio-inside-03.png",
+                "frontdrop": "/img/frontdrop-studio-inside_03.png",
+                "imgDescription": "A 3D sketch style drawing of a strategic plan viewed from a slightly elevated angle, showing the top and one side. The design is minimalistic, featuring clean lines with two accents: black and #ffd84d (bright yellow). The strategic plan should appear modern and abstract, set against a strictly white background.",
+                "cta": "Plan Now",
+                "animation": {
+                    "isLooped": false,
+                    "isExitAnimated": true,
+                    "isEntryAnimated": true,
+                    "template": "slide-from-left"
+                }
+            },
+            {
+                "timestamp": "01:20",
+                "audio": "/audio/01-pod-cast.aac",
+                "logo": {
+                    "icon": "fa-brands fa-octopus-deploy",
+                    "firstWord": "octopus",
+                    "secondWord": "energy"
+                },
+                "headline": "Audience Understanding",
+                "text": [
+                    "Absolutely. Now, let's talk about some of the challenges businesses face when implementing lead generation. What are some of the common obstacles?"
+                ],
+                "tags": "#LeadGeneration #Challenges",
+                "img": "/img/episode_start.webp",
+                "filter": "/img/filter-comic-3.jpg",
+                "backdrop": "/img/backdrop-studio-inside-03.png",
+                "frontdrop": "/img/frontdrop-studio-inside_03.png",
+                "imgDescription": "A 3D sketch style drawing of a business meeting viewed from a slightly elevated angle, showing the top and one side. The design is minimalistic, featuring clean lines with two accents: black and #ffd84d (bright yellow). The business meeting should appear modern and abstract, set against a strictly white background.",
+                "cta": "Face Challenges",
+                "animation": {
+                    "isLooped": false,
+                    "isExitAnimated": true,
+                    "isEntryAnimated": true,
+                    "template": "slide-from-left"
+                }
+            },
+            {
+                "timestamp": "01:30",
+                "audio": "/audio/01-pod-cast.aac",
+                "logo": {
+                    "icon": "fa-brands fa-octopus-deploy",
+                    "firstWord": "octopus",
+                    "secondWord": "energy"
+                },
+                "headline": "Common Obstacles",
+                "text": [
+                    "One major challenge is the lack of understanding of the target audience. Effective lead generation relies on knowing who your potential customers are, what they need, and how to reach them. Without this understanding, efforts can be misdirected, leading to frustration and wasted resources."
+                ],
+                "tags": "#LeadGeneration #Obstacles",
+                "img": "/img/episode_start.webp",
+                "filter": "/img/filter-comic-3.jpg",
+                "backdrop": "/img/backdrop-studio-inside-03.png",
+                "frontdrop": "/img/frontdrop-studio-inside_03.png",
+                "imgDescription": "A 3D sketch style drawing of a frustrated businessperson viewed from a slightly elevated angle, showing the top and one side. The design is minimalistic, featuring clean lines with two accents: black and #ffd84d (bright yellow). The businessperson should appear modern and abstract, set against a strictly white background.",
+                "cta": "Overcome Obstacles",
+                "animation": {
+                    "isLooped": false,
+                    "isExitAnimated": true,
+                    "isEntryAnimated": true,
+                    "template": "slide-from-left"
+                }
+            },
+            {
+                "timestamp": "01:50",
+                "audio": "/audio/01-pod-cast.aac",
+                "logo": {
+                    "icon": "fa-brands fa-octopus-deploy",
+                    "firstWord": "octopus",
+                    "secondWord": "energy"
+                },
+                "headline": "Fear of the Unknown",
+                "text": [
+                    "And what about the fear of the unknown? I've heard that many businesses simply don't know where to start."
+                ],
+                "tags": "#LeadGeneration #Fear",
+                "img": "/img/episode_start.webp",
+                "filter": "/img/filter-comic-3.jpg",
+                "backdrop": "/img/backdrop-studio-inside-03.png",
+                "frontdrop": "/img/frontdrop-studio-inside_03.png",
+                "imgDescription": "A 3D sketch style drawing of a confused business team viewed from a slightly elevated angle, showing the top and one side. The design is minimalistic, featuring clean lines with two accents: black and #ffd84d (bright yellow). The business team should appear modern and abstract, set against a strictly white background.",
+                "cta": "Start Here",
+                "animation": {
+                    "isLooped": false,
+                    "isExitAnimated": true,
+                    "isEntryAnimated": true,
+                    "template": "slide-from-left"
+                }
+            },
+            {
+                "timestamp": "02:00",
+                "audio": "/audio/01-pod-cast.aac",
+                "logo": {
+                    "icon": "fa-brands fa-octopus-deploy",
+                    "firstWord": "octopus",
+                    "secondWord": "energy"
+                },
+                "headline": "Expert Guidance",
+                "text": [
+                    "That's a significant barrier, Mike. Many businesses lack the in-house expertise and are unsure about outsourcing this critical function. However, partnering with experienced lead generation professionals or agencies can provide the necessary guidance and support to get started on the right foot."
+                ],
+                "tags": "#LeadGeneration #ExpertGuidance",
+                "img": "/img/episode_start.webp",
+                "filter": "/img/filter-comic-3.jpg",
+                "backdrop": "/img/backdrop-studio-inside-03.png",
+                "frontdrop": "/img/frontdrop-studio-inside_03.png",
+                "imgDescription": "A 3D sketch style drawing of a business consultation viewed from a slightly elevated angle, showing the top and one side. The design is minimalistic, featuring clean lines with two accents: black and #ffd84d (bright yellow). The business consultation should appear modern and abstract, set against a strictly white background.",
+                "cta": "Get Support",
+                "animation": {
+                    "isLooped": false,
+                    "isExitAnimated": true,
+                    "isEntryAnimated": true,
+                    "template": "slide-from-left"
+                }
+            },
+            {
+                "timestamp": "02:20",
+                "audio": "/audio/01-pod-cast.aac",
+                "logo": {
+                    "icon": "fa-brands fa-octopus-deploy",
+                    "firstWord": "octopus",
+                    "secondWord": "energy"
+                },
+                "headline": "Practical Solutions",
+                "text": [
+                    "Great points, Sherif. So, what are some practical solutions to overcome these barriers and successfully implement lead generation?"
+                ],
+                "tags": "#LeadGeneration #Solutions",
+                "img": "/img/episode_start.webp",
+                "filter": "/img/filter-comic-3.jpg",
+                "backdrop": "/img/backdrop-studio-inside-03.png",
+                "frontdrop": "/img/frontdrop-studio-inside_03.png",
+                "imgDescription": "A 3D sketch style drawing of a business meeting discussing solutions viewed from a slightly elevated angle, showing the top and one side. The design is minimalistic, featuring clean lines with two accents: black and #ffd84d (bright yellow). The business meeting should appear modern and abstract, set against a strictly white background.",
+                "cta": "Find Solutions",
+                "animation": {
+                    "isLooped": false,
+                    "isExitAnimated": true,
+                    "isEntryAnimated": true,
+                    "template": "slide-from-left"
+                }
+            },
+            {
+                "timestamp": "02:30",
+                "audio": "/audio/01-pod-cast.aac",
+                "logo": {
+                    "icon": "fa-brands fa-octopus-deploy",
+                    "firstWord": "octopus",
+                    "secondWord": "energy"
+                },
+                "headline": "Education and Training",
+                "text": [
+                    "First, education and training are key. Businesses should invest time in learning about lead generation strategies, tools, and best practices. There are numerous online courses, webinars, and resources available that can help demystify the process."
+                ],
+                "tags": "#LeadGeneration #Education",
+                "img": "/img/episode_start.webp",
+                "filter": "/img/filter-comic-3.jpg",
+                "backdrop": "/img/backdrop-studio-inside-03.png",
+                "frontdrop": "/img/frontdrop-studio-inside_03.png",
+                "imgDescription": "A 3D sketch style drawing of a business training session viewed from a slightly elevated angle, showing the top and one side. The design is minimalistic, featuring clean lines with two accents: black and #ffd84d (bright yellow). The training session should appear modern and abstract, set against a strictly white background.",
+                "cta": "Learn More",
+                "animation": {
+                    "isLooped": false,
+                    "isExitAnimated": true,
+                    "isEntryAnimated": true,
+                    "template": "slide-from-left"
+                }
+            },
+            {
+                "timestamp": "02:50",
+                "audio": "/audio/01-pod-cast.aac",
+                "logo": {
+                    "icon": "fa-brands fa-octopus-deploy",
+                    "firstWord": "octopus",
+                    "secondWord": "energy"
+                },
+                "headline": "Start Small",
+                "text": [
+                    "Starting small and scaling up can also be effective, right?"
+                ],
+                "tags": "#LeadGeneration #StartSmall",
+                "img": "/img/episode_start.webp",
+                "filter": "/img/filter-comic-3.jpg",
+                "backdrop": "/img/backdrop-studio-inside-03.png",
+                "frontdrop": "/img/frontdrop-studio-inside_03.png",
+                "imgDescription": "A 3D sketch style drawing of a small business team working on a project viewed from a slightly elevated angle, showing the top and one side. The design is minimalistic, featuring clean lines with two accents: black and #ffd84d (bright yellow). The small business team should appear modern and abstract, set against a strictly white background.",
+                "cta": "Begin Now",
+                "animation": {
+                    "isLooped": false,
+                    "isExitAnimated": true,
+                    "isEntryAnimated": true,
+                    "template": "slide-from-left"
+                }
+            },
+            {
+                "timestamp": "03:00",
+                "audio": "/audio/01-pod-cast.aac",
+                "logo": {
+                    "icon": "fa-brands fa-octopus-deploy",
+                    "firstWord": "octopus",
+                    "secondWord": "energy"
+                },
+                "headline": "Effective Strategies",
+                "text": [
+                    "Exactly, Mike. Begin with a simple lead generation campaign to test the waters. Use the insights gained from this initial effort to refine your strategy and gradually expand your efforts."
+                ],
+                "tags": "#LeadGeneration #EffectiveStrategies",
+                "img": "/img/episode_start.webp",
+                "filter": "/img/filter-comic-3.jpg",
+                "backdrop": "/img/backdrop-studio-inside-03.png",
+                "frontdrop": "/img/frontdrop-studio-inside_03.png",
+                "imgDescription": "A 3D sketch style drawing of a business team planning strategies viewed from a slightly elevated angle, showing the top and one side. The design is minimalistic, featuring clean lines with two accents: black and #ffd84d (bright yellow). The business team should appear modern and abstract, set against a strictly white background.",
+                "cta": "Plan Now",
+                "animation": {
+                    "isLooped": false,
+                    "isExitAnimated": true,
+                    "isEntryAnimated": true,
+                    "template": "slide-from-left"
+                }
+            },
+            {
+                "timestamp": "03:20",
+                "audio": "/audio/01-pod-cast.aac",
+                "logo": {
+                    "icon": "fa-brands fa-octopus-deploy",
+                    "firstWord": "octopus",
+                    "secondWord": "energy"
+                },
+                "headline": "Leverage Technology",
+                "text": [
+                    "And technology plays a big role too, I assume?"
+                ],
+                "tags": "#LeadGeneration #Technology",
+                "img": "/img/episode_start.webp",
+                "filter": "/img/filter-comic-3.jpg",
+                "backdrop": "/img/backdrop-studio-inside-03.png",
+                "frontdrop": "/img/frontdrop-studio-inside_03.png",
+                "imgDescription": "A 3D sketch style drawing of technology tools viewed from a slightly elevated angle, showing the top and one side. The design is minimalistic, featuring clean lines with two accents: black and #ffd84d (bright yellow). The technology tools should appear modern and abstract, set against a strictly white background.",
+                "cta": "Use Tech",
+                "animation": {
+                    "isLooped": false,
+                    "isExitAnimated": true,
+                    "isEntryAnimated": true,
+                    "template": "slide-from-left"
+                }
+            },
+            {
+                "timestamp": "03:30",
+                "audio": "/audio/01-pod-cast.aac",
+                "logo": {
+                    "icon": "fa-brands fa-octopus-deploy",
+                    "firstWord": "octopus",
+                    "secondWord": "energy"
+                },
+                "headline": "Tech for Optimization",
+                "text": [
+                    "Absolutely. There are many lead generation tools and platforms designed to streamline the process. From CRM systems to email marketing software, these tools can help automate and optimize lead generation efforts."
+                ],
+                "tags": "#LeadGeneration #Optimization",
+                "img": "/img/episode_start.webp",
+                "filter": "/img/filter-comic-3.jpg",
+                "backdrop": "/img/backdrop-studio-inside-03.png",
+                "frontdrop": "/img/frontdrop-studio-inside_03.png",
+                "imgDescription": "A 3D sketch style drawing of CRM and email marketing tools viewed from a slightly elevated angle, showing the top and one side. The design is minimalistic, featuring clean lines with two accents: black and #ffd84d (bright yellow). The tools should appear modern and abstract, set against a strictly white background.",
+                "cta": "Optimize Now",
+                "animation": {
+                    "isLooped": false,
+                    "isExitAnimated": true,
+                    "isEntryAnimated": true,
+                    "template": "slide-from-left"
+                }
+            },
+            {
+                "timestamp": "03:50",
+                "audio": "/audio/01-pod-cast.aac",
+                "logo": {
+                    "icon": "fa-brands fa-octopus-deploy",
+                    "firstWord": "octopus",
+                    "secondWord": "energy"
+                },
+                "headline": "Expert Partnership",
+                "text": [
+                    "What about partnering with experts? How can that help?"
+                ],
+                "tags": "#LeadGeneration #ExpertPartnership",
+                "img": "/img/episode_start.webp",
+                "filter": "/img/filter-comic-3.jpg",
+                "backdrop": "/img/backdrop-studio-inside-03.png",
+                "frontdrop": "/img/frontdrop-studio-inside_03.png",
+                "imgDescription": "A 3D sketch style drawing of a business partnership viewed from a slightly elevated angle, showing the top and one side. The design is minimalistic, featuring clean lines with two accents: black and #ffd84d (bright yellow). The business partnership should appear modern and abstract, set against a strictly white background.",
+                "cta": "Partner Up",
+                "animation": {
+                    "isLooped": false,
+                    "isExitAnimated": true,
+                    "isEntryAnimated": true,
+                    "template": "slide-from-left"
+                }
+            },
+            {
+                "timestamp": "04:00",
+                "audio": "/audio/01-pod-cast.aac",
+                "logo": {
+                    "icon": "fa-brands fa-octopus-deploy",
+                    "firstWord": "octopus",
+                    "secondWord": "energy"
+                },
+                "headline": "Get Expert Help",
+                "text": [
+                    "Partnering with experts, whether it's a consultancy, a marketing agency, or hiring an experienced professional in-house, can make a significant difference. They bring the expertise and experience needed to navigate the complexities of lead generation and ensure successful implementation."
+                ],
+                "tags": "#LeadGeneration #ExpertHelp",
+                "img": "/img/episode_start.webp",
+                "filter": "/img/filter-comic-3.jpg",
+                "backdrop": "/img/backdrop-studio-inside-03.png",
+                "frontdrop": "/img/frontdrop-studio-inside_03.png",
+                "imgDescription": "A 3D sketch style drawing of a business expert providing guidance viewed from a slightly elevated angle, showing the top and one side. The design is minimalistic, featuring clean lines with two accents: black and #ffd84d (bright yellow). The business expert should appear modern and abstract, set against a strictly white background.",
+                "cta": "Get Help",
+                "animation": {
+                    "isLooped": false,
+                    "isExitAnimated": true,
+                    "isEntryAnimated": true,
+                    "template": "slide-from-left"
+                }
+            },
+            {
+                "timestamp": "04:20",
+                "audio": "/audio/01-pod-cast.aac",
+                "logo": {
+                    "icon": "fa-brands fa-octopus-deploy",
+                    "firstWord": "octopus",
+                    "secondWord": "energy"
+                },
+                "headline": "Conclusion",
+                "text": [
+                    "Thanks for those insights, Sherif. In conclusion, while businesses may hesitate to implement lead generation due to misconceptions and challenges, the benefits far outweigh the initial hurdles. By educating themselves, starting small, leveraging technology, and seeking expert guidance, businesses can overcome these barriers and unlock the full potential of lead generation."
+                ],
+                "tags": "#LeadGeneration #Conclusion",
+                "img": "/img/episode_start.webp",
+                "filter": "/img/filter-comic-3.jpg",
+                "backdrop": "/img/backdrop-studio-inside-03.png",
+                "frontdrop": "/img/frontdrop-studio-inside_03.png",
+                "imgDescription": "A 3D sketch style drawing of a business team celebrating success viewed from a slightly elevated angle, showing the top and one side. The design is minimalistic, featuring clean lines with two accents: black and #ffd84d (bright yellow). The business team should appear modern and abstract, set against a strictly white background.",
+                "cta": "Get Started",
+                "animation": {
+                    "isLooped": false,
+                    "isExitAnimated": true,
+                    "isEntryAnimated": true,
+                    "template": "slide-from-left"
+                }
+            },
+            {
+                "timestamp": "04:40",
+                "audio": "/audio/01-pod-cast.aac",
+                "logo": {
+                    "icon": "fa-brands fa-octopus-deploy",
+                    "firstWord": "octopus",
+                    "secondWord": "energy"
+                },
+                "headline": "Thank You",
+                "text": [
+                    "Exactly, Mike. Lead generation can truly transform a business when done right."
+                ],
+                "tags": "#LeadGeneration #ThankYou",
+                "img": "/img/episode_start.webp",
+                "filter": "/img/filter-comic-3.jpg",
+                "backdrop": "/img/backdrop-studio-inside-03.png",
+                "frontdrop": "/img/frontdrop-studio-inside_03.png",
+                "imgDescription": "A 3D sketch style drawing of a thank you message viewed from a slightly elevated angle, showing the top and one side. The design is minimalistic, featuring clean lines with two accents: black and #ffd84d (bright yellow). The thank you message should appear modern and abstract, set against a strictly white background.",
+                "cta": "Thank You",
+                "animation": {
+                    "isLooped": false,
+                    "isExitAnimated": true,
+                    "isEntryAnimated": true,
+                    "template": "slide-from-left"
+                }
+            },
+            {
+                "timestamp": "04:50",
+                "audio": "/audio/01-pod-cast.aac",
+                "logo": {
+                    "icon": "fa-brands fa-octopus-deploy",
+                    "firstWord": "octopus",
+                    "secondWord": "energy"
+                },
+                "headline": "Final Words",
+                "text": [
+                    "Thank you for joining us today, Sherif. For our listeners who want to learn more about lead generation, be sure to visit Sherif's website at test.loyalleads.co.uk. And don't forget to subscribe to our podcast for more insights and tips on marketing and business growth. Until next time, I'm Mike Sanshase, and this has been Marketing Insights."
+                ],
+                "tags": "#LeadGeneration #FinalWords",
+                "img": "/img/episode_start.webp",
+                "filter": "/img/filter-comic-3.jpg",
+                "backdrop": "/img/backdrop-studio-inside-03.png",
+                "frontdrop": "/img/frontdrop-studio-inside_03.png",
+                "imgDescription": "A 3D sketch style drawing of a business handshake viewed from a slightly elevated angle, showing the top and one side. The design is minimalistic, featuring clean lines with two accents: black and #ffd84d (bright yellow). The business handshake should appear modern and abstract, set against a strictly white background.",
+                "cta": "Subscribe",
+                "animation": {
+                    "isLooped": false,
+                    "isExitAnimated": true,
+                    "isEntryAnimated": true,
+                    "template": "slide-from-left"
+                }
+            }
+        ]
+    }
+]
 const campaigns = [
     {
         "title": "how to inhace your business",
@@ -1942,6 +2627,10 @@ const campaigns = [
                 "text": ["Welcome back to another episode of Marketing Insights, the podcast where we explore the latest trends, challenges, and opportunities in the world of marketing and business growth. I'm your host, Mike Sanshase, and today, we have a special guest with us, Sherif Butt, who has over 10 years of experience in the field. Welcome, Sherif!"],
                 "tags": "#MarketingInsights #PodcastIntro",
                 "img": "/img/episode_start.webp",
+                "img": "/img/episode_start.webp",
+                "filter": "/img/filter-comic-3.jpg",
+                "backdrop": "/img/backdrop-studio-inside-03.png",
+                "frontdrop": "/img/frontdrop-studio-inside_03.png",
                 "imgDescription": "A 3D sketch style drawing of a podcast studio viewed from a slightly elevated angle, showing the top and one side. The design is minimalistic, featuring clean lines with two accents: black and #ffd84d (bright yellow). The podcast studio should appear modern and abstract, set against a strictly white background.",
                 "cta": "Stay Tuned",
                 "animation": {
@@ -1963,6 +2652,10 @@ const campaigns = [
                 "text": ["Thanks, Mike! It's great to be here."],
                 "tags": "#MarketingInsights #GuestIntro",
                 "img": "/img/guest_intro.webp",
+                "img": "/img/episode_start.webp",
+                "filter": "/img/filter-comic-3.jpg",
+                "backdrop": "/img/backdrop-studio-inside-03.png",
+                "frontdrop": "/img/frontdrop-studio-inside_03.png",
                 "imgDescription": "A 3D sketch style drawing of a guest speaker viewed from a slightly elevated angle, showing the top and one side. The design is minimalistic, featuring clean lines with two accents: black and #ffd84d (bright yellow). The guest speaker should appear modern and abstract, set against a strictly white background.",
                 "cta": "Meet Sherif",
                 "animation": {
@@ -1984,6 +2677,10 @@ const campaigns = [
                 "text": ["Today, we're diving into a topic that many businesses grapple with: Why Businesses Hesitate to Implement Lead Generation. Sherif, you've worked with numerous businesses over the years. Why do you think there's so much hesitation around lead generation?"],
                 "tags": "#LeadGeneration #Marketing",
                 "img": "/img/lead_generation.webp",
+                "img": "/img/episode_start.webp",
+                "filter": "/img/filter-comic-3.jpg",
+                "backdrop": "/img/backdrop-studio-inside-03.png",
+                "frontdrop": "/img/frontdrop-studio-inside_03.png",
                 "imgDescription": "A 3D sketch style drawing of a business team discussing strategies viewed from a slightly elevated angle, showing the top and one side. The design is minimalistic, featuring clean lines with two accents: black and #ffd84d (bright yellow). The business team should appear modern and abstract, set against a strictly white background.",
                 "cta": "Discover More",
                 "animation": {
@@ -2005,6 +2702,10 @@ const campaigns = [
                 "text": ["That's a great question, Mike. There are several reasons businesses hesitate. One of the biggest misconceptions is that lead generation is overly complex and requires a significant amount of time and resources to be effective. While it's true that it requires a well-thought-out strategy and consistent effort, it doesn't have to be overwhelming."],
                 "tags": "#LeadGeneration #Misconceptions",
                 "img": "/img/misconceptions.webp",
+                "img": "/img/episode_start.webp",
+                "filter": "/img/filter-comic-3.jpg",
+                "backdrop": "/img/backdrop-studio-inside-03.png",
+                "frontdrop": "/img/frontdrop-studio-inside_03.png",
                 "imgDescription": "A 3D sketch style drawing of a confused businessperson viewed from a slightly elevated angle, showing the top and one side. The design is minimalistic, featuring clean lines with two accents: black and #ffd84d (bright yellow). The businessperson should appear modern and abstract, set against a strictly white background.",
                 "cta": "Learn More",
                 "animation": {
@@ -2026,6 +2727,10 @@ const campaigns = [
                 "text": ["That makes sense. So, what would you say to businesses that believe lead generation doesn't yield immediate results?"],
                 "tags": "#LeadGeneration #Results",
                 "img": "/img/immediate_results.webp",
+                "img": "/img/episode_start.webp",
+                "filter": "/img/filter-comic-3.jpg",
+                "backdrop": "/img/backdrop-studio-inside-03.png",
+                "frontdrop": "/img/frontdrop-studio-inside_03.png",
                 "imgDescription": "A 3D sketch style drawing of a graph showing rapid results viewed from a slightly elevated angle, showing the top and one side. The design is minimalistic, featuring clean lines with two accents: black and #ffd84d (bright yellow). The graph should appear modern and abstract, set against a strictly white background.",
                 "cta": "See Results",
                 "animation": {
@@ -2047,6 +2752,10 @@ const campaigns = [
                 "text": ["It's important to understand that the effectiveness of lead generation can vary based on the approach and the industry. Some strategies might take time to build momentum, but others, like targeted online ads or email campaigns, can start showing results relatively quickly. The key is to set realistic expectations and have a solid plan."],
                 "tags": "#LeadGeneration #Strategies",
                 "img": "/img/effective_strategies.webp",
+                "img": "/img/episode_start.webp",
+                "filter": "/img/filter-comic-3.jpg",
+                "backdrop": "/img/backdrop-studio-inside-03.png",
+                "frontdrop": "/img/frontdrop-studio-inside_03.png",
                 "imgDescription": "A 3D sketch style drawing of a strategic plan viewed from a slightly elevated angle, showing the top and one side. The design is minimalistic, featuring clean lines with two accents: black and #ffd84d (bright yellow). The strategic plan should appear modern and abstract, set against a strictly white background.",
                 "cta": "Plan Now",
                 "animation": {
@@ -2068,6 +2777,10 @@ const campaigns = [
                 "text": ["Absolutely. Now, let's talk about some of the challenges businesses face when implementing lead generation. What are some of the common obstacles?"],
                 "tags": "#LeadGeneration #Challenges",
                 "img": "/img/audience_understanding.webp",
+                "img": "/img/episode_start.webp",
+                "filter": "/img/filter-comic-3.jpg",
+                "backdrop": "/img/backdrop-studio-inside-03.png",
+                "frontdrop": "/img/frontdrop-studio-inside_03.png",
                 "imgDescription": "A 3D sketch style drawing of a business meeting viewed from a slightly elevated angle, showing the top and one side. The design is minimalistic, featuring clean lines with two accents: black and #ffd84d (bright yellow). The business meeting should appear modern and abstract, set against a strictly white background.",
                 "cta": "Face Challenges",
                 "animation": {
@@ -2089,6 +2802,10 @@ const campaigns = [
                 "text": ["One major challenge is the lack of understanding of the target audience. Effective lead generation relies on knowing who your potential customers are, what they need, and how to reach them. Without this understanding, efforts can be misdirected, leading to frustration and wasted resources."],
                 "tags": "#LeadGeneration #Obstacles",
                 "img": "/img/common_obstacles.webp",
+                "img": "/img/episode_start.webp",
+                "filter": "/img/filter-comic-3.jpg",
+                "backdrop": "/img/backdrop-studio-inside-03.png",
+                "frontdrop": "/img/frontdrop-studio-inside_03.png",
                 "imgDescription": "A 3D sketch style drawing of a frustrated businessperson viewed from a slightly elevated angle, showing the top and one side. The design is minimalistic, featuring clean lines with two accents: black and #ffd84d (bright yellow). The businessperson should appear modern and abstract, set against a strictly white background.",
                 "cta": "Overcome Obstacles",
                 "animation": {
@@ -2110,6 +2827,10 @@ const campaigns = [
                 "text": ["And what about the fear of the unknown? I've heard that many businesses simply don't know where to start."],
                 "tags": "#LeadGeneration #Fear",
                 "img": "/img/fear_of_unknown.webp",
+                "img": "/img/episode_start.webp",
+                "filter": "/img/filter-comic-3.jpg",
+                "backdrop": "/img/backdrop-studio-inside-03.png",
+                "frontdrop": "/img/frontdrop-studio-inside_03.png",
                 "imgDescription": "A 3D sketch style drawing of a confused business team viewed from a slightly elevated angle, showing the top and one side. The design is minimalistic, featuring clean lines with two accents: black and #ffd84d (bright yellow). The business team should appear modern and abstract, set against a strictly white background.",
                 "cta": "Start Here",
                 "animation": {
@@ -2131,6 +2852,10 @@ const campaigns = [
                 "text": ["That's a significant barrier, Mike. Many businesses lack the in-house expertise and are unsure about outsourcing this critical function. However, partnering with experienced lead generation professionals or agencies can provide the necessary guidance and support to get started on the right foot."],
                 "tags": "#LeadGeneration #ExpertGuidance",
                 "img": "/img/expert_guidance.webp",
+                "img": "/img/episode_start.webp",
+                "filter": "/img/filter-comic-3.jpg",
+                "backdrop": "/img/backdrop-studio-inside-03.png",
+                "frontdrop": "/img/frontdrop-studio-inside_03.png",
                 "imgDescription": "A 3D sketch style drawing of a business consultation viewed from a slightly elevated angle, showing the top and one side. The design is minimalistic, featuring clean lines with two accents: black and #ffd84d (bright yellow). The business consultation should appear modern and abstract, set against a strictly white background.",
                 "cta": "Get Support",
                 "animation": {
@@ -2152,6 +2877,10 @@ const campaigns = [
                 "text": ["Great points, Sherif. So, what are some practical solutions to overcome these barriers and successfully implement lead generation?"],
                 "tags": "#LeadGeneration #Solutions",
                 "img": "/img/practical_solutions.webp",
+                "img": "/img/episode_start.webp",
+                "filter": "/img/filter-comic-3.jpg",
+                "backdrop": "/img/backdrop-studio-inside-03.png",
+                "frontdrop": "/img/frontdrop-studio-inside_03.png",
                 "imgDescription": "A 3D sketch style drawing of a business meeting discussing solutions viewed from a slightly elevated angle, showing the top and one side. The design is minimalistic, featuring clean lines with two accents: black and #ffd84d (bright yellow). The business meeting should appear modern and abstract, set against a strictly white background.",
                 "cta": "Find Solutions",
                 "animation": {
@@ -2173,6 +2902,10 @@ const campaigns = [
                 "text": ["First, education and training are key. Businesses should invest time in learning about lead generation strategies, tools, and best practices. There are numerous online courses, webinars, and resources available that can help demystify the process."],
                 "tags": "#LeadGeneration #Education",
                 "img": "/img/education_training.webp",
+                "img": "/img/episode_start.webp",
+                "filter": "/img/filter-comic-3.jpg",
+                "backdrop": "/img/backdrop-studio-inside-03.png",
+                "frontdrop": "/img/frontdrop-studio-inside_03.png",
                 "imgDescription": "A 3D sketch style drawing of a business training session viewed from a slightly elevated angle, showing the top and one side. The design is minimalistic, featuring clean lines with two accents: black and #ffd84d (bright yellow). The training session should appear modern and abstract, set against a strictly white background.",
                 "cta": "Learn More",
                 "animation": {
@@ -2194,6 +2927,10 @@ const campaigns = [
                 "text": ["Starting small and scaling up can also be effective, right?"],
                 "tags": "#LeadGeneration #StartSmall",
                 "img": "/img/start_small.webp",
+                "img": "/img/episode_start.webp",
+                "filter": "/img/filter-comic-3.jpg",
+                "backdrop": "/img/backdrop-studio-inside-03.png",
+                "frontdrop": "/img/frontdrop-studio-inside_03.png",
                 "imgDescription": "A 3D sketch style drawing of a small business team working on a project viewed from a slightly elevated angle, showing the top and one side. The design is minimalistic, featuring clean lines with two accents: black and #ffd84d (bright yellow). The small business team should appear modern and abstract, set against a strictly white background.",
                 "cta": "Begin Now",
                 "animation": {
@@ -2215,6 +2952,10 @@ const campaigns = [
                 "text": ["Exactly, Mike. Begin with a simple lead generation campaign to test the waters. Use the insights gained from this initial effort to refine your strategy and gradually expand your efforts."],
                 "tags": "#LeadGeneration #EffectiveStrategies",
                 "img": "/img/effective_strategies_2.webp",
+                "img": "/img/episode_start.webp",
+                "filter": "/img/filter-comic-3.jpg",
+                "backdrop": "/img/backdrop-studio-inside-03.png",
+                "frontdrop": "/img/frontdrop-studio-inside_03.png",
                 "imgDescription": "A 3D sketch style drawing of a business team planning strategies viewed from a slightly elevated angle, showing the top and one side. The design is minimalistic, featuring clean lines with two accents: black and #ffd84d (bright yellow). The business team should appear modern and abstract, set against a strictly white background.",
                 "cta": "Plan Now",
                 "animation": {
@@ -2236,6 +2977,10 @@ const campaigns = [
                 "text": ["And technology plays a big role too, I assume?"],
                 "tags": "#LeadGeneration #Technology",
                 "img": "/img/technology.webp",
+                "img": "/img/episode_start.webp",
+                "filter": "/img/filter-comic-3.jpg",
+                "backdrop": "/img/backdrop-studio-inside-03.png",
+                "frontdrop": "/img/frontdrop-studio-inside_03.png",
                 "imgDescription": "A 3D sketch style drawing of technology tools viewed from a slightly elevated angle, showing the top and one side. The design is minimalistic, featuring clean lines with two accents: black and #ffd84d (bright yellow). The technology tools should appear modern and abstract, set against a strictly white background.",
                 "cta": "Use Tech",
                 "animation": {
@@ -2257,6 +3002,10 @@ const campaigns = [
                 "text": ["Absolutely. There are many lead generation tools and platforms designed to streamline the process. From CRM systems to email marketing software, these tools can help automate and optimize lead generation efforts."],
                 "tags": "#LeadGeneration #Optimization",
                 "img": "/img/tech_optimization.webp",
+                "img": "/img/episode_start.webp",
+                "filter": "/img/filter-comic-3.jpg",
+                "backdrop": "/img/backdrop-studio-inside-03.png",
+                "frontdrop": "/img/frontdrop-studio-inside_03.png",
                 "imgDescription": "A 3D sketch style drawing of CRM and email marketing tools viewed from a slightly elevated angle, showing the top and one side. The design is minimalistic, featuring clean lines with two accents: black and #ffd84d (bright yellow). The tools should appear modern and abstract, set against a strictly white background.",
                 "cta": "Optimize Now",
                 "animation": {
@@ -2278,6 +3027,10 @@ const campaigns = [
                 "text": ["What about partnering with experts? How can that help?"],
                 "tags": "#LeadGeneration #ExpertPartnership",
                 "img": "/img/expert_partnership.webp",
+                "img": "/img/episode_start.webp",
+                "filter": "/img/filter-comic-3.jpg",
+                "backdrop": "/img/backdrop-studio-inside-03.png",
+                "frontdrop": "/img/frontdrop-studio-inside_03.png",
                 "imgDescription": "A 3D sketch style drawing of a business partnership viewed from a slightly elevated angle, showing the top and one side. The design is minimalistic, featuring clean lines with two accents: black and #ffd84d (bright yellow). The business partnership should appear modern and abstract, set against a strictly white background.",
                 "cta": "Partner Up",
                 "animation": {
@@ -2299,6 +3052,10 @@ const campaigns = [
                 "text": ["Partnering with experts, whether it's a consultancy, a marketing agency, or hiring an experienced professional in-house, can make a significant difference. They bring the expertise and experience needed to navigate the complexities of lead generation and ensure successful implementation."],
                 "tags": "#LeadGeneration #ExpertHelp",
                 "img": "/img/get_expert_help.webp",
+                "img": "/img/episode_start.webp",
+                "filter": "/img/filter-comic-3.jpg",
+                "backdrop": "/img/backdrop-studio-inside-03.png",
+                "frontdrop": "/img/frontdrop-studio-inside_03.png",
                 "imgDescription": "A 3D sketch style drawing of a business expert providing guidance viewed from a slightly elevated angle, showing the top and one side. The design is minimalistic, featuring clean lines with two accents: black and #ffd84d (bright yellow). The business expert should appear modern and abstract, set against a strictly white background.",
                 "cta": "Get Help",
                 "animation": {
@@ -2320,6 +3077,10 @@ const campaigns = [
                 "text": ["Thanks for those insights, Sherif. In conclusion, while businesses may hesitate to implement lead generation due to misconceptions and challenges, the benefits far outweigh the initial hurdles. By educating themselves, starting small, leveraging technology, and seeking expert guidance, businesses can overcome these barriers and unlock the full potential of lead generation."],
                 "tags": "#LeadGeneration #Conclusion",
                 "img": "/img/conclusion.webp",
+                "img": "/img/episode_start.webp",
+                "filter": "/img/filter-comic-3.jpg",
+                "backdrop": "/img/backdrop-studio-inside-03.png",
+                "frontdrop": "/img/frontdrop-studio-inside_03.png",
                 "imgDescription": "A 3D sketch style drawing of a business team celebrating success viewed from a slightly elevated angle, showing the top and one side. The design is minimalistic, featuring clean lines with two accents: black and #ffd84d (bright yellow). The business team should appear modern and abstract, set against a strictly white background.",
                 "cta": "Get Started",
                 "animation": {
@@ -2341,6 +3102,10 @@ const campaigns = [
                 "text": ["Exactly, Mike. Lead generation can truly transform a business when done right."],
                 "tags": "#LeadGeneration #ThankYou",
                 "img": "/img/thank_you.webp",
+                "img": "/img/episode_start.webp",
+                "filter": "/img/filter-comic-3.jpg",
+                "backdrop": "/img/backdrop-studio-inside-03.png",
+                "frontdrop": "/img/frontdrop-studio-inside_03.png",
                 "imgDescription": "A 3D sketch style drawing of a thank you message viewed from a slightly elevated angle, showing the top and one side. The design is minimalistic, featuring clean lines with two accents: black and #ffd84d (bright yellow). The thank you message should appear modern and abstract, set against a strictly white background.",
                 "cta": "Thank You",
                 "animation": {
@@ -2362,6 +3127,10 @@ const campaigns = [
                 "text": ["Thank you for joining us today, Sherif. For our listeners who want to learn more about lead generation, be sure to visit Sherif's website at test.loyalleads.co.uk. And don't forget to subscribe to our podcast for more insights and tips on marketing and business growth. Until next time, I'm Mike Sanshase, and this has been Marketing Insights."],
                 "tags": "#LeadGeneration #FinalWords",
                 "img": "/img/final_words.webp",
+                "img": "/img/episode_start.webp",
+                "filter": "/img/filter-comic-3.jpg",
+                "backdrop": "/img/backdrop-studio-inside-03.png",
+                "frontdrop": "/img/frontdrop-studio-inside_03.png",
                 "imgDescription": "A 3D sketch style drawing of a business handshake viewed from a slightly elevated angle, showing the top and one side. The design is minimalistic, featuring clean lines with two accents: black and #ffd84d (bright yellow). The business handshake should appear modern and abstract, set against a strictly white background.",
                 "cta": "Subscribe",
                 "animation": {

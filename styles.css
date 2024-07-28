@@ -1128,6 +1128,58 @@ aside {
 
 /* ads animation */
 
+@keyframes none {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes bounceFromBottom {
+  0% {
+    opacity: 0;
+    transform: translateY(30%);
+  }
+  60% {
+    opacity: 1;
+    transform: translateY(-10%);
+  }
+  100% {
+    transform: translateY(0);
+  }
+}
+
+@keyframes bounceFromLeft {
+  0% {
+    opacity: 0;
+    transform: translateX(-50%);
+  }
+  50% {
+    opacity: 1;
+    transform: translateX(10%);
+  }
+  100% {
+    transform: translateX(0);
+  }
+}
+
+@keyframes bounceToLeft {
+  0% {
+    opacity: 1;
+    transform: translateX(0);
+  }
+  60% {
+    opacity: 1;
+    transform: translateX(10%);
+  }
+  100% {
+    opacity: 0;
+    transform: translateX(-60%);
+  }
+}
+
 @keyframes fadeIn {
   from {
     opacity: 0;
@@ -1291,12 +1343,37 @@ aside {
 
 @keyframes zoomInSmall {
   from {
-    transform: scale(0.5);
+    transform: scale(0.96);
     opacity: 0;
   }
   to {
     transform: scale(1);
     opacity: 1;
+  }
+}
+@keyframes zoomInTwistSmall {
+  from {
+    transform: scale(0.96);
+    opacity: 0;
+    rotate: -3deg;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+    rotate: 3deg;
+  }
+}
+
+@keyframes zoomOutTwistSmall {
+  from {
+    transform: scale(1);
+    opacity: 1;
+    rotate: 3deg;
+  }
+  to {
+    transform: scale(0.96);
+    opacity: 0;
+    rotate: -3deg;
   }
 }
 
@@ -1317,13 +1394,49 @@ aside {
     opacity: 1;
   }
   to {
-    transform: scale(0.5);
+    transform: scale(0.96);
+    opacity: 0;
+  }
+}
+@keyframes zoomOutSmallStay {
+  from {
+    transform: scale(1.05);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+@keyframes zoomOutSmallGo {
+  from {
+    transform: scale(1.05);
+    opacity: 1;
+  }
+  to {
+    transform: scale(1);
     opacity: 0;
   }
 }
 
 .hidden-element {
   opacity: 0;
+}
+
+.none {
+  animation: none 0s ease-out forwards;
+}
+
+.bounce-from-bottom {
+  animation: bounceFromBottom 1s ease-out forwards;
+}
+
+.bounce-from-left {
+  animation: bounceFromLeft 1s ease-out forwards;
+}
+
+.bounce-to-left {
+  animation: bounceToLeft 1s ease-out forwards;
 }
 
 .fade-in {
@@ -1396,6 +1509,21 @@ aside {
 
 .zoom-out-small {
   animation: zoomOutSmall 1s ease-out forwards;
+}
+
+.zoom-out-small-stay {
+  animation: zoomOutSmallStay 1s ease-out forwards;
+}
+.zoom-out-small-go {
+  animation: zoomOutSmallGo 1s ease-out forwards;
+}
+
+.zoom-in-twist-small {
+  animation: zoomInTwistSmall 1s ease-out forwards;
+}
+
+.zoom-out-twist-small {
+  animation: zoomOutTwistSmall 1s ease-out forwards;
 }
 
 .ad-container {
@@ -1584,6 +1712,78 @@ aside {
 #zoomToggleButton {
   transition: background-color 0.3s ease;
 }
-#zoomToggleButton:hover {
-  background-color: #3b82f6;
+
+
+
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 60px;
+  height: 34px;
+}
+
+.switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+  background-color: black;
+}
+
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: var(--sjs-general-forecolor);
+  transition: .4s;
+  border: 1px solid gray;
+}
+
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 26px;
+  width: 26px;
+  left: 4px;
+  bottom: 4px;
+  background-color: white;
+  transition: .4s;
+}
+
+input:checked + .slider {
+  background-color: var(--sjs-general-backcolor-dark);
+}
+
+input:checked + .slider:before {
+  transform: translateX(26px);
+}
+
+.slider.round {
+  border-radius: 34px;
+  border: 1px solid ;
+  
+}
+
+.slider.round:before {
+  border-radius: 50%;
+  
+}
+
+.group:hover .group-hover\:flex,
+.group-hover\:flex:hover {
+    display: flex;
+}
+
+.group-hover\:flex {
+  transition: opacity 0.3s;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.group:hover .group-hover\:flex,
+.group-hover\:flex:hover {
+  opacity: 1;
+  pointer-events: auto;
 }

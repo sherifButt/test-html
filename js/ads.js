@@ -47,9 +47,17 @@ let currentCampaignIndex = 0;
 let isAutoPlayActive = false;
 
 // update animationTemplates array object
-const sizes = ["480x120", "300x250", "160x600", "300x250-text", "728x90", "1200x628", "1200x628-2", "1080x1080","1080x1920"];
+const sizes = ["480x120", "300x250", "160x600", "300x250-text", "728x90", "1200x628", "1200x628-2", "1080x1080", "1080x1920"];
 
 let currentImageType = 'main';
+
+let uiSettings = {
+    isSlideSettings: false,
+    // Add other UI settings here as needed
+};
+
+// enhance elements edit locaion and sclging
+
 
 
 // implanting campaign object
@@ -77,16 +85,38 @@ const storedCurrentCampaignIndex = JSON.parse(localStorage.getItem('currentCampa
 let currentAdIndex = JSON.parse(localStorage.getItem('currentAdIndex')) || 0;
 let currentImageIndex = JSON.parse(localStorage.getItem('currentImageIndex')) || 0;
 
+
+// Function to save UI settings to localStorage
+function saveUISettings() {
+    localStorage.setItem('uiSettings', JSON.stringify(uiSettings));
+}
+
+// Function to load UI settings from localStorage
+function loadUISettings() {
+    const savedSettings = localStorage.getItem('uiSettings');
+    if (savedSettings) {
+        uiSettings = JSON.parse(savedSettings);
+    }
+}
+
 function getSelectedBanner() {
     return document.getElementById('bannerSelect').value;
 }
 
-
+// Function to save UI settings to localStorage
+function saveUISettings() {
+    localStorage.setItem('uiSettings', JSON.stringify(uiSettings));
+}
 
 // Add this function to apply all saved settings for a specific banner size
 function applyAllSavedSettings(size) {
-    const settings = storedBannerSettings.find(setting => setting.size === size).settings;
-    
+    let settings;
+    if (uiSettings.isSlideSettings && storedAds[currentAdIndex].settings) {
+        settings = storedAds[currentAdIndex].settings;
+    } else {
+        settings = storedBannerSettings.find(setting => setting.size === size).settings;
+    }
+
     const layoutSettings = settings.layout;
     const elementSettings = settings.elements;
 
@@ -106,7 +136,7 @@ function applyAllSavedSettings(size) {
                 if (element.tagName.toLowerCase() === 'path') {
                     element.setAttribute('transform', position);
                 } else {
-                    element.style.position = 'relative';
+                    element.style.position = 'absolute';
                     element.style.top = position.top;
                     element.style.left = position.left;
                 }
@@ -138,19 +168,19 @@ function applyAllSavedSettings(size) {
     if (layoutSettings.opacities) {
         Object.entries(layoutSettings.opacities).forEach(([elementType, opacity]) => {
             const element = document.getElementById(`${elementType}-${size}`);
-            if(elementType === 'backdrop'){
+            if (elementType === 'backdrop') {
                 const backdropImage = document.getElementById(`backdropimage-${size}`);
-                if(backdropImage){
+                if (backdropImage) {
                     backdropImage.style.opacity = opacity;
                 }
-            } else if (elementType === 'frontdrop'){
+            } else if (elementType === 'frontdrop') {
                 const frontdropImage = document.getElementById(`frontdropimage-${size}`);
-                if(frontdropImage){
+                if (frontdropImage) {
                     frontdropImage.style.opacity = opacity;
                 }
-            } else if (elementType === 'filter'){
+            } else if (elementType === 'filter') {
                 const filterImage = document.getElementById(`filterimage-${size}`);
-                if(filterImage){
+                if (filterImage) {
                     filterImage.style.opacity = opacity;
                 }
             } else if (element) {
@@ -184,9 +214,6 @@ function applyAllSavedSettings(size) {
         });
     }
 
-
-                
-
     // Apply SVG opacities
     if (layoutSettings.opacities) {
         if (layoutSettings.opacities.svgOneOpacity !== undefined) {
@@ -204,7 +231,23 @@ function applyAllSavedSettings(size) {
     }
 
     // Apply colors
-    applyStoredColors();
+    // applyStoredColors();
+
+    // Apply colors
+    if (layoutSettings.colors) {
+        Object.entries(layoutSettings.colors).forEach(([elementType, color]) => {
+            const element = document.getElementById(`${elementType}-${size}`);
+            if (element) {
+                if (elementType === 'backbanner') {
+                    element.style.backgroundColor = color;
+                } else if (elementType.startsWith('path')) {
+                    element.setAttribute('fill', color);
+                } else {
+                    element.style.color = color;
+                }
+            }
+        });
+    }
 
     // Apply other layout settings
     if (layoutSettings.imageSize) {
@@ -234,12 +277,25 @@ function applyAllSavedSettings(size) {
     }
 }
 
+settingsToggle.addEventListener('change', function () {
+    uiSettings.isSlideSettings = this.checked;
+    saveUISettings();
+    const size = getSelectedBanner();
+    if (size) {
+        applyAllSavedSettings(size);
+        updateCheckboxStates(size);
+        updateElementsList();
+    }
+});
+
 function changeElementBlur(value) {
     if (!selectedElement) return;
     const size = getSelectedBanner();
     const elementType = selectedElement.id.split('-')[0];
+    let settings = uiSettings.isSlideSettings ? storedAds[currentAdIndex].settings : storedBannerSettings.find(setting => setting.size === size).settings;
+
     const blurValue = `blur(${value}px)`;
-    
+
     if (elementType === 'backdrop') {
         const backdropImage = document.getElementById(`backdropimage-${size}`);
         if (backdropImage) {
@@ -259,10 +315,9 @@ function changeElementBlur(value) {
         selectedElement.style.filter = blurValue;
     }
 
-    // Save the blur setting
-    const settings = storedBannerSettings.find(setting => setting.size === size).settings.layout;
-    if (!settings.filters) settings.filters = {};
-    settings.filters[elementType] = blurValue;
+    if (!settings.layout.filters) settings.layout.filters = {};
+    settings.layout.filters[elementType] = blurValue;
+
     saveSettings();
 }
 
@@ -611,10 +666,10 @@ function moveElement(direction, step = 5) {
     if (!selectedElement) return;
     const size = getSelectedBanner();
     const elementType = selectedElement.id.split('-')[0];
-    const settings = storedBannerSettings.find(setting => setting.size === size).settings.layout;
+    let settings = uiSettings.isSlideSettings ? storedAds[currentAdIndex].settings : storedBannerSettings.find(setting => setting.size === size).settings;
 
     if (selectedElement.tagName.toLowerCase() === 'path') {
-        // SVG path handling remains the same
+        // SVG path handling
         const currentTransform = selectedElement.getAttribute('transform') || '';
         let currentX = 0;
         let currentY = 0;
@@ -631,14 +686,14 @@ function moveElement(direction, step = 5) {
         }
         const newTransform = `translate(${currentX}, ${currentY})`;
         selectedElement.setAttribute('transform', newTransform);
-        if (!settings.positions) settings.positions = {};
-        settings.positions[elementType] = newTransform;
+        if (!settings.layout.positions) settings.layout.positions = {};
+        settings.layout.positions[elementType] = newTransform;
     } else {
         // Non-SVG element handling
         const computedStyle = window.getComputedStyle(selectedElement);
         let currentTop = parseInt(selectedElement.style.top) || parseInt(computedStyle.top) || 0;
         let currentLeft = parseInt(selectedElement.style.left) || parseInt(computedStyle.left) || 0;
-        
+
         switch (direction) {
             case 'up': currentTop -= step; break;
             case 'down': currentTop += step; break;
@@ -650,8 +705,8 @@ function moveElement(direction, step = 5) {
         selectedElement.style.top = `${currentTop}px`;
         selectedElement.style.left = `${currentLeft}px`;
 
-        if (!settings.positions) settings.positions = {};
-        settings.positions[elementType] = { top: `${currentTop}px`, left: `${currentLeft}px` };
+        if (!settings.layout.positions) settings.layout.positions = {};
+        settings.layout.positions[elementType] = { top: `${currentTop}px`, left: `${currentLeft}px` };
     }
 
     saveSettings();
@@ -661,17 +716,17 @@ function moveElement(direction, step = 5) {
 // Update the changeZIndex function to increase/decrease by a larger step if Shift is pressed
 function changeZIndex(direction) {
     if (!selectedElement) return;
-
     const size = getSelectedBanner();
     const elementType = selectedElement.id.split('-')[0];
+    let settings = uiSettings.isSlideSettings ? storedAds[currentAdIndex].settings : storedBannerSettings.find(setting => setting.size === size).settings;
+
     const currentZIndex = parseInt(window.getComputedStyle(selectedElement).zIndex) || 0;
     const newZIndex = direction === 'up' ? currentZIndex + 10 : Math.max(0, currentZIndex - 10);
 
     selectedElement.style.zIndex = newZIndex;
 
-    const settings = storedBannerSettings.find(setting => setting.size === size).settings.layout;
-    if (!settings.zIndex) settings.zIndex = {};
-    settings.zIndex[elementType] = newZIndex;
+    if (!settings.layout.zIndex) settings.layout.zIndex = {};
+    settings.layout.zIndex[elementType] = newZIndex;
 
     saveSettings();
 }
@@ -681,26 +736,29 @@ function rotateElement(direction) {
     if (!selectedElement) return;
     const size = getSelectedBanner();
     const elementType = selectedElement.id.split('-')[0];
-    const settings = storedBannerSettings.find(setting => setting.size === size).settings.layout;
+    let settings = uiSettings.isSlideSettings ? storedAds[currentAdIndex].settings : storedBannerSettings.find(setting => setting.size === size).settings;
 
     const currentRotation = selectedElement.style.transform ?
         parseInt(selectedElement.style.transform.replace(/[^\d-]/g, '')) : 0;
     const newRotation = direction === 'left' ? currentRotation - 15 : currentRotation + 15;
     selectedElement.style.transform = `rotate(${newRotation}deg)`;
 
-    // Save the new rotation
-    if (!settings.rotations) settings.rotations = {};
-    settings.rotations[elementType] = newRotation;
+    if (!settings.layout.rotations) settings.layout.rotations = {};
+    settings.layout.rotations[elementType] = newRotation;
 
     saveSettings();
 }
+
+// do the same with rotateElment to mirrorElemnt below
+
+
 
 // Update the mirrorElement function
 function mirrorElement() {
     if (!selectedElement) return;
     const size = getSelectedBanner();
     const elementType = selectedElement.id.split('-')[0];
-    const settings = storedBannerSettings.find(setting => setting.size === size).settings.layout;
+    let settings = uiSettings.isSlideSettings ? storedAds[currentAdIndex].settings : storedBannerSettings.find(setting => setting.size === size).settings;
 
     const currentScale = selectedElement.style.transform && selectedElement.style.transform.includes('scale')
         ? parseInt(selectedElement.style.transform.split('scale(')[1])
@@ -709,8 +767,8 @@ function mirrorElement() {
     selectedElement.style.transform = `scale(${newScale}, 1)`;
 
     // Save the new scale
-    if (!settings.scales) settings.scales = {};
-    settings.scales[elementType] = newScale;
+    if (!settings.layout.scales) settings.layout.scales = {};
+    settings.layout.scales[elementType] = newScale;
 
     saveSettings();
 }
@@ -720,7 +778,7 @@ function resizeElement(direction) {
     if (!selectedElement) return;
     const size = getSelectedBanner();
     const elementType = selectedElement.id.split('-')[0];
-    const settings = storedBannerSettings.find(setting => setting.size === size).settings.layout;
+    let settings = uiSettings.isSlideSettings ? storedAds[currentAdIndex].settings : storedBannerSettings.find(setting => setting.size === size).settings;
 
     const currentScale = selectedElement.style.transform && selectedElement.style.transform.includes('scale')
         ? parseFloat(selectedElement.style.transform.split('scale(')[1])
@@ -729,8 +787,8 @@ function resizeElement(direction) {
     selectedElement.style.transform = `scale(${newScale})`;
 
     // Save the new scale
-    if (!settings.scales) settings.scales = {};
-    settings.scales[elementType] = newScale;
+    if (!settings.layout.scales) settings.layout.scales = {};
+    settings.layout.scales[elementType] = newScale;
 
     saveSettings();
 }
@@ -740,17 +798,17 @@ function changeElementOpacity(value) {
     if (!selectedElement) return;
     const size = getSelectedBanner();
     const elementType = selectedElement.id.split('-')[0];
-    const settings = storedBannerSettings.find(setting => setting.size === size).settings.layout;
+    let settings = uiSettings.isSlideSettings ? storedAds[currentAdIndex].settings : storedBannerSettings.find(setting => setting.size === size).settings;
 
     if (selectedElement.id.startsWith('path-')) {
         selectedElement.setAttribute('fill-opacity', value);
         const svgNumber = selectedElement.id.includes('one') ? 'One' : 'Two';
-        if (!settings.opacities) settings.opacities = {};
-        settings.opacities[`svg${svgNumber}Opacity`] = value;
+        if (!settings.layout.opacities) settings.layout.opacities = {};
+        settings.layout.opacities[`svg${svgNumber}Opacity`] = value;
     } else {
         selectedElement.style.opacity = value;
-        if (!settings.opacities) settings.opacities = {};
-        settings.opacities[elementType] = value;
+        if (!settings.layout.opacities) settings.layout.opacities = {};
+        settings.layout.opacities[elementType] = value;
     }
 
     saveSettings();
@@ -760,16 +818,17 @@ function changeElementOpacity(value) {
 // Update the applyElementPositions function
 function applyElementPositions() {
     const size = getSelectedBanner();
-    const settings = storedBannerSettings.find(setting => setting.size === size).settings.layout;
+    let settings = uiSettings.isSlideSettings ? storedAds[currentAdIndex].settings : storedBannerSettings.find(setting => setting.size === size).settings;
 
-    if (settings.positions) {
-        Object.entries(settings.positions).forEach(([elementType, position]) => {
+
+    if (settings.layout.positions) {
+        Object.entries(settings.layout.positions).forEach(([elementType, position]) => {
             const element = document.getElementById(`${elementType}-${size}`);
             if (element) {
                 if (element.tagName.toLowerCase() === 'path') {
                     element.setAttribute('transform', position);
                 } else {
-                    element.style.position = 'relative';
+                    element.style.position = 'absolute';
                     element.style.top = position.top;
                     element.style.left = position.left;
                 }
@@ -777,8 +836,8 @@ function applyElementPositions() {
         });
     }
 
-    if (settings.rotations) {
-        Object.entries(settings.rotations).forEach(([elementType, rotation]) => {
+    if (settings.layout.rotations) {
+        Object.entries(settings.layout.rotations).forEach(([elementType, rotation]) => {
             const element = document.getElementById(`${elementType}-${size}`);
             if (element) {
                 element.style.transform = `rotate(${rotation}deg)`;
@@ -786,8 +845,8 @@ function applyElementPositions() {
         });
     }
 
-    if (settings.scales) {
-        Object.entries(settings.scales).forEach(([elementType, scale]) => {
+    if (settings.layout.scales) {
+        Object.entries(settings.layout.scales).forEach(([elementType, scale]) => {
             const element = document.getElementById(`${elementType}-${size}`);
             if (element) {
                 element.style.transform = `scale(${scale})`;
@@ -795,8 +854,8 @@ function applyElementPositions() {
         });
     }
 
-    if (settings.opacities) {
-        Object.entries(settings.opacities).forEach(([elementType, opacity]) => {
+    if (settings.layout.opacities) {
+        Object.entries(settings.layout.opacities).forEach(([elementType, opacity]) => {
             const element = document.getElementById(`${elementType}-${size}`);
             if (element) {
                 if (elementType.startsWith('svg')) {
@@ -862,7 +921,12 @@ function resetElement() {
 }
 
 function updateCheckboxStates(size) {
-    const settings = storedBannerSettings.find(setting => setting.size === size).settings.elements;
+    let settings;
+    if (uiSettings.isSlideSettings && storedAds[currentAdIndex].settings) {
+        settings = storedAds[currentAdIndex].settings.elements;
+    } else {
+        settings = storedBannerSettings.find(setting => setting.size === size).settings.elements;
+    }
     const elements = {
         'logo-icon': 'logoIcon',
         'image': 'image',
@@ -918,17 +982,17 @@ function selectBanner(size) {
     } else {
         document.querySelectorAll('.border-blue-500').forEach(el => el.classList.remove('border-blue-500', 'shadow-xl', 'ring-4', 'ring-blue-300'));
         selectedBanner.classList.add('border-blue-500', 'shadow-xl', 'ring-4', 'ring-blue-300');
+    }
 
-       
-    } applyAllSavedSettings(size);
+    applyAllSavedSettings(size);
+    updateSliderValues(size);
+    updateCheckboxStates(size);
+    updateElementsList();
+    updateVisibilityChecklist(size);
 
-        updateSliderValues(size);
-        updateCheckboxStates(size);
-        updateElementsList();
-
-        selectedElement = null;
-        highlightSelectedElement();
-        deselectElement();
+    selectedElement = null;
+    highlightSelectedElement();
+    deselectElement();
 }
 
 
@@ -985,8 +1049,18 @@ function updateSliderValues(size) {
 
 
 function saveSettings() {
-    localStorage.setItem('bannerSettings', JSON.stringify(storedBannerSettings));
-    localStorage.setItem('ads', JSON.stringify(storedAds));
+    const size = getSelectedBanner();
+    if (uiSettings.isSlideSettings) {
+        // Save settings to current slide
+        if (!storedAds[currentAdIndex].settings) {
+            storedAds[currentAdIndex].settings = JSON.parse(JSON.stringify(storedBannerSettings.find(setting => setting.size === size).settings));
+        }
+        localStorage.setItem('ads', JSON.stringify(storedAds));
+    } else {
+        // Save banner-wide settings
+        localStorage.setItem('bannerSettings', JSON.stringify(storedBannerSettings));
+    }
+    // Save other settings as before
     localStorage.setItem('images', JSON.stringify(storedImages));
     localStorage.setItem('filters', JSON.stringify(storedFilters));
     localStorage.setItem('campaigns', JSON.stringify(storedCampaigns));
@@ -998,6 +1072,10 @@ function saveSettings() {
 
 function toggleElement(element) {
     const size = getSelectedBanner();
+    if (!size) {
+        console.warn('No banner selected');
+        return;
+    }
     let el;
     if (element === 'svg-wave') {
         const pathOne = document.getElementById(`path-one-${size}`);
@@ -1030,11 +1108,70 @@ function toggleElement(element) {
         'backdrop': 'backdrop',
         'filter': 'filter',
         'backbanner': 'backbanner'
-
     }[element];
-    settings[elementKey] = el.style.display !== 'none';
+
+    if (uiSettings.isSlideSettings) {
+        // Update slide-specific settings
+        if (!storedAds[currentAdIndex].settings) {
+            storedAds[currentAdIndex].settings = JSON.parse(JSON.stringify(storedBannerSettings.find(setting => setting.size === size).settings));
+        }
+        storedAds[currentAdIndex].settings.elements[elementKey] = el.style.display !== 'none';
+    } else {
+        // Update banner-wide settings
+        settings[elementKey] = el.style.display !== 'none';
+    }
+
+    // Immediately update visibility for special elements
+    if (['frontdrop', 'backdrop', 'filter'].includes(element)) {
+        updateSpecialElementVisibility(element, size);
+    }
+
     saveSettings();
     updateElementsList(); // Refresh the elements list
+}
+
+function updateSpecialElementVisibility(element, size) {
+    const container = document.getElementById(`${element}-${size}`);
+    const image = document.getElementById(`${element}image-${size}`);
+    if (container && image) {
+        const isVisible = container.style.display !== 'none';
+        container.style.display = isVisible ? 'block' : 'none';
+        image.style.display = isVisible ? 'block' : 'none';
+    }
+}
+
+function updateVisibilityChecklist(size) {
+    const settings = uiSettings.isSlideSettings && storedAds[currentAdIndex].settings
+        ? storedAds[currentAdIndex].settings.elements
+        : storedBannerSettings.find(setting => setting.size === size).settings.elements;
+
+    const elements = {
+        'logo-icon': 'logoIcon',
+        'image': 'image',
+        'headline': 'headline',
+        'text': 'text',
+        'tags': 'tags',
+        'cta': 'cta',
+        'svg-wave': 'svgWave',
+        'textcontainer': 'textContainer',
+        'backdrop': 'backdrop',
+        'filter': 'filter',
+        'frontdrop': 'frontdrop',
+        'backbanner': 'backbanner'
+    };
+
+    Object.entries(elements).forEach(([elementId, settingKey]) => {
+        const checkbox = document.getElementById(`toggle-${elementId}`);
+        if (checkbox) {
+            checkbox.checked = settings[settingKey];
+        }
+    });
+
+    // Handle background toggle separately
+    const backgroundCheckbox = document.getElementById('toggle-background');
+    if (backgroundCheckbox) {
+        backgroundCheckbox.checked = settings.backgroundImage;
+    }
 }
 
 
@@ -1319,7 +1456,7 @@ function updateTextLength() {
 
 function updateImages() {
     sizes.forEach(size => {
-        document.getElementById(`image-${size}`).src = storedImages[currentImageIndex];    
+        document.getElementById(`image-${size}`).src = storedImages[currentImageIndex];
     });
 }
 
@@ -1554,9 +1691,23 @@ function scheduleNextAd() {
     }
 }
 
-function toggleMoveMarker() {
-    const moveMarkerButton = document.getElementById('moveMarkerButton');
+// function toggleMoveMarker() {
+//     const moveMarkerButton = document.getElementById('moveMarkerButton');
+//     isMoveMarkerActive = !isMoveMarkerActive;
+
+//     if (isMoveMarkerActive) {
+//         moveMarkerButton.classList.add('active', 'bg-blue-500', 'text-white');
+//         moveMarkerButton.classList.remove('bg-gray-300');
+//     } else {
+//         moveMarkerButton.classList.remove('active', 'bg-blue-500', 'text-white');
+//         moveMarkerButton.classList.add('bg-gray-300');
+//     }
+// }
+
+function toggleMoveMarker(index) {
     isMoveMarkerActive = !isMoveMarkerActive;
+    const moveMarkerButton = document.getElementById('moveMarkerButton');
+    const markers = document.querySelectorAll('#timelineMarkers > div');
 
     if (isMoveMarkerActive) {
         moveMarkerButton.classList.add('active', 'bg-blue-500', 'text-white');
@@ -1565,6 +1716,25 @@ function toggleMoveMarker() {
         moveMarkerButton.classList.remove('active', 'bg-blue-500', 'text-white');
         moveMarkerButton.classList.add('bg-gray-300');
     }
+
+    markers.forEach((marker, i) => {
+        const moveButton = marker.querySelector('.fa-arrows-alt').parentElement;
+        if (i === index) {
+            if (isMoveMarkerActive) {
+                moveButton.classList.add('active');
+                moveButton.classList.remove('bg-white');
+                moveButton.querySelector('i').classList.add('text-white');
+            } else {
+                moveButton.classList.remove('active');
+                moveButton.classList.add('bg-white');
+                moveButton.querySelector('i').classList.remove('text-white');
+            }
+        } else {
+            moveButton.classList.remove('active');
+            moveButton.classList.add('bg-white');
+            moveButton.querySelector('i').classList.remove('text-white');
+        }
+    });
 }
 
 function zoomTimeline(direction) {
@@ -1987,12 +2157,25 @@ function createDraggableMarker(index, timestamp) {
     const timelineMarkers = document.getElementById('timelineMarkers');
     const markerPosition = (timestamp / totalDuration) * 100;
     const marker = document.createElement('div');
-    marker.className = 'absolute w-2.5 h-2.5 bg-blue-500 rounded-full cursor-pointer transform -translate-x-1/2';
+    marker.className = 'absolute w-2.5 h-2.5 bg-blue-500 rounded-full cursor-pointer transform -translate-x-1/2 group';
     marker.style.left = `${markerPosition}%`;
     marker.style.top = '-10px';
     marker.title = formatTimestamp(timestamp);
     marker.setAttribute('data-index', index);
     marker.setAttribute('data-time', timestamp);
+
+    const buttonsContainer = document.createElement('div');
+    buttonsContainer.className = 'absolute bottom-1 left-1/2 transform -translate-x-1/2 mb-1 hidden group-hover:flex space-x-1  flex gap-1';
+
+    const moveButton = createMarkerButton('fa-arrows-alt', 'text-yellow-500', () => toggleMoveMarker(index));
+    const editButton = createMarkerButton('fa-edit', 'text-blue-500', () => editMarker(index));
+    const deleteButton = createMarkerButton('fa-trash', 'text-red-500', () => deleteMarker(index));
+
+    buttonsContainer.appendChild(moveButton);
+    buttonsContainer.appendChild(editButton);
+    buttonsContainer.appendChild(deleteButton);
+
+    marker.appendChild(buttonsContainer);
 
     marker.addEventListener('mousedown', handleMarkerInteraction);
     marker.addEventListener('touchstart', handleMarkerInteraction, { passive: false });
@@ -2002,9 +2185,20 @@ function createDraggableMarker(index, timestamp) {
     console.log(`Marker created at position: ${markerPosition}%`);
 }
 
+function createMarkerButton(iconClass, colorClass, onClickHandler) {
+    const button = document.createElement('button');
+    button.className = `cursor-pointer px-2 mb-3 ${colorClass} rounded`;
+    button.innerHTML = `<i class="fas ${iconClass} text-xs "></i>`;
+    button.onclick = (e) => {
+        e.stopPropagation();
+        onClickHandler();
+    };
+    return button;
+}
+
 function handleMarkerInteraction(e) {
     e.preventDefault();
-    const marker = e.target;
+    const marker = e.target.closest('div[data-index]');
     const index = parseInt(marker.getAttribute('data-index'));
 
     if (isMoveMarkerActive) {
@@ -2035,6 +2229,9 @@ function moveSlideToCurrentTime(index) {
     updateAds();
 
     console.log(`Slide ${index} moved to ${formatTimestamp(currentTime)}`);
+    
+    // Deactivate move mode
+    toggleMoveMarker(index);
 }
 
 function startDragging(e) {
@@ -2133,6 +2330,20 @@ function updateCounterDuringDrag(time) {
     timeCounter.innerText = `${formatTimestamp(time)}`;
 }
 
+function deleteMarker(index) {
+    if (confirm('Are you sure you want to delete this slide?')) {
+        storedAds.splice(index, 1);
+        saveSettings();
+        initializeTimeline();
+        updateAds();
+    }
+}
+
+function editMarker(index) {
+    currentAdIndex = index;
+    openEditModal();
+}
+
 function animateZoom(startZoom, endZoom, duration) {
     const startTime = Date.now();
 
@@ -2164,7 +2375,13 @@ function addSlideAtCurrentTime() {
 
     // Copy data from the previous slide (or the next slide if it's the first one)
     const sourceIndex = insertIndex > 0 ? insertIndex - 1 : Math.min(insertIndex, storedAds.length - 1);
-    const newSlide = JSON.parse(JSON.stringify(storedAds[sourceIndex])); // Deep copy
+    const newSlide = JSON.parse(JSON.stringify(storedAds[sourceIndex]));
+
+    // Ensure the new slide has a settings property
+    if (!newSlide.settings) {
+        const size = getSelectedBanner();
+        newSlide.settings = JSON.parse(JSON.stringify(storedBannerSettings.find(setting => setting.size === size).settings));
+    }
 
     // Update the timestamp of the new slide
     newSlide.timestamp = currentTime;
@@ -2207,7 +2424,6 @@ function updateTimelineWithNewMarker() {
 }
 
 function updateAds() {
-
     sizes.forEach(size => {
         const elements = {
             pathOne: document.getElementById(`path-one-${size}`),
@@ -2226,11 +2442,21 @@ function updateAds() {
             filterImage: document.getElementById(`filterimage-${size}`),
             frontdrop: document.getElementById(`frontdrop-${size}`),
             frontdropImage: document.getElementById(`frontdropimage-${size}`),
-            backbanner: document.getElementById(`backbanner-${size}`)
+            backbanner: document.getElementById(`backbanner-${size}`),
+            svgWave: document.getElementById(`svg-wave-${size}`)
         };
-        const settings = storedBannerSettings.find(setting => setting.size === size).settings;
 
         const ad = storedAds[currentAdIndex];
+        let settings;
+
+        if (uiSettings.isSlideSettings && ad.settings) {
+            settings = ad.settings;
+        } else {
+            settings = storedBannerSettings.find(setting => setting.size === size).settings;
+        }
+        // Apply all saved settings for the current slide/banner
+        applyAllSavedSettings(size);
+
         const animation = ad.animation || {};
 
         // Update content
@@ -2238,42 +2464,46 @@ function updateAds() {
         const adTextArray = ad.text;
         if (elements.text) elements.text.innerText = adTextArray[settings.layout.textLength] || adTextArray[0];
         if (elements.tags) elements.tags.innerText = ad.tags;
-        if (elements.cta && elements.cta.innerText !== '>') {
-            elements.cta.innerText = ad.cta;
-        }
+        if (elements.cta && elements.cta.innerText !== '>') elements.cta.innerText = ad.cta;
 
         updateLogo(size);
 
-        // Update background banner
-        if (ad.img && elements.image) elements.image.src = ad.img;
-        if (ad.imageBackground && elements.imageBackground) elements.imageBackground.src = ad.imageBackground;
-        if (ad.filter && elements.filter) elements.filter.style.backgroundColor = ad.filter;
+        // Update images
+        if (ad.img) updateMainImage(ad.img);
+        if (ad.backdrop) updateBackdropImage(ad.backdrop);
+        if (ad.frontdrop) updateFrontdropImage(ad.frontdrop);
+        if (ad.filter) updateFilterImage(ad.filter);
 
-        if (ad.filter && elements.filterImage) elements.filterImage.src = ad.filter;
-        if (ad.backdrop && elements.backdropImage) elements.backdropImage.src = ad.backdrop;
-        if (ad.frontdrop && elements.frontdropImage) elements.frontdropImage.src = ad.frontdrop;
-        
-
+        // Apply backbanner color
+        if (ad.backbanner && elements.backbanner) {
+            elements.backbanner.style.backgroundColor = ad.backbanner;
+        }
 
         // Apply visibility settings
         Object.entries(elements).forEach(([key, element]) => {
-            if (key == 'pathOne' || key == 'pathTwo') {
-                if (elements.svgWave) {
-                    elements.svgWave.style.display = settings.elements[key] ? 'block' : 'none';
+            if (element && settings.elements && settings.elements[key] !== undefined) {
+                const isVisible = settings.elements[key];
+                if (key === 'pathOne' || key === 'pathTwo') {
+                    if (elements.svgWave) {
+                        elements.svgWave.style.display = isVisible ? 'block' : 'none';
+                    }
+                } else {
+                    element.style.display = isVisible ? 'block' : 'none';
                 }
-
-            } else if (element && key !== 'backdropImage' && key !== 'filterImage' && key !== 'frontdropImage') {
-                element.style.display = settings.elements[key] ? 'block' : 'none';
-
             }
         });
 
-        // Apply other settings
-        if (elements.image) elements.image.style.width = settings.layout.imageSize;
-        if (elements.headline) elements.headline.style.fontSize = settings.layout.titleSize;
-        if (elements.text) elements.text.style.fontSize = settings.layout.bodySize;
-        if (elements.logoIcon) elements.logoIcon.style.transform = `rotate(${settings.layout.logoRotation}deg)`;
-        if (elements.image) elements.image.style.zIndex = settings.layout.imageZIndex || 30;
+        // Special handling for frontdrop, backdrop, and filter
+        ['frontdrop', 'backdrop', 'filter'].forEach(element => {
+            const container = elements[element];
+            const image = elements[`${element}Image`];
+            if (container && image) {
+                const isVisible = settings.elements[element];
+                container.style.display = isVisible ? 'block' : 'none';
+                image.style.display = isVisible ? 'block' : 'none';
+            }
+        });
+
 
         // Apply entry animations
         if (animation.template && animation.isEntryAnimated) {
@@ -2281,19 +2511,24 @@ function updateAds() {
             if (template) {
                 const { settings: animationSettings, elements: animationElements } = template.entry;
                 Object.entries(elements).forEach(([key, element]) => {
-                    if (element && animationElements[key]) {
-                        if (element && animationElements[key] && 
-                            !['frontdropImage', 'backdropImage', 'filterImage'].includes(key)) {
-                            applyAnimation(element, animationElements[key], animationSettings);
-                        }
+                    if (element && animationElements[key] &&
+                        !['frontdropImage', 'backdropImage', 'filterImage'].includes(key)) {
+                        applyAnimation(element, animationElements[key], animationSettings);
                     }
                 });
             }
         }
     });
 
+    // Update the visibility checklist for the currently selected banner
+    const selectedBanner = getSelectedBanner();
+    if (selectedBanner) {
+        updateVisibilityChecklist(selectedBanner);
+    }
+
     updateSlideNavigationButtons();
     updateTimelineMarkers();
+    updateElementsList();
 }
 
 function applyAnimation(element, animationClass, settings) {
@@ -2320,6 +2555,13 @@ function applyAnimation(element, animationClass, settings) {
         element.classList.add(animationClass);
     }
 }
+
+document.getElementById('settingsToggle').addEventListener('change', function () {
+    const size = getSelectedBanner();
+    if (size) {
+        applyAllSavedSettings(size);
+    }
+});
 
 function handleExitAnimations(callback) {
 
@@ -2422,10 +2664,13 @@ function jumpToAd(index) {
 
     // Update ads
     currentAdIndex = index;
-
-
     updateAds();
 
+    // Update the visibility checklist
+    const selectedBanner = getSelectedBanner();
+    if (selectedBanner) {
+        updateVisibilityChecklist(selectedBanner);
+    }
 
     saveSettings();
 
@@ -2503,7 +2748,7 @@ function resizeBody(action) {
 function toggleBackground() {
     const size = getSelectedBanner();
     if (!size) {
-        console.error('No banner selected');
+        // console.error('No banner selected');
         return;
     }
     const container = document.getElementById(`ad-container-${size}`);
@@ -2823,11 +3068,12 @@ function updateImageUrls() {
 
 function openBackdropGallery() {
     currentImageType = 'backdrop';
-    openImageGallery();
+    openImageGallery('backdrop');
 }
+
 function openFrontdropGallery() {
     currentImageType = 'frontdrop';
-    openImageGallery();
+    openImageGallery('frontdrop');
 }
 
 function openFilterGallery() {
@@ -2836,11 +3082,12 @@ function openFilterGallery() {
 }
 
 function openImageGallery(type = 'main') {
+    currentImageType = type; // Store the current image type being selected
     const modal = document.getElementById('imageGalleryModal');
     const grid = document.getElementById('imageGalleryGrid');
     grid.innerHTML = ''; // Clear existing images
 
-    const imageSource =storedImages;
+    const imageSource = storedImages;
 
     const filteredImages = imageSource.filter(imageUrl => {
         const fileName = imageUrl.split('/').pop().toLowerCase();
@@ -2878,7 +3125,7 @@ function openImageGallery(type = 'main') {
 
         grid.appendChild(imgContainer);
     });
- currentImageType = type;
+
     modal.classList.remove('hidden');
 }
 
@@ -2888,94 +3135,187 @@ function closeImageGallery() {
 }
 
 function selectGalleryImage(imageUrl) {
+    const currentSlide = storedAds[currentAdIndex];
 
-    sizes.forEach(size => {
-        let imgElement;
-        switch (currentImageType) {
-            case 'frontdrop':
-                imgElement = document.getElementById(`frontdropimage-${size}`);
-                break;
-            case 'backdrop':
-                imgElement = document.getElementById(`backdropimage-${size}`);
-                break;
-            case 'filter':
-                imgElement = document.getElementById(`filterimage-${size}`);
-                break;
-            default:
-                imgElement = document.getElementById(`image-${size}`);
-        }
-
-        if (imgElement) {
-            imgElement.src = imageUrl;
-        }
-    });
-
-    // Update the current slide's image URL in storedAds
-    if (currentImageType === 'main') {
-        storedAds[currentAdIndex].img = imageUrl;
-    } else if (currentImageType === 'backdrop') {
-        storedAds[currentAdIndex].backdrop = imageUrl;
-    } else if (currentImageType === 'filter') {
-        storedAds[currentAdIndex].filter = imageUrl;
-    } else if (currentImageType === 'frontdrop') {
-        storedAds[currentAdIndex].frontdrop = imageUrl;
+    switch (currentImageType) {
+        case 'main':
+            currentSlide.img = imageUrl;
+            updateImagePreview('mainImagePreview', 'mainImageName', imageUrl);
+            updateMainImage(imageUrl);
+            break;
+        case 'backdrop':
+            currentSlide.backdrop = imageUrl;
+            updateImagePreview('backdropImagePreview', 'backdropImageName', imageUrl);
+            updateBackdropImage(imageUrl);
+            break;
+        case 'frontdrop':
+            currentSlide.frontdrop = imageUrl;
+            updateImagePreview('frontdropImagePreview', 'frontdropImageName', imageUrl);
+            updateFrontdropImage(imageUrl);
+            break;
+        case 'filter':
+            currentSlide.filter = imageUrl;
+            updateImagePreview('filterImagePreview', 'filterImageName', imageUrl);
+            updateFilterImage(imageUrl);
+            break;
     }
 
-    // Save the changes
     saveSettings();
-
-    // Close the gallery
     closeImageGallery();
-
-    // Reset the currentImageType
     currentImageType = 'main';
 }
 
+function updateMainImage(imageUrl) {
+    sizes.forEach(size => {
+        const img = document.getElementById(`image-${size}`);
+        if (img) {
+            img.src = imageUrl;
+        }
+    });
+}
 
+function updateBackdropImage(imageUrl) {
+    sizes.forEach(size => {
+        const img = document.getElementById(`backdropimage-${size}`);
+        if (img) {
+            img.src = imageUrl;
+        }
+    });
+}
+
+function updateFrontdropImage(imageUrl) {
+    sizes.forEach(size => {
+        const img = document.getElementById(`frontdropimage-${size}`);
+        if (img) {
+            img.src = imageUrl;
+        }
+    });
+}
+
+function updateFilterImage(imageUrl) {
+    sizes.forEach(size => {
+        const img = document.getElementById(`filterimage-${size}`);
+        if (img) {
+            img.src = imageUrl;
+        }
+    });
+}
+
+document.getElementById('openGalleryButton').addEventListener('click', () => {
+    currentImageType = 'main';
+    openImageGallery('main');
+});
 
 function openEditModal() {
     const modal = document.getElementById('editSlideModal');
     const form = document.getElementById('editSlideForm');
-
-    const banners = document.getElementById('banners');
-
-
     const currentSlide = storedAds[currentAdIndex];
 
+    if (!modal || !form) {
+        console.error('Modal or form not found');
+        return;
+    }
+
+    // Load slide-specific settings if they exist
+    if (currentSlide.settings) {
+        applyAllSavedSettings(getSelectedBanner());
+    }
+
+    // Helper function to safely set form field values
+    const setFieldValue = (fieldName, value) => {
+        const field = form[fieldName];
+        if (field) {
+            field.value = value;
+        } else {
+            console.warn(`Field ${fieldName} not found in the form`);
+        }
+    };
+
     // Populate form fields
-    form.timestamp.value = currentSlide.timestamp;
-    form.audio.value = currentSlide.audio;
-    form.logoIcon.value = currentSlide.logo.icon;
-    form.logoFirstWord.value = currentSlide.logo.firstWord;
-    form.logoSecondWord.value = currentSlide.logo.secondWord;
-    form.headline.value = currentSlide.headline;
-    form.text.value = currentSlide.text.join('\n');
-    form.tags.value = currentSlide.tags;
-    form.img.value = currentSlide.img;
-    form.cta.value = currentSlide.cta;
-    form.animations.value = JSON.stringify(currentSlide.animation, null, 2);
+    setFieldValue('timestamp', currentSlide.timestamp);
+    setFieldValue('audio', currentSlide.audio);
+
+    if (currentSlide.logo) {
+        setFieldValue('logoIcon', currentSlide.logo.icon);
+        setFieldValue('logoFirstWord', currentSlide.logo.firstWord);
+        setFieldValue('logoSecondWord', currentSlide.logo.secondWord);
+    }
+
+    setFieldValue('headline', currentSlide.headline);
+    setFieldValue('text', currentSlide.text.join('\n'));
+    setFieldValue('tags', currentSlide.tags);
+    setFieldValue('cta', currentSlide.cta);
+
+    // Populate animation template
+    const animationTemplateSelect = document.getElementById('editAnimationTemplate');
+    const customAnimationFields = document.getElementById('customAnimationFields');
+    const editAnimations = document.getElementById('editAnimations');
+
+    if (animationTemplateSelect && customAnimationFields && editAnimations) {
+        // Populate image previews
+        updateImagePreview('mainImagePreview', 'mainImageName', currentSlide.img);
+        updateImagePreview('backdropImagePreview', 'backdropImageName', currentSlide.backdrop);
+        updateImagePreview('frontdropImagePreview', 'frontdropImageName', currentSlide.frontdrop);
+        updateImagePreview('filterImagePreview', 'filterImageName', currentSlide.filter);
+
+        if (currentSlide.animation && currentSlide.animation.template) {
+            animationTemplateSelect.value = currentSlide.animation.template;
+            if (currentSlide.animation.template === 'custom') {
+                customAnimationFields.classList.remove('hidden');
+                editAnimations.value = JSON.stringify(currentSlide.animation, null, 2);
+            } else {
+                customAnimationFields.classList.add('hidden');
+            }
+        } else {
+            animationTemplateSelect.value = '';
+            customAnimationFields.classList.add('hidden');
+        }
+    } else {
+        console.warn('Some animation-related elements not found');
+    }
 
     modal.classList.remove('hidden');
-    banners.classList.add('hidden');
+}
 
-    // If this is a new slide, highlight the new marker
-    if (currentAdIndex === storedAds.length - 1 || storedAds[currentAdIndex].timestamp !== storedAds[currentAdIndex + 1].timestamp) {
-        updateTimelineWithNewMarker();
+function updateImagePreview(imgId, nameId, imageUrl) {
+    const imgElement = document.getElementById(imgId);
+    const nameElement = document.getElementById(nameId);
+
+    if (imageUrl) {
+        imgElement.src = imageUrl;
+        nameElement.textContent = getImageNameFromUrl(imageUrl);
+    } else {
+        imgElement.src = 'path/to/placeholder-image.jpg';
+        nameElement.textContent = 'No image selected';
     }
+}
+
+function getImageNameFromUrl(url) {
+    return url.split('/').pop();
 }
 
 function closeEditModal() {
     const modal = document.getElementById('editSlideModal');
     const banners = document.getElementById('banners');
 
-    modal.classList.add('hidden');
-    banners.classList.remove('hidden');
+    if (modal) {
+        modal.classList.add('hidden');
+    }
+
+    if (banners) {
+        banners.classList.remove('hidden');
+    } else {
+        console.warn("Element with ID 'banners' not found");
+    }
 }
 
 function handleEditFormSubmit(event) {
     event.preventDefault();
     const form = event.target;
+    const currentSlide = storedAds[currentAdIndex];
+
     const updatedSlide = {
+        ...currentSlide,
         timestamp: parseInt(form.timestamp.value),
         audio: form.audio.value,
         logo: {
@@ -2986,10 +3326,22 @@ function handleEditFormSubmit(event) {
         headline: form.headline.value,
         text: form.text.value.split('\n'),
         tags: form.tags.value,
-        img: form.img.value,
         cta: form.cta.value,
-        animation: JSON.parse(form.animations.value)
+        animation: {
+            template: form.animationTemplate.value,
+            isEntryAnimated: true,
+            isExitAnimated: true
+        }
     };
+
+    if (form.animationTemplate.value === 'custom') {
+        try {
+            updatedSlide.animation = JSON.parse(form.animations.value);
+        } catch (error) {
+            console.error('Invalid JSON for custom animation');
+            return;
+        }
+    }
 
     // Update the current slide in storedAds
     storedAds[currentAdIndex] = updatedSlide;
@@ -3014,14 +3366,14 @@ function handleEditFormSubmit(event) {
 function toggleSideBar() {
     // <div id="sideBar" class="hidden lg:fixed lg:inset-y-0 lg:z-50 lg:flex lg:w-96 lg:flex-col">
     const sidebar = document.getElementById('sideBar');
-    if(sidebar.classList.contains('hidden')) {
+    if (sidebar.classList.contains('hidden')) {
         sidebar.classList.remove('hidden',);
-    sidebar.classList.add('fixed', 'inset-y-0', 'z-50', 'flex','w-full', 'flex-col')
+        sidebar.classList.add('fixed', 'inset-y-0', 'z-50', 'flex', 'w-full', 'flex-col')
 
-       
+
     } else {
         sidebar.classList.add('hidden');
-        sidebar.classList.remove('fixed', 'inset-y-0', 'z-50', 'flex','w-full', 'flex-col')
+        sidebar.classList.remove('fixed', 'inset-y-0', 'z-50', 'flex', 'w-full', 'flex-col')
     }
 
 
@@ -3051,7 +3403,7 @@ function scaleBanners() {
     banners.forEach(banner => {
         const originalWidth = parseInt(banner.getAttribute('data-original-width'));
         const originalHeight = parseInt(banner.getAttribute('data-original-height'));
-        
+
         const widthScale = (viewportWidth * 0.95) / originalWidth;
         const heightScale = (viewportHeight * 0.7) / originalHeight;
         const scaleFactor = Math.min(widthScale, heightScale, 1);
@@ -3106,14 +3458,14 @@ function createAndInsertZoomButton() {
 
     // Try to insert the button in the preferred location
     const buttonContainer = document.querySelector('.flex.gap-2');
-    
-        // Fallback: Insert the button as a fixed element if preferred location is not found
-        zoomButton.style.position = 'fixed';
-        zoomButton.style.top = '20px';
-        zoomButton.style.right = '20px';
-        zoomButton.style.zIndex = '40';
-        document.body.appendChild(zoomButton);
-    
+
+    // Fallback: Insert the button as a fixed element if preferred location is not found
+    zoomButton.style.position = 'fixed';
+    zoomButton.style.top = '20px';
+    zoomButton.style.right = '20px';
+    zoomButton.style.zIndex = '40';
+    document.body.appendChild(zoomButton);
+
 
     updateZoomButtonText();
 }
@@ -3139,11 +3491,44 @@ if (document.readyState === 'loading') {
 document.addEventListener('DOMContentLoaded', () => {
 
     convertAllTimestampsToMilliseconds();
+    loadUISettings();
+
+    // Set the initial state of the settings toggle
+    const settingsToggle = document.getElementById('settingsToggle');
+    settingsToggle.checked = uiSettings.isSlideSettings;
+
+    // Add event listener for the settings toggle
+    settingsToggle.addEventListener('change', function () {
+        uiSettings.isSlideSettings = this.checked;
+        saveUISettings();
+        const size = getSelectedBanner();
+        if (size) {
+            applyAllSavedSettings(size);
+        }
+    });
 
     // Apply saved settings for all banner sizes
     storedBannerSettings.forEach(bannerSetting => {
         applyAllSavedSettings(bannerSetting.size);
     });
+
+    // Ensure backbanner colors are applied
+    storedBannerSettings.forEach(bannerSetting => {
+        const size = bannerSetting.size;
+        const layoutSettings = bannerSetting.settings.layout;
+        if (layoutSettings.colors && layoutSettings.colors.backbanner) {
+            const backbanner = document.getElementById(`backbanner-${size}`);
+            if (backbanner) {
+                backbanner.style.backgroundColor = layoutSettings.colors.backbanner;
+            }
+        }
+    });
+
+    sizes.forEach(size => {
+        applyAllSavedSettings(size);
+    });
+
+
 
     // Apply settings for the initially selected banner
     const initialBanner = getSelectedBanner();
@@ -3179,17 +3564,17 @@ document.addEventListener('DOMContentLoaded', () => {
         updateAds();
     });
 
-    // Initialize the image gallery
-    const openGalleryButton = document.getElementById('openGalleryButton');
-    const closeGalleryButton = document.getElementById('closeGalleryButton');
+    // // Initialize the image gallery
+    // const openGalleryButton = document.getElementById('openGalleryButton');
+    // const closeGalleryButton = document.getElementById('closeGalleryButton');
 
-    if (openGalleryButton) {
-        openGalleryButton.addEventListener('click', openImageGallery);
-    }
+    // if (openGalleryButton) {
+    //     openGalleryButton.addEventListener('click', openImageGallery);
+    // }
 
-    if (closeGalleryButton) {
-        closeGalleryButton.addEventListener('click', closeImageGallery);
-    }
+    // if (closeGalleryButton) {
+    //     closeGalleryButton.addEventListener('click', closeImageGallery);
+    // }
 
     // Initialize image URLs container
     const imageUrlsContainer = document.getElementById('imageUrlsContainer');
@@ -3230,11 +3615,11 @@ document.addEventListener('DOMContentLoaded', () => {
             isShiftKeyDown = false;
         }
     });
-    
+
     // Select an initial banner (e.g., the first one in storedBannerSettings)
-  if (storedBannerSettings.length > 0) {
-    selectBanner(storedBannerSettings[0].size);
-  }
+    if (storedBannerSettings.length > 0) {
+        selectBanner(storedBannerSettings[0].size);
+    }
 
     initializeTimeline();
 
@@ -3316,6 +3701,7 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     elementSelector.addEventListener('change', updateArrowVisibility);
+    document.getElementById('cancelEdit').addEventListener('click', closeEditModal);
 
     increaseButton.addEventListener('click', function () {
         if (elementSelector.value) {
@@ -3334,16 +3720,46 @@ document.addEventListener('DOMContentLoaded', function () {
 });
 
 
-window.onload = function() {
+window.onload = function () {
+
+
+
     // Apply settings for all banners
     storedBannerSettings.forEach(bannerSetting => {
-      applyAllSavedSettings(bannerSetting.size);
+        applyAllSavedSettings(bannerSetting.size);
     });
-  
+
     // Select and highlight an initial banner (e.g., the first one)
     const initialBanner = storedBannerSettings[0].size;
     selectBanner(initialBanner);
     highlightSelectedBanner();
-  };
-  
-  
+};
+
+document.addEventListener('DOMContentLoaded', function () {
+
+    applyStoredColors()
+    const animationTemplateSelect = document.getElementById('editAnimationTemplate');
+    const customAnimationFields = document.getElementById('customAnimationFields');
+
+    // Add click event listeners for image selectors
+    document.getElementById('mainImageSelector').addEventListener('click', () => openImageGallery('main'));
+    document.getElementById('backdropImageSelector').addEventListener('click', () => openImageGallery('backdrop'));
+    document.getElementById('frontdropImageSelector').addEventListener('click', () => openImageGallery('frontdrop'));
+    document.getElementById('filterImageSelector').addEventListener('click', () => openImageGallery('filter'));
+
+    // Populate the animation template dropdown
+    animationTemplates.forEach(template => {
+        const option = document.createElement('option');
+        option.value = template.id;
+        option.textContent = template.name;
+        animationTemplateSelect.appendChild(option);
+    });
+
+    animationTemplateSelect.addEventListener('change', function () {
+        if (this.value === 'custom') {
+            customAnimationFields.classList.remove('hidden');
+        } else {
+            customAnimationFields.classList.add('hidden');
+        }
+    });
+});
