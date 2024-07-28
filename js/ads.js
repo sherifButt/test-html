@@ -39,7 +39,7 @@ let scrollContainerWidth = 0;
 let originalCounterValue = '';
 
 // time line to jump to marker location when clicked
-// update ads object
+// update slides object
 let currentCampaignIndex = 0;
 
 // fix jumbig issue
@@ -58,10 +58,11 @@ let uiSettings = {
 
 // enhance elements edit locaion and sclging
 
-
+// Global variable to track animation state
+let animationsEnabled = true;
 
 // implanting campaign object
-let ads = campaigns[currentCampaignIndex].ads.map(ad => {
+let slides = campaigns[currentCampaignIndex].slides.map(ad => {
     return {
         ...ad,
         logo: campaigns[currentCampaignIndex].logo,
@@ -70,13 +71,13 @@ let ads = campaigns[currentCampaignIndex].ads.map(ad => {
 });
 
 let campaign = campaigns[currentCampaignIndex];
-delete campaign.ads;
+delete campaign.slides;
 
 
 
 // Load settings from local storage or use default
 const storedBannerSettings = JSON.parse(localStorage.getItem('bannerSettings')) || bannerSettings;
-const storedAds = JSON.parse(localStorage.getItem('ads')) || ads;
+const storedSlides = JSON.parse(localStorage.getItem('slides')) || slides;
 const storedImages = JSON.parse(localStorage.getItem('images')) || images;
 const storedFilters = JSON.parse(localStorage.getItem('filters')) || filters;
 const storedCampaigns = JSON.parse(localStorage.getItem('campaigns')) || campaigns;
@@ -111,14 +112,28 @@ function saveUISettings() {
 // Add this function to apply all saved settings for a specific banner size
 function applyAllSavedSettings(size) {
     let settings;
-    if (uiSettings.isSlideSettings && storedAds[currentAdIndex].settings) {
-        settings = storedAds[currentAdIndex].settings;
+    if (uiSettings.isSlideSettings && storedSlides[currentAdIndex].settings) {
+        settings = storedSlides[currentAdIndex].settings;
     } else {
         settings = storedBannerSettings.find(setting => setting.size === size).settings;
     }
 
     const layoutSettings = settings.layout;
     const elementSettings = settings.elements;
+
+    // Apply cta > or text
+    const cta = document.getElementById(`cta-${size}`);
+    if (cta && settings.layout && settings.layout.ctaStyle) {
+        if (settings.layout.ctaStyle === 'circle') {
+            cta.innerText = '>';
+            cta.style.padding = '5px 12px';
+            cta.style.borderRadius = '100%';
+        } else {
+            cta.innerText = storedSlides[currentAdIndex].cta;
+            cta.style.padding = '5px 12px';
+            cta.style.borderRadius = '4px';
+        }
+    }
 
     // Apply element visibility
     Object.entries(elementSettings).forEach(([element, isVisible]) => {
@@ -249,6 +264,18 @@ function applyAllSavedSettings(size) {
         });
     }
 
+    // Apply z-index
+    if (layoutSettings.zIndex) {
+        Object.entries(layoutSettings.zIndex).forEach(([elementType, zIndex]) => {
+            const element = document.getElementById(`${elementType}-${size}`);
+            if (element) {
+                element.style.zIndex = zIndex;
+            }
+        });
+    }
+
+
+
     // Apply other layout settings
     if (layoutSettings.imageSize) {
         const image = document.getElementById(`image-${size}`);
@@ -292,7 +319,7 @@ function changeElementBlur(value) {
     if (!selectedElement) return;
     const size = getSelectedBanner();
     const elementType = selectedElement.id.split('-')[0];
-    let settings = uiSettings.isSlideSettings ? storedAds[currentAdIndex].settings : storedBannerSettings.find(setting => setting.size === size).settings;
+    let settings = uiSettings.isSlideSettings ? storedSlides[currentAdIndex].settings : storedBannerSettings.find(setting => setting.size === size).settings;
 
     const blurValue = `blur(${value}px)`;
 
@@ -664,9 +691,32 @@ function applyStoredColors() {
 // Update the moveElement function
 function moveElement(direction, step = 5) {
     if (!selectedElement) return;
+    
     const size = getSelectedBanner();
+    if (!size) {
+        console.warn('No banner selected');
+        return;
+    }
+
     const elementType = selectedElement.id.split('-')[0];
-    let settings = uiSettings.isSlideSettings ? storedAds[currentAdIndex].settings : storedBannerSettings.find(setting => setting.size === size).settings;
+    
+    // Find the settings object, accounting for slide-specific settings
+    let settings;
+    if (uiSettings.isSlideSettings && storedSlides[currentAdIndex] && storedSlides[currentAdIndex].settings) {
+        settings = storedSlides[currentAdIndex].settings;
+    } else {
+        const bannerSetting = storedBannerSettings.find(setting => setting.size === size);
+        if (!bannerSetting || !bannerSetting.settings) {
+            console.error(`No settings found for banner size: ${size}`);
+            return;
+        }
+        settings = bannerSetting.settings;
+    }
+
+    // Ensure layout settings exist
+    if (!settings.layout) {
+        settings.layout = {};
+    }
 
     if (selectedElement.tagName.toLowerCase() === 'path') {
         // SVG path handling
@@ -710,6 +760,44 @@ function moveElement(direction, step = 5) {
     }
 
     saveSettings();
+
+    console.log(`Moved ${elementType} ${direction} by ${step}px`);
+}
+
+
+function getElementSettings(size) {
+    if (uiSettings.isSlideSettings && storedSlides[currentAdIndex] && storedSlides[currentAdIndex].settings) {
+        return storedSlides[currentAdIndex].settings;
+    } else {
+        const bannerSetting = storedBannerSettings.find(setting => setting.size === size);
+        if (!bannerSetting || !bannerSetting.settings) {
+            console.error(`No settings found for banner size: ${size}`);
+            return null;
+        }
+        return bannerSetting.settings;
+    }
+}
+
+function someElementFunction(params) {
+    if (!selectedElement) return;
+    
+    const size = getSelectedBanner();
+    if (!size) {
+        console.warn('No banner selected');
+        return;
+    }
+
+    const settings = getElementSettings(size);
+    if (!settings) return;
+
+    // Ensure necessary nested objects exist
+    if (!settings.layout) settings.layout = {};
+    if (!settings.layout.someProperty) settings.layout.someProperty = {};
+
+    // Rest of your function logic here
+    // ...
+
+    saveSettings();
 }
 
 
@@ -718,7 +806,7 @@ function changeZIndex(direction) {
     if (!selectedElement) return;
     const size = getSelectedBanner();
     const elementType = selectedElement.id.split('-')[0];
-    let settings = uiSettings.isSlideSettings ? storedAds[currentAdIndex].settings : storedBannerSettings.find(setting => setting.size === size).settings;
+    let settings = uiSettings.isSlideSettings ? storedSlides[currentAdIndex].settings : storedBannerSettings.find(setting => setting.size === size).settings;
 
     const currentZIndex = parseInt(window.getComputedStyle(selectedElement).zIndex) || 0;
     const newZIndex = direction === 'up' ? currentZIndex + 10 : Math.max(0, currentZIndex - 10);
@@ -736,7 +824,7 @@ function rotateElement(direction) {
     if (!selectedElement) return;
     const size = getSelectedBanner();
     const elementType = selectedElement.id.split('-')[0];
-    let settings = uiSettings.isSlideSettings ? storedAds[currentAdIndex].settings : storedBannerSettings.find(setting => setting.size === size).settings;
+    let settings = uiSettings.isSlideSettings ? storedSlides[currentAdIndex].settings : storedBannerSettings.find(setting => setting.size === size).settings;
 
     const currentRotation = selectedElement.style.transform ?
         parseInt(selectedElement.style.transform.replace(/[^\d-]/g, '')) : 0;
@@ -758,7 +846,7 @@ function mirrorElement() {
     if (!selectedElement) return;
     const size = getSelectedBanner();
     const elementType = selectedElement.id.split('-')[0];
-    let settings = uiSettings.isSlideSettings ? storedAds[currentAdIndex].settings : storedBannerSettings.find(setting => setting.size === size).settings;
+    let settings = uiSettings.isSlideSettings ? storedSlides[currentAdIndex].settings : storedBannerSettings.find(setting => setting.size === size).settings;
 
     const currentScale = selectedElement.style.transform && selectedElement.style.transform.includes('scale')
         ? parseInt(selectedElement.style.transform.split('scale(')[1])
@@ -776,21 +864,54 @@ function mirrorElement() {
 // Update the resizeElement function
 function resizeElement(direction) {
     if (!selectedElement) return;
+    
     const size = getSelectedBanner();
-    const elementType = selectedElement.id.split('-')[0];
-    let settings = uiSettings.isSlideSettings ? storedAds[currentAdIndex].settings : storedBannerSettings.find(setting => setting.size === size).settings;
+    if (!size) {
+        console.warn('No banner selected');
+        return;
+    }
 
+    const elementType = selectedElement.id.split('-')[0];
+    
+    // Find the settings object, accounting for slide-specific settings
+    let settings;
+    if (uiSettings.isSlideSettings && storedSlides[currentAdIndex].settings) {
+        settings = storedSlides[currentAdIndex].settings;
+    } else {
+        const bannerSetting = storedBannerSettings.find(setting => setting.size === size);
+        if (!bannerSetting) {
+            console.error(`No settings found for banner size: ${size}`);
+            return;
+        }
+        settings = bannerSetting.settings;
+    }
+
+    // Ensure layout settings exist
+    if (!settings.layout) {
+        settings.layout = {};
+    }
+
+    // Get current scale
     const currentScale = selectedElement.style.transform && selectedElement.style.transform.includes('scale')
         ? parseFloat(selectedElement.style.transform.split('scale(')[1])
         : 1;
+
+    // Calculate new scale
     const newScale = direction === 'up' ? currentScale * 1.1 : currentScale * 0.9;
+
+    // Apply new scale
     selectedElement.style.transform = `scale(${newScale})`;
 
     // Save the new scale
-    if (!settings.layout.scales) settings.layout.scales = {};
+    if (!settings.layout.scales) {
+        settings.layout.scales = {};
+    }
     settings.layout.scales[elementType] = newScale;
 
+    // Save settings
     saveSettings();
+
+    console.log(`Resized ${elementType} to scale: ${newScale}`);
 }
 
 // Update the changeElementOpacity function
@@ -798,7 +919,7 @@ function changeElementOpacity(value) {
     if (!selectedElement) return;
     const size = getSelectedBanner();
     const elementType = selectedElement.id.split('-')[0];
-    let settings = uiSettings.isSlideSettings ? storedAds[currentAdIndex].settings : storedBannerSettings.find(setting => setting.size === size).settings;
+    let settings = uiSettings.isSlideSettings ? storedSlides[currentAdIndex].settings : storedBannerSettings.find(setting => setting.size === size).settings;
 
     if (selectedElement.id.startsWith('path-')) {
         selectedElement.setAttribute('fill-opacity', value);
@@ -818,7 +939,7 @@ function changeElementOpacity(value) {
 // Update the applyElementPositions function
 function applyElementPositions() {
     const size = getSelectedBanner();
-    let settings = uiSettings.isSlideSettings ? storedAds[currentAdIndex].settings : storedBannerSettings.find(setting => setting.size === size).settings;
+    let settings = uiSettings.isSlideSettings ? storedSlides[currentAdIndex].settings : storedBannerSettings.find(setting => setting.size === size).settings;
 
 
     if (settings.layout.positions) {
@@ -922,8 +1043,8 @@ function resetElement() {
 
 function updateCheckboxStates(size) {
     let settings;
-    if (uiSettings.isSlideSettings && storedAds[currentAdIndex].settings) {
-        settings = storedAds[currentAdIndex].settings.elements;
+    if (uiSettings.isSlideSettings && storedSlides[currentAdIndex].settings) {
+        settings = storedSlides[currentAdIndex].settings.elements;
     } else {
         settings = storedBannerSettings.find(setting => setting.size === size).settings.elements;
     }
@@ -1052,10 +1173,10 @@ function saveSettings() {
     const size = getSelectedBanner();
     if (uiSettings.isSlideSettings) {
         // Save settings to current slide
-        if (!storedAds[currentAdIndex].settings) {
-            storedAds[currentAdIndex].settings = JSON.parse(JSON.stringify(storedBannerSettings.find(setting => setting.size === size).settings));
+        if (!storedSlides[currentAdIndex].settings) {
+            storedSlides[currentAdIndex].settings = JSON.parse(JSON.stringify(storedBannerSettings.find(setting => setting.size === size).settings));
         }
-        localStorage.setItem('ads', JSON.stringify(storedAds));
+        localStorage.setItem('slides', JSON.stringify(storedSlides));
     } else {
         // Save banner-wide settings
         localStorage.setItem('bannerSettings', JSON.stringify(storedBannerSettings));
@@ -1112,10 +1233,10 @@ function toggleElement(element) {
 
     if (uiSettings.isSlideSettings) {
         // Update slide-specific settings
-        if (!storedAds[currentAdIndex].settings) {
-            storedAds[currentAdIndex].settings = JSON.parse(JSON.stringify(storedBannerSettings.find(setting => setting.size === size).settings));
+        if (!storedSlides[currentAdIndex].settings) {
+            storedSlides[currentAdIndex].settings = JSON.parse(JSON.stringify(storedBannerSettings.find(setting => setting.size === size).settings));
         }
-        storedAds[currentAdIndex].settings.elements[elementKey] = el.style.display !== 'none';
+        storedSlides[currentAdIndex].settings.elements[elementKey] = el.style.display !== 'none';
     } else {
         // Update banner-wide settings
         settings[elementKey] = el.style.display !== 'none';
@@ -1141,8 +1262,8 @@ function updateSpecialElementVisibility(element, size) {
 }
 
 function updateVisibilityChecklist(size) {
-    const settings = uiSettings.isSlideSettings && storedAds[currentAdIndex].settings
-        ? storedAds[currentAdIndex].settings.elements
+    const settings = uiSettings.isSlideSettings && storedSlides[currentAdIndex].settings
+        ? storedSlides[currentAdIndex].settings.elements
         : storedBannerSettings.find(setting => setting.size === size).settings.elements;
 
     const elements = {
@@ -1175,10 +1296,10 @@ function updateVisibilityChecklist(size) {
 }
 
 
-async function downloadSettings() {
+async function downloslidesettings() {
     await convertAllTimestampsToMinutes();
     const settingsToDownload = {
-        ads: storedAds,
+        slides: storedSlides,
         bannerSettings: storedBannerSettings,
         images: storedImages
     };
@@ -1192,7 +1313,7 @@ async function downloadSettings() {
     await convertAllTimestampsToMilliseconds();
 }
 
-async function uploadSettings() {
+async function uploslidesettings() {
     const input = document.createElement('input');
     input.type = 'file';
     input.accept = 'application/json';
@@ -1203,8 +1324,8 @@ async function uploadSettings() {
         reader.onload = readerEvent => {
             const content = readerEvent.target.result;
             const parsed = JSON.parse(content);
-            if (parsed.ads && parsed.bannerSettings && parsed.images) {
-                localStorage.setItem('ads', JSON.stringify(parsed.ads));
+            if (parsed.slides && parsed.bannerSettings && parsed.images) {
+                localStorage.setItem('slides', JSON.stringify(parsed.slides));
                 localStorage.setItem('bannerSettings', JSON.stringify(parsed.bannerSettings));
                 localStorage.setItem('images', JSON.stringify(parsed.images));
                 location.reload(); // reload to apply the new settings
@@ -1276,7 +1397,7 @@ function updateTextLength() {
     const size = getSelectedBanner();
     const textElement = document.getElementById(`text-${size}`);
     const settings = storedBannerSettings.find(setting => setting.size === size).settings.layout;
-    const adTextArray = storedAds[currentAdIndex].text;
+    const adTextArray = storedSlides[currentAdIndex].text;
 
     // Cycle through text lengths
     settings.textLength = (settings.textLength + 1) % adTextArray.length;
@@ -1287,7 +1408,7 @@ function updateTextLength() {
 
 function updateLogo(size) {
     const logoIcon = document.getElementById(`logo-icon-${size}`);
-    const logo = storedAds[currentAdIndex].logo;
+    const logo = storedSlides[currentAdIndex].logo;
     let iconHtml = '';
     if (logo.icon.startsWith('img/')) {
         iconHtml = `<img src="${logo.icon}" alt="Logo" style="width: 24px; height: 24px;">`;
@@ -1446,7 +1567,7 @@ function updateTextLength() {
     const size = getSelectedBanner();
     const textElement = document.getElementById(`text-${size}`);
     const settings = storedBannerSettings.find(setting => setting.size === size).settings.layout;
-    const adTextArray = storedAds[currentAdIndex].text;
+    const adTextArray = storedSlides[currentAdIndex].text;
 
     // Cycle through text lengths
     settings.textLength = (settings.textLength + 1) % adTextArray.length;
@@ -1474,7 +1595,7 @@ function playFirstAudioAndRunSlides() {
     } else {
         // Play functionality
         if (!audioStarted) {
-            const firstAdAudioSrc = storedAds[0].audio;
+            const firstAdAudioSrc = storedSlides[0].audio;
             if (firstAdAudioSrc) {
                 audioPlayer.src = firstAdAudioSrc;
                 audioPlayer.load(); // Force the audio to load
@@ -1508,7 +1629,7 @@ function playFirstAudioAndRunSlides() {
 // Helper function to find the correct ad index for a given time
 function findAdIndexForTime(time) {
     let index = 0;
-    while (index < storedAds.length - 1 && getCurrentAdTimestamp(index + 1) <= time) {
+    while (index < storedSlides.length - 1 && getCurrentAdTimestamp(index + 1) <= time) {
         index++;
     }
     return index;
@@ -1540,14 +1661,14 @@ function adjustPlaybackTime(newTimeInSeconds) {
 
     // Find the correct ad index for the new time
     let newIndex = 0;
-    while (newIndex < storedAds.length - 1 && getCurrentAdTimestamp(newIndex + 1) <= newTimestamp) {
+    while (newIndex < storedSlides.length - 1 && getCurrentAdTimestamp(newIndex + 1) <= newTimestamp) {
         newIndex++;
     }
 
-    // Update current index and ads if necessary
+    // Update current index and slides if necessary
     if (newIndex !== currentAdIndex) {
         currentAdIndex = newIndex;
-        updateAds();
+        updateSlides();
     }
 
     // Clear existing timeout and schedule next ad
@@ -1623,7 +1744,7 @@ function restartAutoPlay() {
     audioPlayer.pause();
 
     // Update UI
-    updateAds();
+    updateSlides();
     updateCounter();
     timelineSlider.value = 0;
 
@@ -1641,7 +1762,7 @@ function restartAutoPlay() {
 }
 
 function getCurrentAdTimestamp(index) {
-    const timestamp = storedAds[index].timestamp;
+    const timestamp = storedSlides[index].timestamp;
     return timestamp; // Assuming all timestamps are now stored as milliseconds
 }
 
@@ -1662,14 +1783,14 @@ function scheduleNextAd() {
         return;
     }
 
-    if (currentAdIndex < storedAds.length - 1) {
+    if (currentAdIndex < storedSlides.length - 1) {
         const nextAdIndex = currentAdIndex + 1;
         const nextAdTime = getCurrentAdTimestamp(nextAdIndex);
 
         const delay = nextAdTime - currentTime;
 
         if (isAutoPlayActive) {
-            const currentAd = storedAds[currentAdIndex];
+            const currentAd = storedSlides[currentAdIndex];
             const currentAnimation = currentAd.animation || {};
             const currentTemplate = animationTemplates.find(t => t.id === currentAnimation.template);
             const exitDuration = currentTemplate ? currentTemplate.exit.settings.duration + currentTemplate.exit.settings.delay : 0;
@@ -1677,7 +1798,7 @@ function scheduleNextAd() {
             autoPlayTimeout = setTimeout(() => {
                 handleExitAnimations(() => {
                     currentAdIndex = nextAdIndex;
-                    updateAds();
+                    updateSlides();
                     scheduleNextAd();
                 });
             }, Math.max(delay - exitDuration, 0));
@@ -1889,7 +2010,7 @@ function initializeTimeline() {
     const audioPlayer = document.getElementById('audioPlayer');
 
     // Calculate total duration based on the last ad timestamp or audio duration, whichever is greater
-    const lastAdTimestamp = Math.max(...storedAds.map(ad => ad.timestamp));
+    const lastAdTimestamp = Math.max(...storedSlides.map(ad => ad.timestamp));
     const audioDuration = isFinite(audioPlayer.duration) ? audioPlayer.duration * 1000 : 0;
     const campaignDuration = isFinite(storedCampaign.audio.duration) ? storedCampaign.audio.duration : 0;
 
@@ -1913,7 +2034,7 @@ function initializeTimeline() {
     timelineMarkers.innerHTML = '';
 
     // Create draggable markers
-    storedAds.forEach((ad, index) => {
+    storedSlides.forEach((ad, index) => {
         createDraggableMarker(index, ad.timestamp);
     });
 
@@ -1933,11 +2054,11 @@ function onAudioLoaded() {
     console.log('Campaign audio duration:', storedCampaign.audio.duration);
     console.log('Is campaign duration finite?', isFinite(storedCampaign.audio.duration));
     initializeTimeline();
-    updateAds();
+    updateSlides();
 }
 
 async function convertAllTimestampsToMilliseconds() {
-    storedAds.forEach(ad => {
+    storedSlides.forEach(ad => {
         if (typeof ad.timestamp === 'string') {
             const [minutes, seconds] = ad.timestamp.split(':').map(Number);
             ad.timestamp = Number(ad.timestamp.split(':')[0]) * 60 * 1000 + Number(ad.timestamp.split(':')[1]) * 1000;
@@ -1953,7 +2074,7 @@ async function convertAllTimestampsToMilliseconds() {
 }
 
 async function convertAllTimestampsToMinutes() {
-    storedAds.forEach(ad => {
+    storedSlides.forEach(ad => {
         if (typeof ad.timestamp === 'number') {
             const minutes = Math.floor(ad.timestamp / 60000);
             const seconds = Math.floor((ad.timestamp % 60000) / 1000);
@@ -1985,7 +2106,7 @@ function moveSlideTimestamp(index) {
     const timelineSlider = document.getElementById('timelineSlider');
     const currentTime = parseInt(timelineSlider.value);
 
-    storedAds[index].timestamp = currentTime; // Store as milliseconds
+    storedSlides[index].timestamp = currentTime; // Store as milliseconds
 
     updateMarkerPosition(index, currentTime);
     saveSettings();
@@ -2023,8 +2144,8 @@ function handleSliderChange() {
     // Find the correct ad index for the new time
     currentAdIndex = findAdIndexForTime(sliderValue);
 
-    // Update ads
-    updateAds();
+    // Update slides
+    updateSlides();
 
     // Update counter
     updateCounter();
@@ -2056,7 +2177,7 @@ function jumpToTime(timestamp) {
     // Update other elements
     updateSliderPosition();
     currentAdIndex = findAdIndexForTime(timestamp);
-    updateAds();
+    updateSlides();
     updateCounter();
 
     // Clear existing timeout and schedule next ad
@@ -2113,11 +2234,11 @@ function updateSlideNavigationButtons() {
     const nextButton = document.getElementById('nextSlideButton');
 
     const prevIndex = Math.max(0, currentAdIndex - 1);
-    const nextIndex = Math.min(storedAds.length - 1, currentAdIndex + 1);
+    const nextIndex = Math.min(storedSlides.length - 1, currentAdIndex + 1);
 
-    prevButton.innerHTML = '<i class="fas fa-backward-step"></i> ' + storedAds[prevIndex].headline;
-    currentButton.innerHTML = '<i class="fa-solid fa-arrows-rotate"></i> ' + storedAds[currentAdIndex].headline;
-    nextButton.innerHTML = storedAds[nextIndex].headline + ' <i class="fas fa-forward-step"></i>';
+    prevButton.innerHTML = '<i class="fas fa-backward-step"></i> ' + storedSlides[prevIndex].headline;
+    currentButton.innerHTML = '<i class="fa-solid fa-arrows-rotate"></i> ' + storedSlides[currentAdIndex].headline;
+    nextButton.innerHTML = storedSlides[nextIndex].headline + ' <i class="fas fa-forward-step"></i>';
 
     prevButton.onclick = () => handleExitAnimations(() => jumpToAd(prevIndex))
     currentButton.onclick = () => jumpToAd(currentAdIndex);
@@ -2212,21 +2333,21 @@ function moveSlideToCurrentTime(index) {
     const timelineSlider = document.getElementById('timelineSlider');
     const currentTime = parseInt(timelineSlider.value);
 
-    storedAds[index].timestamp = currentTime;
+    storedSlides[index].timestamp = currentTime;
 
     // Update the marker position
     updateMarkerPosition(index, currentTime);
 
-    // Sort storedAds based on new timestamps
-    storedAds.sort((a, b) => a.timestamp - b.timestamp);
+    // Sort storedSlides based on new timestamps
+    storedSlides.sort((a, b) => a.timestamp - b.timestamp);
 
     // Update currentAdIndex
-    currentAdIndex = storedAds.findIndex(ad => ad.timestamp === currentTime);
+    currentAdIndex = storedSlides.findIndex(ad => ad.timestamp === currentTime);
 
     // Save changes and update UI
     saveSettings();
     initializeTimeline();
-    updateAds();
+    updateSlides();
 
     console.log(`Slide ${index} moved to ${formatTimestamp(currentTime)}`);
     
@@ -2299,14 +2420,14 @@ function stopDragging() {
     const index = parseInt(draggedMarker.getAttribute('data-index'));
     const newTimestamp = parseInt(draggedMarker.getAttribute('data-time'));
 
-    // Update the timestamp in storedAds
-    storedAds[index].timestamp = newTimestamp;
+    // Update the timestamp in storedSlides
+    storedSlides[index].timestamp = newTimestamp;
 
-    // Sort storedAds based on new timestamps
-    storedAds.sort((a, b) => a.timestamp - b.timestamp);
+    // Sort storedSlides based on new timestamps
+    storedSlides.sort((a, b) => a.timestamp - b.timestamp);
 
     // Update currentAdIndex
-    currentAdIndex = storedAds.findIndex(ad => ad.timestamp === newTimestamp);
+    currentAdIndex = storedSlides.findIndex(ad => ad.timestamp === newTimestamp);
 
     // Revert the counter to its original value
     document.getElementById('timeCounter').innerText = originalCounterValue;
@@ -2314,7 +2435,7 @@ function stopDragging() {
     // Save changes and update UI
     saveSettings();
     initializeTimeline();
-    updateAds();
+    updateSlides();
 
     isDragging = false;
     draggedMarker = null;
@@ -2332,10 +2453,10 @@ function updateCounterDuringDrag(time) {
 
 function deleteMarker(index) {
     if (confirm('Are you sure you want to delete this slide?')) {
-        storedAds.splice(index, 1);
+        storedSlides.splice(index, 1);
         saveSettings();
         initializeTimeline();
-        updateAds();
+        updateSlides();
     }
 }
 
@@ -2362,45 +2483,57 @@ function animateZoom(startZoom, endZoom, duration) {
     requestAnimationFrame(step);
 }
 
-
 function addSlideAtCurrentTime() {
     const audioPlayer = document.getElementById('audioPlayer');
     const currentTime = Math.floor(audioPlayer.currentTime * 1000); // Convert to milliseconds
 
     // Find the index where the new slide should be inserted
     let insertIndex = 0;
-    while (insertIndex < storedAds.length && getCurrentAdTimestamp(insertIndex) < currentTime) {
+    while (insertIndex < storedSlides.length && getCurrentAdTimestamp(insertIndex) < currentTime) {
         insertIndex++;
     }
 
     // Copy data from the previous slide (or the next slide if it's the first one)
-    const sourceIndex = insertIndex > 0 ? insertIndex - 1 : Math.min(insertIndex, storedAds.length - 1);
-    const newSlide = JSON.parse(JSON.stringify(storedAds[sourceIndex]));
+    const sourceIndex = insertIndex > 0 ? insertIndex - 1 : Math.min(insertIndex, storedSlides.length - 1);
+    const newSlide = JSON.parse(JSON.stringify(storedSlides[sourceIndex]));
 
     // Ensure the new slide has a settings property
     if (!newSlide.settings) {
         const size = getSelectedBanner();
-        newSlide.settings = JSON.parse(JSON.stringify(storedBannerSettings.find(setting => setting.size === size).settings));
+        if (!size) {
+            console.error('No banner selected');
+            return;
+        }
+
+        const bannerSetting = storedBannerSettings.find(setting => setting.size === size);
+        if (!bannerSetting || !bannerSetting.settings) {
+            console.error(`No settings found for banner size: ${size}`);
+            return;
+        }
+
+        newSlide.settings = JSON.parse(JSON.stringify(bannerSetting.settings));
     }
 
     // Update the timestamp of the new slide
     newSlide.timestamp = currentTime;
 
     // Insert the new slide
-    storedAds.splice(insertIndex, 0, newSlide);
+    storedSlides.splice(insertIndex, 0, newSlide);
 
     // Update currentAdIndex to point to the new slide
     currentAdIndex = insertIndex;
 
-    // Save changes
-    saveSettings();
+    // Save changes to localStorage
+    localStorage.setItem('slides', JSON.stringify(storedSlides));
 
     // Update the UI
-    updateAds();
+    updateSlides();
     initializeTimeline();
 
     // Open edit modal for the new slide
     openEditModal();
+
+    console.log('New slide added and saved:', newSlide);
 }
 
 function updateTimelineWithNewMarker() {
@@ -2423,7 +2556,7 @@ function updateTimelineWithNewMarker() {
     }, 1000);
 }
 
-function updateAds() {
+function updateSlides() {
     sizes.forEach(size => {
         const elements = {
             pathOne: document.getElementById(`path-one-${size}`),
@@ -2446,7 +2579,7 @@ function updateAds() {
             svgWave: document.getElementById(`svg-wave-${size}`)
         };
 
-        const ad = storedAds[currentAdIndex];
+        const ad = storedSlides[currentAdIndex];
         let settings;
 
         if (uiSettings.isSlideSettings && ad.settings) {
@@ -2464,7 +2597,19 @@ function updateAds() {
         const adTextArray = ad.text;
         if (elements.text) elements.text.innerText = adTextArray[settings.layout.textLength] || adTextArray[0];
         if (elements.tags) elements.tags.innerText = ad.tags;
-        if (elements.cta && elements.cta.innerText !== '>') elements.cta.innerText = ad.cta;
+
+        const cta = document.getElementById(`cta-${size}`);
+        if (cta) {
+            if (settings.layout && settings.layout.ctaStyle === 'circle') {
+                cta.innerText = '>';
+                cta.style.padding = '5px 12px';
+                cta.style.borderRadius = '100%';
+            } else {
+                cta.innerText = ad.cta;
+                cta.style.padding = '5px 12px';
+                cta.style.borderRadius = '4px';
+            }
+        }
 
         updateLogo(size);
 
@@ -2533,27 +2678,55 @@ function updateAds() {
 
 function applyAnimation(element, animationClass, settings) {
     if (element && animationClass) {
-        // Remove existing and entering animation classes by getting the classList from animationTemplates array .entry.elements object and exit.elements object 
+        // Remove existing animation classes
         const animationClasses = Object.values(animationTemplates).reduce((acc, template) => {
             const entryClasses = Object.values(template.entry.elements);
             const exitClasses = Object.values(template.exit.elements);
             return [...acc, ...entryClasses, ...exitClasses];
-        }
-            , []);
-
+        }, []);
         element.classList.remove(...animationClasses);
 
-        // Set animation properties
-        element.style.animationDuration = `${settings.duration}ms`;
-        element.style.animationDelay = `${settings.delay}ms`;
-        element.style.animationTimingFunction = settings.easing;
+        if (animationsEnabled) {
+            // Set animation properties
+            element.style.animationDuration = `${settings.duration}ms`;
+            element.style.animationDelay = `${settings.delay}ms`;
+            element.style.animationTimingFunction = settings.easing;
 
-        // Force a reflow
-        void element.offsetWidth;
+            // Force a reflow
+            void element.offsetWidth;
 
-        // Add the animation class
-        element.classList.add(animationClass);
+            // Add the animation class
+            element.classList.add(animationClass);
+        } else {
+            // If animations are disabled, just set the final state immediately
+            element.style.opacity = '1';
+            element.style.transform = 'none';
+        }
     }
+}
+
+
+// Function to toggle animations
+function toggleAnimations() {
+    const toggleSwitch = document.getElementById('animationToggle');
+    animationsEnabled = toggleSwitch.checked;
+    
+    console.log(`Animations ${animationsEnabled ? 'enabled' : 'disabled'}`);
+    
+    // Immediately apply the change to all elements
+    applyAnimationState();
+}
+
+// Function to apply animation state to all elements
+function applyAnimationState() {
+    const allElements = document.querySelectorAll('[id^="ad-container-"] *');
+    allElements.forEach(element => {
+        if (animationsEnabled) {
+            element.style.transition = ''; // Reset to default
+        } else {
+            element.style.transition = 'none'; // Disable transitions
+        }
+    });
 }
 
 document.getElementById('settingsToggle').addEventListener('change', function () {
@@ -2586,7 +2759,7 @@ function handleExitAnimations(callback) {
 
         };
 
-        const ad = storedAds[currentAdIndex];
+        const ad = storedSlides[currentAdIndex];
         const animation = ad.animation || {};
 
         if (animation.template && animation.isExitAnimated) {
@@ -2630,7 +2803,7 @@ function padZero(num, places = 2) {
 }
 
 function nextAd() {
-    if (currentAdIndex < storedAds.length - 1) {
+    if (currentAdIndex < storedSlides.length - 1) {
         handleExitAnimations(() => {
             currentAdIndex++;
             jumpToAd(currentAdIndex);
@@ -2662,9 +2835,9 @@ function jumpToAd(index) {
     // Update audio position
     audioPlayer.currentTime = timestamp / 1000; // Convert to seconds
 
-    // Update ads
+    // Update slides
     currentAdIndex = index;
-    updateAds();
+    updateSlides();
 
     // Update the visibility checklist
     const selectedBanner = getSelectedBanner();
@@ -2801,27 +2974,38 @@ function switchPosition() {
 function toggleCtaStyle() {
     const size = getSelectedBanner();
     const cta = document.getElementById(`cta-${size}`);
-    const settings = storedBannerSettings.find(setting => setting.size === size).settings.layout;
+    let settings = uiSettings.isSlideSettings ? storedSlides[currentAdIndex].settings : storedBannerSettings.find(setting => setting.size === size).settings;
+
+    if (!settings.layout) {
+        settings.layout = {};
+    }
 
     if (cta.innerText === '>') {
-        cta.innerText = storedAds[currentAdIndex].cta;
+        cta.innerText = storedSlides[currentAdIndex].cta;
         cta.style.padding = '5px 12px';
         cta.style.borderRadius = '4px';
-        settings.ctaStyle = 'default';
+        settings.layout.ctaStyle = 'default';
     } else {
         cta.innerText = '>';
         cta.style.padding = '5px 12px';
         cta.style.borderRadius = '100%';
-        settings.ctaStyle = 'circle';
+        settings.layout.ctaStyle = 'circle';
     }
+
+    // Save the current CTA text to the slide settings
+    if (uiSettings.isSlideSettings) {
+        storedSlides[currentAdIndex].cta = cta.innerText;
+    }
+
     saveSettings();
+    console.log(`CTA style toggled to ${settings.layout.ctaStyle} for ${size}`);
 }
 
 function toggleTextLength() {
     const size = getSelectedBanner();
     const textElement = document.getElementById(`text-${size}`);
     const currentText = textElement.innerText;
-    const adTextArray = storedAds[currentAdIndex].text;
+    const adTextArray = storedSlides[currentAdIndex].text;
     if (adTextArray.length > 1) {
         const currentAdIndex = adTextArray.indexOf(currentText);
         const nextIndex = currentAdIndex === adTextArray.length - 1 ? 0 : currentAdIndex + 1;
@@ -2896,9 +3080,9 @@ function convertImageToBase64(url, callback) {
     xhr.send();
 }
 
-async function downloadAds() {
+async function downloadSlides() {
     await convertAllTimestampsToMinutes();
-    const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(storedAds));
+    const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(storedSlides));
     await convertAllTimestampsToMilliseconds();
     const downloadAnchorNode = document.createElement('a');
     downloadAnchorNode.setAttribute("href", dataStr);
@@ -2910,7 +3094,7 @@ async function downloadAds() {
 
 
 
-function uploadAds() {
+function uploadSlides() {
     const input = document.createElement('input');
     input.type = 'file';
     input.accept = 'application/json';
@@ -2921,7 +3105,7 @@ function uploadAds() {
         reader.onload = readerEvent => {
             const content = readerEvent.target.result;
             const parsed = JSON.parse(content);
-            localStorage.setItem('ads', JSON.stringify(parsed));
+            localStorage.setItem('slides', JSON.stringify(parsed));
             location.reload(); // reload to apply the new settings
         }
     }
@@ -2929,7 +3113,7 @@ function uploadAds() {
 }
 
 async function downloadCampaign() {
-    const campaign = { ...storedCampaign, slides: storedAds };
+    const campaign = { ...storedCampaign, slides: storedSlides };
     await convertAllTimestampsToMinutes();
     const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(campaign));
     await convertAllTimestampsToMilliseconds();
@@ -2952,14 +3136,131 @@ function uploadCampaign() {
         reader.onload = readerEvent => {
             const content = readerEvent.target.result;
             const parsed = JSON.parse(content);
-            // delete parsed.ads;
+            // delete parsed.slides;
             localStorage.setItem('campaign', JSON.stringify(parsed));
-            localStorage.setItem('ads', JSON.stringify(parsed.ads));
+            localStorage.setItem('slides', JSON.stringify(parsed.slides));
             location.reload(); // reload to apply the new settings
         }
     }
     input.click();
 }
+
+async function downloadCampaigns() {
+    try {
+        // Ensure all timestamps are in the correct format before downloading
+        await convertAllTimestampsToMinutes();
+
+        // Prepare the campaigns data
+        const campaignsData = {
+            campaigns: storedCampaigns,
+            currentCampaignIndex: currentCampaignIndex
+        };
+
+        // Convert the campaigns data to a JSON string
+        const jsonString = JSON.stringify(campaignsData, null, 2);
+
+        // Create a Blob with the JSON data
+        const blob = new Blob([jsonString], { type: 'application/json' });
+
+        // Create a temporary URL for the Blob
+        const url = URL.createObjectURL(blob);
+
+        // Create a temporary anchor element and trigger the download
+        const downloadLink = document.createElement('a');
+        downloadLink.href = url;
+        downloadLink.download = 'campaigns.json';
+        document.body.appendChild(downloadLink);
+        downloadLink.click();
+        document.body.removeChild(downloadLink);
+
+        // Release the temporary URL
+        URL.revokeObjectURL(url);
+
+        console.log('Campaigns downloaded successfully');
+
+        // Convert timestamps back to milliseconds for internal use
+        await convertAllTimestampsToMilliseconds();
+    } catch (error) {
+        console.error('Error downloading campaigns:', error);
+        alert('An error occurred while downloading campaigns. Please try again.');
+    }
+}
+
+// Function to download settings
+function downloadSettings() {
+    const settings = {
+        bannerSettings: storedBannerSettings,
+        // Add any other settings you want to include
+    };
+    const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(settings, null, 2));
+    const downloadAnchorNode = document.createElement('a');
+    downloadAnchorNode.setAttribute("href", dataStr);
+    downloadAnchorNode.setAttribute("download", "banner_settings.json");
+    document.body.appendChild(downloadAnchorNode); // required for firefox
+    downloadAnchorNode.click();
+    downloadAnchorNode.remove();
+}
+
+// Function to upload settings
+function uploadSettings() {
+    const input = document.createElement('input');
+    input.type = 'file';
+    input.accept = 'application/json';
+    input.onchange = e => {
+        const file = e.target.files[0];
+        const reader = new FileReader();
+        reader.readAsText(file, 'UTF-8');
+        reader.onload = readerEvent => {
+            try {
+                const content = readerEvent.target.result;
+                const parsedSettings = JSON.parse(content);
+                if (parsedSettings.bannerSettings) {
+                    // Update existing storedBannerSettings instead of reassigning
+                    updateStoredBannerSettings(parsedSettings.bannerSettings);
+                    localStorage.setItem('bannerSettings', JSON.stringify(storedBannerSettings));
+                    // Apply the uploaded settings
+                    applyUploadedSettings();
+                    alert('Settings uploaded successfully!');
+                } else {
+                    throw new Error('Invalid settings file');
+                }
+            } catch (error) {
+                console.error('Error parsing settings:', error);
+                alert('Error uploading settings. Please make sure the file is a valid JSON.');
+            }
+        }
+    }
+    input.click();
+}
+
+// Function to update storedBannerSettings
+function updateStoredBannerSettings(newSettings) {
+    // Clear the existing array
+    storedBannerSettings.length = 0;
+    // Push all new settings into the existing array
+    storedBannerSettings.push(...newSettings);
+}
+
+// Function to apply the uploaded settings
+function applyUploadedSettings() {
+    // Iterate through all banner sizes and apply settings
+    storedBannerSettings.forEach(bannerSetting => {
+        applyAllSavedSettings(bannerSetting.size);
+    });
+    
+    // Update UI elements
+    const selectedBanner = getSelectedBanner();
+    if (selectedBanner) {
+        updateSliderValues(selectedBanner);
+        updateCheckboxStates(selectedBanner);
+        updateVisibilityChecklist(selectedBanner);
+    }
+    updateElementsList();
+    
+    // Redraw the current banner
+    updateSlides();
+}
+
 
 
 function downloadImages() {
@@ -3135,7 +3436,7 @@ function closeImageGallery() {
 }
 
 function selectGalleryImage(imageUrl) {
-    const currentSlide = storedAds[currentAdIndex];
+    const currentSlide = storedSlides[currentAdIndex];
 
     switch (currentImageType) {
         case 'main':
@@ -3209,7 +3510,7 @@ document.getElementById('openGalleryButton').addEventListener('click', () => {
 function openEditModal() {
     const modal = document.getElementById('editSlideModal');
     const form = document.getElementById('editSlideForm');
-    const currentSlide = storedAds[currentAdIndex];
+    const currentSlide = storedSlides[currentAdIndex];
 
     if (!modal || !form) {
         console.error('Modal or form not found');
@@ -3312,7 +3613,7 @@ function closeEditModal() {
 function handleEditFormSubmit(event) {
     event.preventDefault();
     const form = event.target;
-    const currentSlide = storedAds[currentAdIndex];
+    const currentSlide = storedSlides[currentAdIndex];
 
     const updatedSlide = {
         ...currentSlide,
@@ -3343,20 +3644,20 @@ function handleEditFormSubmit(event) {
         }
     }
 
-    // Update the current slide in storedAds
-    storedAds[currentAdIndex] = updatedSlide;
+    // Update the current slide in storedSlides
+    storedSlides[currentAdIndex] = updatedSlide;
 
-    // Sort the storedAds array based on timestamps
-    storedAds.sort((a, b) => a.timestamp - b.timestamp);
+    // Sort the storedSlides array based on timestamps
+    storedSlides.sort((a, b) => a.timestamp - b.timestamp);
 
     // Update the currentAdIndex to reflect the new position of the edited slide
-    currentAdIndex = storedAds.findIndex(slide => slide.timestamp === updatedSlide.timestamp);
+    currentAdIndex = storedSlides.findIndex(slide => slide.timestamp === updatedSlide.timestamp);
 
     // Save changes
     saveSettings();
 
     // Update the UI
-    updateAds();
+    updateSlides();
     initializeTimeline();
 
     // Close the modal
@@ -3487,11 +3788,20 @@ if (document.readyState === 'loading') {
 } else {
     initScaling();
 }
-// Initialize ads and images
+
+
+// Initialize slides and images
 document.addEventListener('DOMContentLoaded', () => {
 
     convertAllTimestampsToMilliseconds();
     loadUISettings();
+
+    const toggleSwitch = document.getElementById('animationToggle');
+    if (toggleSwitch) {
+        toggleSwitch.addEventListener('change', toggleAnimations);
+    } else {
+        console.warn('Animation toggle switch not found in the DOM');
+    }
 
     // Set the initial state of the settings toggle
     const settingsToggle = document.getElementById('settingsToggle');
@@ -3506,6 +3816,23 @@ document.addEventListener('DOMContentLoaded', () => {
             applyAllSavedSettings(size);
         }
     });
+
+     
+    const scenelinePlayer = document.querySelector('.sceneline-player');
+
+    function updateScenelinePlayerVisibility() {
+        if (settingsToggle.checked) {
+            scenelinePlayer.classList.remove('hidden');
+        } else {
+            scenelinePlayer.classList.add('hidden');
+        }
+    }
+
+    // Initial visibility setup
+    updateScenelinePlayerVisibility();
+
+    // Add event listener for toggle changes
+    settingsToggle.addEventListener('change', updateScenelinePlayerVisibility);
 
     // Apply saved settings for all banner sizes
     storedBannerSettings.forEach(bannerSetting => {
@@ -3552,7 +3879,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    updateAds();
+    updateSlides();
     updateImages();
     updateElementsList();
     applyElementPositions();
@@ -3561,7 +3888,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     ensureAudioLoaded(() => {
         initializeTimeline();
-        updateAds();
+        updateSlides();
     });
 
     // // Initialize the image gallery
@@ -3673,13 +4000,13 @@ document.getElementById('processImagesButton').addEventListener('click', () => {
         headers: {
             'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ ads: storedAds }),
+        body: JSON.stringify({ slides: storedSlides }),
     })
         .then(response => response.json())
         .then(data => {
             console.log('Success:', data);
-            // Refresh the ads here
-            updateAds();
+            // Refresh the slides here
+            updateSlides();
         })
         .catch((error) => {
             console.error('Error:', error);

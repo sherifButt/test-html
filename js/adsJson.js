@@ -493,7 +493,7 @@ const animationTemplates = [
                 "pathTwo": "hidden-element",
                 "pathOne": "hidden-element",
                 "logo-title": "fade-in",
-                "text-container": "fade-in",
+                "textContainer": "fade-in",
                 "backdrop": "fade-in",
                 "frontdrop": "fade-in",
                 "backbanner": "fade-in"
@@ -515,7 +515,7 @@ const animationTemplates = [
                 "pathTwo": "hidden-element",
                 "pathOne": "hidden-element",
                 "logo-title": "fade-out",
-                "text-container": "fade-out",
+                "textContainer": "fade-out",
                 "backdrop": "fade-out",
                 "frontdrop": "fade-out",
                 "backbanner": "fade-out"
@@ -527,12 +527,12 @@ const animationTemplates = [
         "name": "dramatic-entry",
         "entry": {
             "settings": {
-                "duration": 2000,
+                "duration": 4000,
                 "delay": 0,
                 "easing": "ease-in-out"
             },
             "elements": {
-                "image": "zoom-in-twist-small",
+                "image": "zoom-in-sm-to-twist",
                 "cta": "fade-in",
                 "tags": "fade-in",
                 "text": "fade-in",
@@ -540,22 +540,22 @@ const animationTemplates = [
                 "logoIcon": "fade-in",
                 "pathTwo": "hidden-element",
                 "pathOne": "hidden-element",
-                "logo-title": "fade-in",
-                "text-container": "fade-in",
-                "backdrop": "fade-in",
-                "filter": "zoom-out-small-stay",
-                "frontdrop": "zoom-out-small-stay",
+                "logo-title": "zoom-in-sm-to-twist",
+                "textContainer": "zoom-in-md",
+                "backdrop": "zoom-out-lg-to-stay",
+                "filter": "zoom-in-md",
+                "frontdrop": "zoom-out-md-to-stay",
                 "backbanner": "fade-in"
             }
         },
         "exit": {
             "settings": {
-                "duration": 1000,
+                "duration": 2000,
                 "delay": 0,
                 "easing": "ease-in-out"
             },
             "elements": {
-                "image": "zoom-out-twist-small",
+                "image": "zoom-out-sm-to-twist",
                 "cta": "fade-out",
                 "tags": "fade-out",
                 "text": "fade-out",
@@ -564,10 +564,10 @@ const animationTemplates = [
                 "pathTwo": "hidden-element",
                 "pathOne": "hidden-element",
                 "logo-title": "fade-out",
-                "text-container": "fade-out",
-                "backdrop": "fade-out",
-                "filter": "zoom-in-small-go",
-                "frontdrop": "zoom-in-small-go",
+                "textContainer": "zoom-out-sm",
+                "backdrop": "zoom-in-lg-to-go",
+                "filter": "zoom-out-md",
+                "frontdrop": "zoom-in-md-to-go",
                 "backbanner": "fade-out"
             }
         }
@@ -591,7 +591,7 @@ const animationTemplates = [
                 "pathTwo": "hidden-element",
                 "pathOne": "hidden-element",
                 "logo-title": "fade-in",
-                "text-container": "fade-in",
+                "textContainer": "fade-in",
                 "backdrop": "fade-in",
                 "filter": "fade-in",
                 "frontdrop": "fade-in",
@@ -614,7 +614,7 @@ const animationTemplates = [
                 "pathTwo": "hidden-element",
                 "pathOne": "hidden-element",
                 "logo-title": "fade-out",
-                "text-container": "fade-out",
+                "textContainer": "fade-out",
                 "backdrop": "fade-out",
                 "filter": "fade-out",
                 "frontdrop": "fade-out",
@@ -641,7 +641,7 @@ const animationTemplates = [
                 "pathTwo": "none",
                 "pathOne": "none",
                 "logo-title": "none",
-                "text-container": "none",
+                "textContainer": "none",
                 "backdrop": "none",
                 "filter": "none",
                 "frontdrop": "none",
@@ -664,7 +664,7 @@ const animationTemplates = [
                 "pathTwo": "none",
                 "pathOne": "none",
                 "logo-title": "none",
-                "text-container": "none",
+                "textContainer": "none",
                 "backdrop": "none",
                 "filter": "none",
                 "frontdrop": "none",
@@ -691,7 +691,7 @@ const animationTemplates = [
                 "pathTwo": "slide-from-bottom",
                 "pathOne": "slide-from-bottom",
                 "logo-title": "slide-from-left",
-                "text-container": "slide-from-left",
+                "textContainer": "slide-from-left",
                 "backdrop": "fade-in",
                 "filter": "fade-in",
                 "frontdrop": "fade-in",
@@ -715,7 +715,7 @@ const animationTemplates = [
                 "pathTwo": "slide-to-bottom",
                 "pathOne": "slide-to-bottom",
                 "logo-title": "slide-to-left",
-                "text-container": "slide-to-left",
+                "textContainer": "slide-to-left",
                 "backdrop": "fade-out",
                 "filter": "fade-out",
                 "frontdrop": "fade-out",
@@ -742,7 +742,7 @@ const animationTemplates = [
                 "pathTwo": "slide-from-bottom",
                 "pathOne": "slide-from-bottom",
                 "logo-title": "slide-from-left",
-                "text-container": "slide-from-left",
+                "textContainer": "slide-from-left",
                 "backdrop": "fade-in",
                 "filter": "fade-in",
                 "frontdrop": "fade-in",
@@ -765,7 +765,7 @@ const animationTemplates = [
                 "pathTwo": "slide-to-bottom",
                 "pathOne": "slide-to-bottom",
                 "logo-title": "slide-to-right",
-                "text-container": "slide-to-right",
+                "textContainer": "slide-to-right",
                 "backdrop": "fade-out",
                 "filter": "fade-out",
                 "frontdrop": "fade-out",
@@ -792,7 +792,7 @@ const animationTemplates = [
                 "pathTwo": "slide-from-bottom",
                 "pathOne": "slide-from-bottom",
                 "logo-title": "slide-from-left",
-                "text-container": "slide-from-left",
+                "textContainer": "slide-from-left",
                 "backdrop": "fade-in",
                 "filter": "fade-in",
                 "frontdrop": "fade-in",
@@ -815,7 +815,7 @@ const animationTemplates = [
                 "pathTwo": "slide-to-bottom",
                 "pathOne": "slide-to-bottom",
                 "logo-title": "slide-to-left",
-                "text-container": "slide-to-right",
+                "textContainer": "slide-to-right",
                 "backdrop": "fade-out",
                 "backbanner": "fade-out"
             }
@@ -840,7 +840,7 @@ const animationTemplates = [
                 "pathTwo": "slide-from-bottom",
                 "pathOne": "slide-from-bottom",
                 "logo-title": "slide-from-right",
-                "text-container": "slide-from-right",
+                "textContainer": "slide-from-right",
                 "backdrop": "fade-in",
                 "filter": "fade-in",
                 "frontdrop": "fade-in",
@@ -863,7 +863,7 @@ const animationTemplates = [
                 "pathTwo": "slide-to-bottom",
                 "pathOne": "slide-to-bottom",
                 "logo-title": "slide-to-right",
-                "text-container": "slide-to-right",
+                "textContainer": "slide-to-right",
                 "backdrop": "fade-out",
                 "backbanner": "slide-to-right"
             }
@@ -888,7 +888,7 @@ const animationTemplates = [
                 "pathTwo": "slide-from-bottom",
                 "pathOne": "slide-from-bottom",
                 "logo-title": "slide-from-top",
-                "text-container": "slide-from-top",
+                "textContainer": "slide-from-top",
                 "backdrop": "fade-in",
                 "backbanner": "slide-from-top"
             }
@@ -909,7 +909,7 @@ const animationTemplates = [
                 "pathTwo": "slide-to-bottom",
                 "pathOne": "slide-to-bottom",
                 "logo-title": "slide-to-top",
-                "text-container": "slide-to-top",
+                "textContainer": "slide-to-top",
                 "backdrop": "fade-out",
                 "backbanner": "slide-to-top"
             }
@@ -934,7 +934,7 @@ const animationTemplates = [
                 "pathTwo": "slide-from-bottom",
                 "pathOne": "slide-from-bottom",
                 "logo-title": "slide-from-bottom",
-                "text-container": "slide-from-bottom",
+                "textContainer": "slide-from-bottom",
                 "backdrop": "fade-in",
                 "backbanner": "slide-from-bottom"
             }
@@ -955,7 +955,7 @@ const animationTemplates = [
                 "pathTwo": "slide-to-bottom",
                 "pathOne": "slide-to-bottom",
                 "logo-title": "slide-to-bottom",
-                "text-container": "slide-to-bottom",
+                "textContainer": "slide-to-bottom",
                 "backdrop": "fade-out",
                 "backbanner": "slide-to-bottom"
             }
@@ -980,7 +980,7 @@ const animationTemplates = [
                 "pathTwo": "hidden-element",
                 "pathOne": "hidden-element",
                 "logo-title": "hidden-element",
-                "text-container": "hidden-element",
+                "textContainer": "hidden-element",
                 "backdrop": "fade-in",
                 "backbanner": "hidden-element"
             }
@@ -1001,7 +1001,7 @@ const animationTemplates = [
                 "pathTwo": "hidden-element",
                 "pathOne": "hidden-element",
                 "logo-title": "hidden-element",
-                "text-container": "hidden-element",
+                "textContainer": "hidden-element",
                 "backdrop": "fade-out",
                 "backbanner": "hidden-element"
             }
@@ -1026,7 +1026,7 @@ const animationTemplates = [
                 "pathTwo": "slide-from-bottom",
                 "pathOne": "slide-from-bottom",
                 "logo-title": "slide-from-left",
-                "text-container": "slide-from-right",
+                "textContainer": "slide-from-right",
                 "backdrop": "fade-in",
                 "backbanner": "slide-from-right"
             }
@@ -1047,7 +1047,7 @@ const animationTemplates = [
                 "pathTwo": "slide-to-bottom",
                 "pathOne": "slide-to-bottom",
                 "logo-title": "slide-to-left",
-                "text-container": "slide-to-right",
+                "textContainer": "slide-to-right",
                 "backdrop": "fade-out",
                 "backbanner": "slide-to-right"
 
@@ -2022,7 +2022,7 @@ const campaigns_05_x = [
 
     }
 ]
-const campaigns_expermntal = [
+const campaigns = [
     {
         "title": "how to inhace your business",
         "description": "this is a description",
@@ -2066,7 +2066,7 @@ const campaigns_expermntal = [
                 "imgDescription": "A 3D sketch style drawing of a podcast studio viewed from a slightly elevated angle, showing the top and one side. The design is minimalistic, featuring clean lines with two accents: black and #ffd84d (bright yellow). The podcast studio should appear modern and abstract, set against a strictly white background.",
                 "cta": "Stay Tuned",
                 "animation": {
-                    "template": "dramatic-entry",
+                    "template": "slide-from-left",
                     "isEntryAnimated": true,
                     "isExitAnimated": true
                 }
@@ -2594,7 +2594,7 @@ const campaigns_expermntal = [
         ]
     }
 ]
-const campaigns = [
+const campaigns_valid = [
     {
         "title": "how to inhace your business",
         "description": "this is a description",
@@ -4048,40 +4048,357 @@ const ads2 = [
 ];
 
 const bannerSettings = [
+    
     {
         "size": "480x120",
         "settings": {
-            "elements": {
-                "logoIcon": true,
-                "image": true,
-                "headline": true,
-                "text": false,
-                "tags": true,
-                "cta": true,
-                "svgWave": true,
-                "textContainer": true,
-                "backdrop": false,
-                "filter": false,
-                "backbanner": false
-
-            },
-            "layout": {
-                "logoLayout": "flex-row",
-                "ctaStyle": "default",
-                "imageOpacity": "1",
-                "svgOneOpacity": "1",
-                "svgTwoOpacity": "1",
-                "logoRotation": 0,
-                "backgroundImage": false,
-                "imageSize": "27%",
-                "titleSize": "1.2rem",
-                "bodySize": "1rem",
-                "switchPosition": false,
-                "imageZIndex": 29,
-                "textLength": 0
-            }
+          "elements": {
+            "logoIcon": true,
+            "image": true,
+            "headline": true,
+            "text": false,
+            "tags": true,
+            "cta": true,
+            "svgWave": true,
+            "textContainer": true,
+            "backdrop": false,
+            "filter": false,
+            "backbanner": false
+          },
+          "layout": {
+            "logoLayout": "flex-row",
+            "ctaStyle": "circle",
+            "imageOpacity": "1",
+            "svgOneOpacity": "1",
+            "svgTwoOpacity": "1",
+            "logoRotation": 0,
+            "backgroundImage": false,
+            "imageSize": "27%",
+            "titleSize": "1.2rem",
+            "bodySize": "1rem",
+            "switchPosition": false,
+            "imageZIndex": 29,
+            "textLength": 0
+          }
         }
-    },
+      },
+      {
+        "size": "300x250",
+        "settings": {
+          "elements": {
+            "logoIcon": true,
+            "image": true,
+            "headline": true,
+            "text": false,
+            "tags": true,
+            "cta": true,
+            "svgWave": true,
+            "textContainer": true,
+            "backdrop": false,
+            "filter": false,
+            "backbanner": false
+          },
+          "layout": {
+            "logoLayout": "flex-col",
+            "ctaStyle": "circle",
+            "imageOpacity": 1,
+            "svgOneOpacity": "1",
+            "svgTwoOpacity": "1",
+            "logoRotation": 0,
+            "backgroundImage": false,
+            "imageSize": "53%",
+            "titleSize": "1.4rem",
+            "bodySize": "1rem",
+            "switchPosition": true,
+            "imageZIndex": 9,
+            "textLength": 2
+          }
+        }
+      },
+      {
+        "size": "160x600",
+        "settings": {
+          "elements": {
+            "logoIcon": true,
+            "image": true,
+            "headline": true,
+            "text": false,
+            "tags": true,
+            "cta": true,
+            "svgWave": true,
+            "textContainer": true,
+            "backdrop": false,
+            "filter": false,
+            "backbanner": false
+          },
+          "layout": {
+            "logoLayout": "flex-row",
+            "ctaStyle": "circle",
+            "imageOpacity": 1,
+            "svgOneOpacity": "1",
+            "svgTwoOpacity": 1,
+            "logoRotation": 0,
+            "backgroundImage": false,
+            "imageSize": "100%",
+            "titleSize": "1.6rem",
+            "bodySize": "0.9rem",
+            "switchPosition": false,
+            "imageZIndex": 9,
+            "textLength": 0
+          }
+        }
+      },
+      {
+        "size": "300x250-text",
+        "settings": {
+          "elements": {
+            "logoIcon": true,
+            "image": true,
+            "headline": true,
+            "text": false,
+            "tags": true,
+            "cta": true,
+            "svgWave": true,
+            "textContainer": true,
+            "backdrop": false,
+            "filter": false,
+            "backbanner": false
+          },
+          "layout": {
+            "logoLayout": "flex-row",
+            "ctaStyle": "circle",
+            "imageOpacity": 1,
+            "svgOneOpacity": "1",
+            "svgTwoOpacity": "1",
+            "logoRotation": 0,
+            "backgroundImage": false,
+            "imageSize": "0%",
+            "titleSize": "1.3rem",
+            "bodySize": "0.9rem",
+            "switchPosition": false,
+            "imageZIndex": 30,
+            "textLength": 0
+          }
+        }
+      },
+      {
+        "size": "728x90",
+        "settings": {
+          "elements": {
+            "logoIcon": true,
+            "image": true,
+            "headline": true,
+            "text": false,
+            "tags": true,
+            "cta": true,
+            "svgWave": true,
+            "textContainer": true,
+            "backdrop": false,
+            "filter": false,
+            "backbanner": false
+          },
+          "layout": {
+            "logoLayout": "flex-row",
+            "ctaStyle": "circle",
+            "imageOpacity": 1,
+            "svgOneOpacity": "1",
+            "svgTwoOpacity": 1,
+            "logoRotation": 0,
+            "backgroundImage": false,
+            "imageSize": "15%",
+            "titleSize": "1.2rem",
+            "bodySize": "1rem",
+            "switchPosition": false,
+            "imageZIndex": 30,
+            "textLength": 0
+          }
+        }
+      },
+      {
+        "size": "1200x628",
+        "settings": {
+          "elements": {
+            "logoIcon": true,
+            "image": true,
+            "headline": true,
+            "text": false,
+            "tags": true,
+            "cta": true,
+            "svgWave": true,
+            "textContainer": true,
+            "backdrop": false,
+            "filter": false,
+            "backbanner": false
+          },
+          "layout": {
+            "logoLayout": "flex-row",
+            "ctaStyle": "default",
+            "imageOpacity": 1,
+            "svgOneOpacity": 0.53,
+            "svgTwoOpacity": 1,
+            "logoRotation": 0,
+            "backgroundImage": false,
+            "imageSize": "43%",
+            "titleSize": "2.9rem",
+            "bodySize": "1.25rem",
+            "switchPosition": false,
+            "imageZIndex": 16,
+            "textLength": 0,
+            "zIndex": {
+              "image": 24
+            }
+          }
+        }
+      },
+      {
+        "size": "1200x628-2",
+        "settings": {
+          "elements": {
+            "logoIcon": true,
+            "image": true,
+            "headline": true,
+            "text": false,
+            "tags": true,
+            "cta": true,
+            "svgWave": true,
+            "textContainer": true,
+            "backdrop": false,
+            "filter": false,
+            "backbanner": false
+          },
+          "layout": {
+            "logoLayout": "flex-row",
+            "ctaStyle": "default",
+            "imageOpacity": 1,
+            "svgOneOpacity": 0.53,
+            "svgTwoOpacity": 1,
+            "logoRotation": 0,
+            "backgroundImage": false,
+            "imageSize": "50%",
+            "titleSize": "2rem",
+            "bodySize": "1.25rem",
+            "switchPosition": false,
+            "imageZIndex": 30,
+            "textLength": 0,
+            "zIndex": {
+              "image": 20
+            }
+          }
+        }
+      },
+      {
+        "size": "1080x1080",
+        "settings": {
+          "elements": {
+            "logoIcon": true,
+            "image": true,
+            "headline": true,
+            "text": false,
+            "tags": true,
+            "cta": true,
+            "svgWave": true,
+            "textContainer": true,
+            "backdrop": false,
+            "filter": false,
+            "backbanner": false
+          },
+          "layout": {
+            "logoLayout": "flex-row",
+            "ctaStyle": "default",
+            "imageOpacity": 1,
+            "svgOneOpacity": 0.53,
+            "svgTwoOpacity": 1,
+            "logoRotation": 0,
+            "backgroundImage": false,
+            "imageSize": "50%",
+            "titleSize": "4.9rem",
+            "bodySize": "1.25rem",
+            "switchPosition": false,
+            "imageZIndex": 30,
+            "textLength": 0,
+            "positions": {
+              "path": "translate(-10, -30)",
+              "svg": {
+                "top": "-5px",
+                "left": ""
+              },
+              "ad": {
+                "top": "",
+                "left": "20px"
+              },
+              "text": {
+                "top": "-45px",
+                "left": ""
+              },
+              "textcontainer": {
+                "top": "875px",
+                "left": "100px"
+              },
+              "headline": {
+                "top": "-75px",
+                "left": "175px"
+              },
+              "cta": {
+                "top": "105px",
+                "left": "300px"
+              },
+              "image": {
+                "top": "150px",
+                "left": "240px"
+              }
+            }
+          }
+        }
+      },
+      {
+        "size": "1080x1920",
+        "settings": {
+          "elements": {
+            "logoIcon": true,
+            "image": true,
+            "headline": true,
+            "text": false,
+            "tags": true,
+            "cta": true,
+            "svgWave": true,
+            "textContainer": true,
+            "backdrop": false,
+            "filter": false,
+            "backbanner": false
+          },
+          "layout": {
+            "logoLayout": "flex-row",
+            "ctaStyle": "default",
+            "imageOpacity": 1,
+            "svgOneOpacity": 0.53,
+            "svgTwoOpacity": 1,
+            "logoRotation": 0,
+            "backgroundImage": false,
+            "imageSize": "50%",
+            "titleSize": "4.9rem",
+            "bodySize": "1.25rem",
+            "switchPosition": false,
+            "imageZIndex": 30,
+            "textLength": 0,
+            "positions": {
+              "path": "translate(-10, -30)",
+              "svg": {
+                "top": "-5px",
+                "left": ""
+              },
+              "ad": {
+                "top": "",
+                "left": "20px"
+              },
+              "text": {
+                "top": "-45px",
+                "left": ""
+              }
+            }
+          }
+        }
+      }
+    ,
     {
         "size": "300x250",
         "settings": {
