@@ -295,8 +295,6 @@ function applyAllSavedSettings(size) {
         });
     }
 
-
-
     // Apply other layout settings
     if (layoutSettings.imageSize) {
         const image = document.getElementById(`image-${size}`);
@@ -1502,51 +1500,6 @@ function changeElementZIndex(elementType, action) {
     console.log(`${action === 'increase' ? 'Increased' : 'Decreased'} z-index for ${elementType} to ${zIndex}`);
 }
 
-// TODO: delete this 2 functions
-
-// Functions to control image z-index
-function increaseImageZIndex() {
-    const size = getSelectedBanner();
-    const image = document.getElementById(`image-${size}`);
-
-    if (!image) {
-        console.warn(`Image element not found for size: ${size}`);
-        return;
-    }
-
-    let zIndex = parseInt(window.getComputedStyle(image).zIndex, 10);
-    zIndex = isNaN(zIndex) ? 10 : zIndex + 10;
-    image.style.zIndex = zIndex;
-
-    const settings = storedBannerSettings.find(setting => setting.size === size).settings.layout;
-    settings.imageZIndex = zIndex;
-    saveSettings();
-
-    console.log(`Increased z-index for ${size} image to ${zIndex}`);
-}
-
-
-
-function decreaseImageZIndex() {
-    const size = getSelectedBanner();
-    const image = document.getElementById(`image-${size}`);
-
-    if (!image) {
-        console.warn(`Image element not found for size: ${size}`);
-        return;
-    }
-
-    let zIndex = parseInt(window.getComputedStyle(image).zIndex, 10);
-    zIndex = isNaN(zIndex) ? 10 : Math.max(1, zIndex - 10);
-    image.style.zIndex = zIndex;
-
-    const settings = storedBannerSettings.find(setting => setting.size === size).settings.layout;
-    settings.imageZIndex = zIndex;
-    saveSettings();
-
-    console.log(`Decreased z-index for ${size} image to ${zIndex}`);
-}
-
 function updateTitleSize() {
     const size = getSelectedBanner();
     const titleSize = document.getElementById('title-size').value + 'rem';
@@ -1832,19 +1785,6 @@ function scheduleNextAd() {
         }, 1000); // Update every second
     }
 }
-
-// function toggleMoveMarker() {
-//     const moveMarkerButton = document.getElementById('moveMarkerButton');
-//     isMoveMarkerActive = !isMoveMarkerActive;
-
-//     if (isMoveMarkerActive) {
-//         moveMarkerButton.classList.add('active', 'bg-blue-500', 'text-white');
-//         moveMarkerButton.classList.remove('bg-gray-300');
-//     } else {
-//         moveMarkerButton.classList.remove('active', 'bg-blue-500', 'text-white');
-//         moveMarkerButton.classList.add('bg-gray-300');
-//     }
-// }
 
 function toggleMoveMarker(index) {
     isMoveMarkerActive = !isMoveMarkerActive;
@@ -2635,10 +2575,10 @@ function updateSlides() {
         updateLogo(size);
 
         // Update images
-        if (ad.img) updateMainImage(ad.img);
-        if (ad.backdrop) updateBackdropImage(ad.backdrop);
-        if (ad.frontdrop) updateFrontdropImage(ad.frontdrop);
-        if (ad.filter) updateFilterImage(ad.filter);
+        if (ad.img) updateImage('main',ad.img);
+        if (ad.backdrop) updateImage('backdrop',ad.backdrop);
+        if (ad.frontdrop) updateImage('frontdrop',ad.frontdrop);
+        if (ad.filter) updateImage('filter',ad.filter);
 
         // Apply backbanner color
         if (ad.backbanner && elements.backbanner) {
@@ -3389,19 +3329,9 @@ function updateImageUrls() {
     });
 }
 
-function openBackdropGallery() {
-    currentImageType = 'backdrop';
-    openImageGallery('backdrop');
-}
-
-function openFrontdropGallery() {
-    currentImageType = 'frontdrop';
-    openImageGallery('frontdrop');
-}
-
-function openFilterGallery() {
-    currentImageType = 'filter';
-    openImageGallery('filter');
+function openSpecificGallery(type) {
+    currentImageType = type;
+    openImageGallery(type);
 }
 
 function openImageGallery(type = 'main') {
@@ -3464,22 +3394,22 @@ function selectGalleryImage(imageUrl) {
         case 'main':
             currentSlide.img = imageUrl;
             updateImagePreview('mainImagePreview', 'mainImageName', imageUrl);
-            updateMainImage(imageUrl);
+            updateImage('main', imageUrl);
             break;
         case 'backdrop':
             currentSlide.backdrop = imageUrl;
             updateImagePreview('backdropImagePreview', 'backdropImageName', imageUrl);
-            updateBackdropImage(imageUrl);
+            updateImage('backdrop', imageUrl);
             break;
         case 'frontdrop':
             currentSlide.frontdrop = imageUrl;
             updateImagePreview('frontdropImagePreview', 'frontdropImageName', imageUrl);
-            updateFrontdropImage(imageUrl);
+            updateImage('frontdrop', imageUrl);
             break;
         case 'filter':
             currentSlide.filter = imageUrl;
             updateImagePreview('filterImagePreview', 'filterImageName', imageUrl);
-            updateFilterImage(imageUrl);
+            updateImage('filter', imageUrl);
             break;
     }
 
@@ -3488,36 +3418,24 @@ function selectGalleryImage(imageUrl) {
     currentImageType = 'main';
 }
 
-function updateMainImage(imageUrl) {
+function updateImage(type, imageUrl) {
     sizes.forEach(size => {
-        const img = document.getElementById(`image-${size}`);
-        if (img) {
-            img.src = imageUrl;
+        let elementId;
+        switch (type) {
+            case 'main':
+                elementId = `image-${size}`;
+                break;
+            case 'backdrop':
+            case 'frontdrop':
+            case 'filter':
+                elementId = `${type}image-${size}`;
+                break;
+            default:
+                console.warn(`Unknown image type: ${type}`);
+                return;
         }
-    });
-}
 
-function updateBackdropImage(imageUrl) {
-    sizes.forEach(size => {
-        const img = document.getElementById(`backdropimage-${size}`);
-        if (img) {
-            img.src = imageUrl;
-        }
-    });
-}
-
-function updateFrontdropImage(imageUrl) {
-    sizes.forEach(size => {
-        const img = document.getElementById(`frontdropimage-${size}`);
-        if (img) {
-            img.src = imageUrl;
-        }
-    });
-}
-
-function updateFilterImage(imageUrl) {
-    sizes.forEach(size => {
-        const img = document.getElementById(`filterimage-${size}`);
+        const img = document.getElementById(elementId);
         if (img) {
             img.src = imageUrl;
         }
@@ -3615,12 +3533,12 @@ function openEditModal() {
 
         // Add event listeners
         saveAsNewTemplateBtn.addEventListener('click', saveAsNewTemplate);
-        updateTemplateBtn.addEventListener('click', updateTemplate);
-        editTemplateBtn.addEventListener('click', editTemplate);
-        
+        editTemplateBtn.addEventListener('click', () => handleTemplateEdit('edit'));
+        updateTemplateBtn.addEventListener('click', () => handleTemplateEdit('update'));
+
 
         // Add event listener to handle template changes
-        animationTemplateSelect.addEventListener('change', function() {
+        animationTemplateSelect.addEventListener('change', function () {
             const isCustom = this.value === 'custom';
             customAnimationFields.classList.toggle('hidden', !isCustom);
             editTemplateBtn.classList.toggle('hidden', isCustom);
@@ -3756,109 +3674,59 @@ function handleEditFormSubmit(event) {
     closeEditModal();
 }
 
-function addCustomTemplate() {
-    const customAnimationJSON = document.getElementById('editAnimations').value;
-    let customAnimation;
-    try {
-        customAnimation = JSON.parse(customAnimationJSON);
-    } catch (error) {
-        alert('Invalid JSON for custom animation. Please check your input.');
-        return;
+function handleTemplateEdit(action) {
+    const animationTemplateSelect = document.getElementById('editAnimationTemplate');
+    const customAnimationFields = document.getElementById('customAnimationFields');
+    const editAnimations = document.getElementById('editAnimations');
+    const updateTemplateBtn = document.getElementById('updateTemplateBtn');
+    const editTemplateBtn = document.getElementById('editTemplateBtn');
+
+    if (action === 'edit') {
+        const selectedTemplateId = animationTemplateSelect.value;
+        if (selectedTemplateId === 'custom' || !selectedTemplateId) {
+            alert('Please select a template to edit.');
+            return;
+        }
+
+        const template = animationTemplates.find(t => t.id === selectedTemplateId);
+        if (!template) {
+            alert('Template not found.');
+            return;
+        }
+
+        editingTemplateId = selectedTemplateId;
+        editAnimations.value = JSON.stringify(template, null, 2);
+        customAnimationFields.classList.remove('hidden');
+        updateTemplateBtn.classList.remove('hidden');
+        editTemplateBtn.classList.add('hidden');
+    } else if (action === 'update') {
+        if (!editingTemplateId) return;
+
+        let updatedTemplate;
+        try {
+            updatedTemplate = JSON.parse(editAnimations.value);
+        } catch (error) {
+            alert('Invalid JSON for custom animation. Please check your input.');
+            return;
+        }
+
+        const templateIndex = animationTemplates.findIndex(t => t.id === editingTemplateId);
+        if (templateIndex !== -1) {
+            animationTemplates[templateIndex] = {
+                ...animationTemplates[templateIndex],
+                ...updatedTemplate
+            };
+            saveAnimationTemplates();
+            alert('Template updated successfully!');
+            updateAnimationTemplateSelect(editingTemplateId);
+        }
+
+        customAnimationFields.classList.add('hidden');
+        updateTemplateBtn.classList.add('hidden');
+        editTemplateBtn.classList.remove('hidden');
+
+        editingTemplateId = null;
     }
-
-    const templateName = prompt('Enter a name for this template:');
-    if (!templateName) return;
-
-    const newTemplate = {
-        id: templateName.toLowerCase().replace(/\s+/g, '-'),
-        name: templateName,
-        ...customAnimation
-    };
-
-    animationTemplates.push(newTemplate);
-    saveAnimationTemplates();
-    updateAnimationTemplateSelect(newTemplate.id);
-}
-
-function editTemplate() {
-    const selectedTemplateId = document.getElementById('editAnimationTemplate').value;
-    if (selectedTemplateId === 'custom' || !selectedTemplateId) {
-        alert('Please select a template to edit.');
-        return;
-    }
-
-    const template = animationTemplates.find(t => t.id === selectedTemplateId);
-    if (!template) {
-        alert('Template not found.');
-        return;
-    }
-
-    editingTemplateId = selectedTemplateId;
-    document.getElementById('editAnimations').value = JSON.stringify(template, null, 2);
-    document.getElementById('customAnimationFields').classList.remove('hidden');
-    document.getElementById('updateTemplateBtn').classList.remove('hidden');
-    document.getElementById('editTemplateBtn').classList.add('hidden');
-}
-
-function updateTemplate() {
-    if (!editingTemplateId) return;
-
-    const customAnimationJSON = document.getElementById('editAnimations').value;
-    let updatedTemplate;
-    try {
-        updatedTemplate = JSON.parse(customAnimationJSON);
-    } catch (error) {
-        alert('Invalid JSON for custom animation. Please check your input.');
-        return;
-    }
-
-    const templateIndex = animationTemplates.findIndex(t => t.id === editingTemplateId);
-    if (templateIndex !== -1) {
-        animationTemplates[templateIndex] = {
-            ...animationTemplates[templateIndex],
-            ...updatedTemplate
-        };
-        saveAnimationTemplates();
-        alert('Template updated successfully!');
-        updateAnimationTemplateSelect(editingTemplateId);
-    }
-
-    // Hide the custom animation fields and update button
-    document.getElementById('customAnimationFields').classList.add('hidden');
-    document.getElementById('updateTemplateBtn').classList.add('hidden');
-    document.getElementById('editTemplateBtn').classList.remove('hidden');
-
-    editingTemplateId = null;
-}
-
-function saveEditedTemplate() {
-    if (!editingTemplateId) return;
-
-    const customAnimationJSON = document.getElementById('editAnimations').value;
-    let updatedTemplate;
-    try {
-        updatedTemplate = JSON.parse(customAnimationJSON);
-    } catch (error) {
-        alert('Invalid JSON for custom animation. Please check your input.');
-        return;
-    }
-
-    const templateIndex = animationTemplates.findIndex(t => t.id === editingTemplateId);
-    if (templateIndex !== -1) {
-        animationTemplates[templateIndex] = {
-            ...animationTemplates[templateIndex],
-            ...updatedTemplate
-        };
-        saveAnimationTemplates();
-        alert('Template updated successfully!');
-        updateAnimationTemplateSelect(editingTemplateId);
-    }
-
-    // Remove the "Save Template" button
-    const saveTemplateBtn = document.querySelector('#customAnimationFields button:last-child');
-    if (saveTemplateBtn) saveTemplateBtn.remove();
-
-    editingTemplateId = null;
 }
 
 function saveAsNewTemplate() {

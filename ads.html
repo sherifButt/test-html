@@ -225,8 +225,8 @@
                   <div class="flex justify-between items-center">
                     <span class="text-sm">Slides</span>
                     <div class="flex">
-                      <a class="px-2 py-1 rounded ml-2 cursor-pointer" onclick="downloadAds()"><i class="fas fa-download"></i></a>
-                      <a class="px-2 py-1 rounded ml-2 cursor-pointer" onclick="uploadAds()"><i class="fas fa-upload"></i></a>
+                      <a class="px-2 py-1 rounded ml-2 cursor-pointer" onclick="downloadSlides()"><i class="fas fa-download"></i></a>
+                      <a class="px-2 py-1 rounded ml-2 cursor-pointer" onclick="uploadSlides()"><i class="fas fa-upload"></i></a>
                       <span class="text-sm pt-2">[json]</span>
                     </div>
                   </div>
@@ -234,7 +234,7 @@
                     <span class="text-sm">Images</span>
                     <div class="flex">
                       <a class="px-2 py-1 rounded ml-2 cursor-pointer" onclick="downloadImages()"><i class="fas fa-download"></i></a>
-                      <a class="px-2 py-1 rounded ml-2 cursor-pointer" onclick="uploadImages()"><i class="fas fa-upload"></i></a>
+                      <a class="px-2 py-1 rounded ml-2 cursor-pointer" onclick="updateStoredImages()"><i class="fas fa-upload"></i></a>
                       <span class="text-sm pt-2">[json]</span>
                     </div>
                   </div>
@@ -332,19 +332,19 @@
             <!-- banner vs slide toggle -->
             <div class="sticky -bottom-0 w-full p-4 bg-white border-t flex items-center justify-center">
               <div class="flex items-center w-flll pr-auto pl-auto">
-                <span class="mr-3 text-xs"><i class="fas fa-ad"></i></span>
+                <span class="mr-3 text-xs"><i class="fas fa-ad" title="Ads Mode"></i></span>
                 <label class="switch">
                   <input type="checkbox" id="settingsToggle" />
                   <span class="slider round"></span>
                 </label>
-                <span class="ml-3 text-xs"><i class="fas fa-play"></i></span>
+                <span class="ml-3 text-xs"><i class="fas fa-play" title="Animation Mode"></i></span>
               </div>
               <div class="flex items-center">
-                <span class="mr-2 text-xs">Animations</span>
+                <i class="fa-solid fa-person" title="Animations off"></i>
                 <label class="switch">
                   <input type="checkbox" id="animationToggle" checked />
-                  <span class="slider round"></span>
-                </label>
+                  <span class="slider round"></span> </label >
+                  <i class="fa-solid fa-person-running" title="Animations on"></i>
               </div>
             </div>
           </nav>
@@ -826,13 +826,13 @@
                       <button id="openGalleryButton" class="px-2 py-1 bg-blue-500 text-white rounded" onclick="openImageGallery('main')">
                         <i class="fas fa-image"></i><span class="text-xs"> Img</span>
                       </button>
-                      <button id="changeFrontdropButton" class="px-2 py-1 bg-purple-500 text-white rounded" onclick="openImageGallery('frontdrop')">
+                      <button id="changeFrontdropButton" class="px-2 py-1 bg-purple-500 text-white rounded" onclick="openSpecificGallery('frontdrop')">
                         <i class="fas fa-image"></i><span class="text-xs"> Front</span>
                       </button>
-                      <button id="changeBackdropButton" class="px-2 py-1 bg-purple-500 text-white rounded" onclick="openImageGallery('backdrop')">
+                      <button id="changeBackdropButton" class="px-2 py-1 bg-purple-500 text-white rounded" onclick="openSpecificGallery('backdrop')">
                         <i class="fas fa-image"></i><span class="text-xs"> Back</span>
                       </button>
-                      <button id="changeFilterButton" class="px-2 py-1 bg-indigo-500 text-white rounded" onclick="openImageGallery('filter')">
+                      <button id="changeFilterButton" class="px-2 py-1 bg-indigo-500 text-white rounded" onclick="openSpecificGallery('filter')">
                         <i class="fas fa-image"></i><span class="text-xs"> Filter</span>
                       </button>
                     </div>
