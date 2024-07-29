@@ -53,13 +53,15 @@ let currentImageType = 'main';
 
 let uiSettings = {
     isSlideSettings: false,
+    isAnimationsEnabled: false // Global variable to track animation state
+
     // Add other UI settings here as needed
 };
 
+let editingTemplateId = null;
+
 // enhance elements edit locaion and sclging
 
-// Global variable to track animation state
-let animationsEnabled = true;
 
 // implanting campaign object
 let slides = campaigns[currentCampaignIndex].slides.map(ad => {
@@ -98,16 +100,35 @@ function loadUISettings() {
     if (savedSettings) {
         uiSettings = JSON.parse(savedSettings);
     }
+    // Ensure both settings are set, defaulting to false if not present
+    if (uiSettings.isSlideSettings === undefined) {
+        uiSettings.isSlideSettings = false;
+    }
+    if (uiSettings.isAnimationsEnabled === undefined) {
+        uiSettings.isAnimationsEnabled = false;
+    }
+}
+
+function applyUISettings() {
+    // Apply animation settings
+    applyAnimationState();
+
+    // Update animation toggle UI
+    const animationToggle = document.getElementById('animationToggle');
+    if (animationToggle) {
+        animationToggle.checked = uiSettings.isAnimationsEnabled;
+    }
+
+    // Apply other UI settings as needed
+    // ...
+
+    console.log('UI Settings applied:', uiSettings);
 }
 
 function getSelectedBanner() {
     return document.getElementById('bannerSelect').value;
 }
 
-// Function to save UI settings to localStorage
-function saveUISettings() {
-    localStorage.setItem('uiSettings', JSON.stringify(uiSettings));
-}
 
 // Add this function to apply all saved settings for a specific banner size
 function applyAllSavedSettings(size) {
@@ -691,7 +712,7 @@ function applyStoredColors() {
 // Update the moveElement function
 function moveElement(direction, step = 5) {
     if (!selectedElement) return;
-    
+
     const size = getSelectedBanner();
     if (!size) {
         console.warn('No banner selected');
@@ -699,7 +720,7 @@ function moveElement(direction, step = 5) {
     }
 
     const elementType = selectedElement.id.split('-')[0];
-    
+
     // Find the settings object, accounting for slide-specific settings
     let settings;
     if (uiSettings.isSlideSettings && storedSlides[currentAdIndex] && storedSlides[currentAdIndex].settings) {
@@ -780,7 +801,7 @@ function getElementSettings(size) {
 
 function someElementFunction(params) {
     if (!selectedElement) return;
-    
+
     const size = getSelectedBanner();
     if (!size) {
         console.warn('No banner selected');
@@ -864,7 +885,7 @@ function mirrorElement() {
 // Update the resizeElement function
 function resizeElement(direction) {
     if (!selectedElement) return;
-    
+
     const size = getSelectedBanner();
     if (!size) {
         console.warn('No banner selected');
@@ -872,7 +893,7 @@ function resizeElement(direction) {
     }
 
     const elementType = selectedElement.id.split('-')[0];
-    
+
     // Find the settings object, accounting for slide-specific settings
     let settings;
     if (uiSettings.isSlideSettings && storedSlides[currentAdIndex].settings) {
@@ -2350,7 +2371,7 @@ function moveSlideToCurrentTime(index) {
     updateSlides();
 
     console.log(`Slide ${index} moved to ${formatTimestamp(currentTime)}`);
-    
+
     // Deactivate move mode
     toggleMoveMarker(index);
 }
@@ -2651,14 +2672,14 @@ function updateSlides() {
 
 
         // Apply entry animations
-        if (animation.template && animation.isEntryAnimated) {
-            const template = animationTemplates.find(t => t.id === animation.template);
+        if (animation.isEntryAnimated) {
+            const template = animation.template === 'custom' ? animation.custom : animationTemplates.find(t => t.id === animation.template);
             if (template) {
-                const { settings: animationSettings, elements: animationElements } = template.entry;
-                Object.entries(elements).forEach(([key, element]) => {
-                    if (element && animationElements[key] &&
-                        !['frontdropImage', 'backdropImage', 'filterImage'].includes(key)) {
-                        applyAnimation(element, animationElements[key], animationSettings);
+                const { settings, elements } = template.entry;
+                Object.entries(elements).forEach(([key, animationClass]) => {
+                    const element = document.getElementById(`${key}-${size}`);
+                    if (element && !['frontdropImage', 'backdropImage', 'filterImage'].includes(key)) {
+                        applyAnimation(element, animationClass, settings);
                     }
                 });
             }
@@ -2686,7 +2707,7 @@ function applyAnimation(element, animationClass, settings) {
         }, []);
         element.classList.remove(...animationClasses);
 
-        if (animationsEnabled) {
+        if (uiSettings.isAnimationsEnabled) {
             // Set animation properties
             element.style.animationDuration = `${settings.duration}ms`;
             element.style.animationDelay = `${settings.delay}ms`;
@@ -2709,19 +2730,20 @@ function applyAnimation(element, animationClass, settings) {
 // Function to toggle animations
 function toggleAnimations() {
     const toggleSwitch = document.getElementById('animationToggle');
-    animationsEnabled = toggleSwitch.checked;
-    
-    console.log(`Animations ${animationsEnabled ? 'enabled' : 'disabled'}`);
-    
-    // Immediately apply the change to all elements
-    applyAnimationState();
+    uiSettings.isAnimationsEnabled = toggleSwitch.checked;
+
+    console.log(`Animations ${uiSettings.isAnimationsEnabled ? 'enabled' : 'disabled'}`);
+    // Save the new setting
+    saveUISettings()
+    // Apply the new setting
+    applyUISettings();
 }
 
 // Function to apply animation state to all elements
 function applyAnimationState() {
     const allElements = document.querySelectorAll('[id^="ad-container-"] *');
     allElements.forEach(element => {
-        if (animationsEnabled) {
+        if (uiSettings.isAnimationsEnabled) {
             element.style.transition = ''; // Reset to default
         } else {
             element.style.transition = 'none'; // Disable transitions
@@ -2762,8 +2784,8 @@ function handleExitAnimations(callback) {
         const ad = storedSlides[currentAdIndex];
         const animation = ad.animation || {};
 
-        if (animation.template && animation.isExitAnimated) {
-            const template = animationTemplates.find(t => t.id === animation.template);
+        if (animation.isExitAnimated) {
+            const template = animation.template === 'custom' ? animation.custom : animationTemplates.find(t => t.id === animation.template);
             if (template) {
                 const { settings, elements: animationElements } = template.exit;
                 Object.entries(elements).forEach(([key, element]) => {
@@ -3247,7 +3269,7 @@ function applyUploadedSettings() {
     storedBannerSettings.forEach(bannerSetting => {
         applyAllSavedSettings(bannerSetting.size);
     });
-    
+
     // Update UI elements
     const selectedBanner = getSelectedBanner();
     if (selectedBanner) {
@@ -3256,7 +3278,7 @@ function applyUploadedSettings() {
         updateVisibilityChecklist(selectedBanner);
     }
     updateElementsList();
-    
+
     // Redraw the current banner
     updateSlides();
 }
@@ -3547,10 +3569,22 @@ function openEditModal() {
     setFieldValue('tags', currentSlide.tags);
     setFieldValue('cta', currentSlide.cta);
 
+    // Set animation toggle states
+    const isLoopedToggle = document.getElementById('isLooped');
+    const isExitAnimatedToggle = document.getElementById('isExitAnimated');
+    const isEntryAnimatedToggle = document.getElementById('isEntryAnimated');
+
+    if (isLoopedToggle) isLoopedToggle.checked = currentSlide.animation?.isLooped ?? false;
+    if (isExitAnimatedToggle) isExitAnimatedToggle.checked = currentSlide.animation?.isExitAnimated ?? true;
+    if (isEntryAnimatedToggle) isEntryAnimatedToggle.checked = currentSlide.animation?.isEntryAnimated ?? true;
+
     // Populate animation template
     const animationTemplateSelect = document.getElementById('editAnimationTemplate');
     const customAnimationFields = document.getElementById('customAnimationFields');
     const editAnimations = document.getElementById('editAnimations');
+    const saveAsNewTemplateBtn = document.getElementById('saveAsNewTemplateBtn');
+    const updateTemplateBtn = document.getElementById('updateTemplateBtn');
+    const editTemplateBtn = document.getElementById('editTemplateBtn');
 
     if (animationTemplateSelect && customAnimationFields && editAnimations) {
         // Populate image previews
@@ -3559,24 +3593,54 @@ function openEditModal() {
         updateImagePreview('frontdropImagePreview', 'frontdropImageName', currentSlide.frontdrop);
         updateImagePreview('filterImagePreview', 'filterImageName', currentSlide.filter);
 
+        // Populate animation template options
+        updateAnimationTemplateSelect(currentSlide.animation?.template || '');
+
+        // Set the selected template and handle custom fields
         if (currentSlide.animation && currentSlide.animation.template) {
             animationTemplateSelect.value = currentSlide.animation.template;
             if (currentSlide.animation.template === 'custom') {
                 customAnimationFields.classList.remove('hidden');
-                editAnimations.value = JSON.stringify(currentSlide.animation, null, 2);
+                editTemplateBtn.classList.add('hidden');
+                editAnimations.value = JSON.stringify(currentSlide.animation.custom, null, 2);
             } else {
                 customAnimationFields.classList.add('hidden');
+                editTemplateBtn.classList.remove('hidden');
             }
         } else {
             animationTemplateSelect.value = '';
             customAnimationFields.classList.add('hidden');
+            editTemplateBtn.classList.remove('hidden');
         }
+
+        // Add event listeners
+        saveAsNewTemplateBtn.addEventListener('click', saveAsNewTemplate);
+        updateTemplateBtn.addEventListener('click', updateTemplate);
+        editTemplateBtn.addEventListener('click', editTemplate);
+        
+
+        // Add event listener to handle template changes
+        animationTemplateSelect.addEventListener('change', function() {
+            const isCustom = this.value === 'custom';
+            customAnimationFields.classList.toggle('hidden', !isCustom);
+            editTemplateBtn.classList.toggle('hidden', isCustom);
+            updateTemplateBtn.classList.add('hidden');
+
+            if (isCustom && (!editAnimations.value || editAnimations.value === '{}')) {
+                const defaultTemplate = animationTemplates[0];
+                editAnimations.value = JSON.stringify(defaultTemplate, null, 2);
+            }
+        });
     } else {
         console.warn('Some animation-related elements not found');
     }
 
     modal.classList.remove('hidden');
 }
+
+
+
+
 
 function updateImagePreview(imgId, nameId, imageUrl) {
     const imgElement = document.getElementById(imgId);
@@ -3614,9 +3678,11 @@ function handleEditFormSubmit(event) {
     event.preventDefault();
     const form = event.target;
     const currentSlide = storedSlides[currentAdIndex];
+    const animationTemplateSelect = document.getElementById('editAnimationTemplate');
+
 
     const updatedSlide = {
-        ...currentSlide,
+        ...currentSlide, // Start with all existing properties
         timestamp: parseInt(form.timestamp.value),
         audio: form.audio.value,
         logo: {
@@ -3629,19 +3695,45 @@ function handleEditFormSubmit(event) {
         tags: form.tags.value,
         cta: form.cta.value,
         animation: {
+            ...currentSlide.animation,  // Start with existing animation properties
             template: form.animationTemplate.value,
-            isEntryAnimated: true,
-            isExitAnimated: true
+            isLooped: form.isLooped.checked,
+            isExitAnimated: form.isExitAnimated.checked,
+            isEntryAnimated: form.isEntryAnimated.checked
         }
     };
 
-    if (form.animationTemplate.value === 'custom') {
+    updatedSlide.animation.template = animationTemplateSelect.value;
+
+    if (updatedSlide.animation.template === 'custom') {
         try {
-            updatedSlide.animation = JSON.parse(form.animations.value);
+            updatedSlide.animation.custom = JSON.parse(form.animations.value);
         } catch (error) {
             console.error('Invalid JSON for custom animation');
+            alert('Invalid JSON for custom animation. Please check your input.');
             return;
         }
+    } else {
+        // If not using custom, remove the custom property
+        delete updatedSlide.animation.custom;
+    }
+
+    // Update animation properties only if the form elements exist
+    if (form.isLooped) updatedSlide.animation.isLooped = form.isLooped.checked;
+    if (form.isExitAnimated) updatedSlide.animation.isExitAnimated = form.isExitAnimated.checked;
+    if (form.isEntryAnimated) updatedSlide.animation.isEntryAnimated = form.isEntryAnimated.checked;
+
+    if (form.animationTemplate.value === 'custom') {
+        try {
+            updatedSlide.animation.custom = JSON.parse(form.animations.value);
+        } catch (error) {
+            console.error('Invalid JSON for custom animation');
+            alert('Invalid JSON for custom animation. Please check your input.');
+            return;
+        }
+    } else {
+        // If not using custom, remove the custom property
+        delete updatedSlide.animation.custom;
     }
 
     // Update the current slide in storedSlides
@@ -3664,6 +3756,170 @@ function handleEditFormSubmit(event) {
     closeEditModal();
 }
 
+function addCustomTemplate() {
+    const customAnimationJSON = document.getElementById('editAnimations').value;
+    let customAnimation;
+    try {
+        customAnimation = JSON.parse(customAnimationJSON);
+    } catch (error) {
+        alert('Invalid JSON for custom animation. Please check your input.');
+        return;
+    }
+
+    const templateName = prompt('Enter a name for this template:');
+    if (!templateName) return;
+
+    const newTemplate = {
+        id: templateName.toLowerCase().replace(/\s+/g, '-'),
+        name: templateName,
+        ...customAnimation
+    };
+
+    animationTemplates.push(newTemplate);
+    saveAnimationTemplates();
+    updateAnimationTemplateSelect(newTemplate.id);
+}
+
+function editTemplate() {
+    const selectedTemplateId = document.getElementById('editAnimationTemplate').value;
+    if (selectedTemplateId === 'custom' || !selectedTemplateId) {
+        alert('Please select a template to edit.');
+        return;
+    }
+
+    const template = animationTemplates.find(t => t.id === selectedTemplateId);
+    if (!template) {
+        alert('Template not found.');
+        return;
+    }
+
+    editingTemplateId = selectedTemplateId;
+    document.getElementById('editAnimations').value = JSON.stringify(template, null, 2);
+    document.getElementById('customAnimationFields').classList.remove('hidden');
+    document.getElementById('updateTemplateBtn').classList.remove('hidden');
+    document.getElementById('editTemplateBtn').classList.add('hidden');
+}
+
+function updateTemplate() {
+    if (!editingTemplateId) return;
+
+    const customAnimationJSON = document.getElementById('editAnimations').value;
+    let updatedTemplate;
+    try {
+        updatedTemplate = JSON.parse(customAnimationJSON);
+    } catch (error) {
+        alert('Invalid JSON for custom animation. Please check your input.');
+        return;
+    }
+
+    const templateIndex = animationTemplates.findIndex(t => t.id === editingTemplateId);
+    if (templateIndex !== -1) {
+        animationTemplates[templateIndex] = {
+            ...animationTemplates[templateIndex],
+            ...updatedTemplate
+        };
+        saveAnimationTemplates();
+        alert('Template updated successfully!');
+        updateAnimationTemplateSelect(editingTemplateId);
+    }
+
+    // Hide the custom animation fields and update button
+    document.getElementById('customAnimationFields').classList.add('hidden');
+    document.getElementById('updateTemplateBtn').classList.add('hidden');
+    document.getElementById('editTemplateBtn').classList.remove('hidden');
+
+    editingTemplateId = null;
+}
+
+function saveEditedTemplate() {
+    if (!editingTemplateId) return;
+
+    const customAnimationJSON = document.getElementById('editAnimations').value;
+    let updatedTemplate;
+    try {
+        updatedTemplate = JSON.parse(customAnimationJSON);
+    } catch (error) {
+        alert('Invalid JSON for custom animation. Please check your input.');
+        return;
+    }
+
+    const templateIndex = animationTemplates.findIndex(t => t.id === editingTemplateId);
+    if (templateIndex !== -1) {
+        animationTemplates[templateIndex] = {
+            ...animationTemplates[templateIndex],
+            ...updatedTemplate
+        };
+        saveAnimationTemplates();
+        alert('Template updated successfully!');
+        updateAnimationTemplateSelect(editingTemplateId);
+    }
+
+    // Remove the "Save Template" button
+    const saveTemplateBtn = document.querySelector('#customAnimationFields button:last-child');
+    if (saveTemplateBtn) saveTemplateBtn.remove();
+
+    editingTemplateId = null;
+}
+
+function saveAsNewTemplate() {
+    const customAnimationJSON = document.getElementById('editAnimations').value;
+    let customAnimation;
+    try {
+        customAnimation = JSON.parse(customAnimationJSON);
+    } catch (error) {
+        alert('Invalid JSON for custom animation. Please check your input.');
+        return;
+    }
+
+    const templateName = prompt('Enter a name for this template:');
+    if (!templateName) return;
+
+    const newTemplate = {
+        id: templateName.toLowerCase().replace(/\s+/g, '-'),
+        name: templateName,
+        ...customAnimation
+    };
+
+    animationTemplates.push(newTemplate);
+    saveAnimationTemplates();
+    updateAnimationTemplateSelect(newTemplate.id);
+}
+
+function updateAnimationTemplateSelect(selectedId = '') {
+    const animationTemplateSelect = document.getElementById('editAnimationTemplate');
+    animationTemplateSelect.innerHTML = '<option value="">Select animation template</option>';
+    animationTemplates.forEach(template => {
+        const option = document.createElement('option');
+        option.value = template.id;
+        option.textContent = template.name;
+        animationTemplateSelect.appendChild(option);
+    });
+    const customOption = document.createElement('option');
+    customOption.value = 'custom';
+    customOption.textContent = 'Custom';
+    animationTemplateSelect.appendChild(customOption);
+
+    animationTemplateSelect.value = selectedId;
+
+    // Trigger the change event to update button visibility
+    animationTemplateSelect.dispatchEvent(new Event('change'));
+}
+
+function saveAnimationTemplates() {
+    localStorage.setItem('animationTemplates', JSON.stringify(animationTemplates));
+}
+
+// Load animation templates from localStorage on page load
+function loadAnimationTemplates() {
+    const savedTemplates = localStorage.getItem('animationTemplates');
+    if (savedTemplates) {
+        const parsedTemplates = JSON.parse(savedTemplates);
+        // Instead of reassigning, we'll update the array contents
+        animationTemplates.length = 0; // Clear the array
+        animationTemplates.push(...parsedTemplates); // Add all saved templates
+    }
+}
+
 function toggleSideBar() {
     // <div id="sideBar" class="hidden lg:fixed lg:inset-y-0 lg:z-50 lg:flex lg:w-96 lg:flex-col">
     const sidebar = document.getElementById('sideBar');
@@ -3676,8 +3932,6 @@ function toggleSideBar() {
         sidebar.classList.add('hidden');
         sidebar.classList.remove('fixed', 'inset-y-0', 'z-50', 'flex', 'w-full', 'flex-col')
     }
-
-
 }
 
 // Function to scale banners
@@ -3795,9 +4049,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
     convertAllTimestampsToMilliseconds();
     loadUISettings();
+    loadAnimationTemplates();
 
     const toggleSwitch = document.getElementById('animationToggle');
     if (toggleSwitch) {
+        toggleSwitch.checked = uiSettings.isAnimationsEnabled;
         toggleSwitch.addEventListener('change', toggleAnimations);
     } else {
         console.warn('Animation toggle switch not found in the DOM');
@@ -3805,19 +4061,35 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Set the initial state of the settings toggle
     const settingsToggle = document.getElementById('settingsToggle');
-    settingsToggle.checked = uiSettings.isSlideSettings;
+    const animationToggle = document.getElementById('animationToggle');
 
-    // Add event listener for the settings toggle
-    settingsToggle.addEventListener('change', function () {
-        uiSettings.isSlideSettings = this.checked;
-        saveUISettings();
-        const size = getSelectedBanner();
-        if (size) {
-            applyAllSavedSettings(size);
-        }
-    });
+    if (settingsToggle) {
+        settingsToggle.checked = uiSettings.isSlideSettings;
+        settingsToggle.addEventListener('change', function () {
+            uiSettings.isSlideSettings = this.checked;
+            if (uiSettings.isSlideSettings) {
+                uiSettings.isAnimationsEnabled = true;
+                if (animationToggle) {
+                    animationToggle.checked = true;
+                }
+            }
+            saveUISettings();
+            applyUISettings();
+            const size = getSelectedBanner();
+            if (size) {
+                applyAllSavedSettings(size);
+            }
+        });
+    }
 
-     
+    if (animationToggle) {
+        animationToggle.checked = uiSettings.isAnimationsEnabled;
+        animationToggle.addEventListener('change', toggleAnimations);
+    }
+
+    applyUISettings();
+
+
     const scenelinePlayer = document.querySelector('.sceneline-player');
 
     function updateScenelinePlayerVisibility() {
@@ -3921,6 +4193,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Add event listeners for the edit slide modal
     document.getElementById('editSlideButton').addEventListener('click', openEditModal);
+    document.getElementById('editSlideButtonSideBar').addEventListener('click', openEditModal);
     document.getElementById('cancelEdit').addEventListener('click', closeEditModal);
     document.getElementById('editSlideForm').addEventListener('submit', handleEditFormSubmit);
 

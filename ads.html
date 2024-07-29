@@ -58,7 +58,7 @@
                   <button onclick="nextAd()"><i class="fas fa-arrow-right float-end"></i> <i class="fa-solid fa-rectangle-ad w-4 h-4"></i></button>
                   <button onclick="previousImage()"><i class="fas fa-arrow-left"></i> <i class="fa-solid fa-images w-4 h-4"></i></button>
                   <button onclick="nextImage()"><i class="fas fa-arrow-right float-end"></i> <i class="fa-solid fa-images w-4 h-4"></i></button>
-                  <button id="editSlideButton" class=" bg-blue-500 text-white "><i class="fas fa-edit"></i></button>
+                  <button id="editSlideButtonSideBar" class="bg-blue-500 text-white"><i class="fas fa-edit"></i></button>
                 </div>
                 <button onclick="downloadAllBannersAsZip()"><i class="fas fa-download"></i> Download Ad Banners ZIP</button>
               </div>
@@ -314,13 +314,6 @@
                     <span class="text-sm w-full">Set Image as Background</span>
                     <input type="checkbox" id="toggle-background" onchange="toggleBackground()" />
                   </label>
-                  <div class="flex items-center">
-                    <span class="mr-2 text-xs">Animation</span>
-                    <label class="switch">
-                      <input type="checkbox" id="animationToggle" checked>
-                      <span class="slider round"></span>
-                    </label>
-                  </div>
                 </div>
               </details>
 
@@ -337,19 +330,19 @@
               </details>
             </div>
             <!-- banner vs slide toggle -->
-            <div class="sticky -bottom-0 w-full p-4 bg-white  border-t flex items-center justify-center">
+            <div class="sticky -bottom-0 w-full p-4 bg-white border-t flex items-center justify-center">
               <div class="flex items-center w-flll pr-auto pl-auto">
                 <span class="mr-3 text-xs"><i class="fas fa-ad"></i></span>
                 <label class="switch">
-                  <input type="checkbox" id="settingsToggle">
+                  <input type="checkbox" id="settingsToggle" />
                   <span class="slider round"></span>
                 </label>
                 <span class="ml-3 text-xs"><i class="fas fa-play"></i></span>
               </div>
               <div class="flex items-center">
-                <span class="mr-2 text-xs">Animation</span>
+                <span class="mr-2 text-xs">Animations</span>
                 <label class="switch">
-                  <input type="checkbox" id="animationToggle" checked>
+                  <input type="checkbox" id="animationToggle" checked />
                   <span class="slider round"></span>
                 </label>
               </div>
@@ -645,7 +638,10 @@
                 <div id="frontdrop-1200x628" class="absolute top-0 left-0 w-full h-full z-0">
                   <img id="frontdropimage-1200x628" src="img/frontdrop-studio-inside_03.png" alt="Ad Image" class="w-full z-0 absolute top-0 left-0" />
                 </div>
-                <div id="textcontainer-1200x628" class="absolute top-1/2 left-2/3 transform -translate-x-16 -translate-y-1/2 flex flex-col gap-4 items-start z-20 flex flex-col gap-4 items-start z-20">
+                <div
+                  id="textcontainer-1200x628"
+                  class="absolute top-1/2 left-2/3 transform -translate-x-16 -translate-y-1/2 flex flex-col gap-4 items-start z-20 flex flex-col gap-4 items-start z-20"
+                >
                   <h2 id="headline-1200x628" class="ads-title font-bold">Sunglasses Deals Up to 50% Off</h2>
                   <p class="hidden" id="text-1200x628">From Aviator Shades to Retro sunglasses. Check out our new collection</p>
                   <p class="text-sm" id="tags-1200x628">#EnergySavings #SwitchAndSave</p>
@@ -826,7 +822,7 @@
                       <button id="moveMarkerButton" class="px-2 py-1 rounded bg-gray-300 hover:bg-gray-400 focus:outline-none"><i class="fas fa-arrows-alt"></i></button>
                       <button id="editSlideButton" class="px-2 py-1 bg-blue-500 text-white rounded"><i class="fas fa-edit"></i></button>
                       <button id="addSlideButton" class="px-2 py-1 bg-green-500 text-white rounded"><i class="fas fa-plus"></i></button>
-                      
+
                       <button id="openGalleryButton" class="px-2 py-1 bg-blue-500 text-white rounded" onclick="openImageGallery('main')">
                         <i class="fas fa-image"></i><span class="text-xs"> Img</span>
                       </button>
@@ -927,10 +923,16 @@
               </div>
               <div class="w-1/2">
                 <label for="formattedTime" class="block text-sm font-bold text-gray-700">Formatted Time (mm:ss)</label>
-                <input type="text" id="formattedTime" name="formattedTime" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-300 leading-tight bg-gray-100" disabled />
+                <input
+                  type="text"
+                  id="formattedTime"
+                  name="formattedTime"
+                  class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-300 leading-tight bg-gray-100"
+                  disabled
+                />
               </div>
             </div>
-            
+
             <div class="mb-4">
               <label class="block text-gray-700 text-sm font-bold mb-2" for="editAudio">Audio Source</label>
               <input
@@ -940,7 +942,7 @@
                 class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
               />
             </div>
-      
+
             <div class="flex gap-4 mb-4">
               <div class="w-1/3">
                 <label class="block text-gray-700 text-sm font-bold mb-2" for="editLogoIcon">Logo Icon</label>
@@ -970,7 +972,7 @@
                 />
               </div>
             </div>
-      
+
             <div class="mb-4">
               <label class="block text-gray-700 text-sm font-bold mb-2" for="editHeadline">Headline</label>
               <input
@@ -980,7 +982,7 @@
                 class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
               />
             </div>
-      
+
             <div class="mb-4">
               <label class="block text-gray-700 text-sm font-bold mb-2" for="editText">Text</label>
               <textarea
@@ -990,7 +992,7 @@
                 rows="3"
               ></textarea>
             </div>
-      
+
             <div class="mb-4">
               <label class="block text-gray-700 text-sm font-bold mb-2" for="editTags">Tags</label>
               <input
@@ -1000,41 +1002,41 @@
                 class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
               />
             </div>
-      
+
             <div class="flex gap-4 mb-4">
               <div class="w-1/2">
                 <label class="block text-gray-700 text-sm font-bold mb-2">Main Image</label>
                 <div id="mainImageSelector" class="cursor-pointer border rounded p-2 text-center">
-                  <img id="mainImagePreview" src="" alt="Main Image" class="max-w-full h-auto mb-2">
+                  <img id="mainImagePreview" src="" alt="Main Image" class="max-w-full h-auto mb-2" />
                   <p id="mainImageName" class="text-sm text-gray-600"></p>
                 </div>
               </div>
               <div class="w-1/2">
                 <label class="block text-gray-700 text-sm font-bold mb-2">Backdrop Image</label>
                 <div id="backdropImageSelector" class="cursor-pointer border rounded p-2 text-center">
-                  <img id="backdropImagePreview" src="" alt="Backdrop Image" class="max-w-full h-auto mb-2">
+                  <img id="backdropImagePreview" src="" alt="Backdrop Image" class="max-w-full h-auto mb-2" />
                   <p id="backdropImageName" class="text-sm text-gray-600"></p>
                 </div>
               </div>
             </div>
-            
+
             <div class="flex gap-4 mb-4">
               <div class="w-1/2">
                 <label class="block text-gray-700 text-sm font-bold mb-2">Frontdrop Image</label>
                 <div id="frontdropImageSelector" class="cursor-pointer border rounded p-2 text-center">
-                  <img id="frontdropImagePreview" src="" alt="Frontdrop Image" class="max-w-full h-auto mb-2">
+                  <img id="frontdropImagePreview" src="" alt="Frontdrop Image" class="max-w-full h-auto mb-2" />
                   <p id="frontdropImageName" class="text-sm text-gray-600"></p>
                 </div>
               </div>
               <div class="w-1/2">
                 <label class="block text-gray-700 text-sm font-bold mb-2">Filter Image</label>
                 <div id="filterImageSelector" class="cursor-pointer border rounded p-2 text-center">
-                  <img id="filterImagePreview" src="" alt="Filter Image" class="max-w-full h-auto mb-2">
+                  <img id="filterImagePreview" src="" alt="Filter Image" class="max-w-full h-auto mb-2" />
                   <p id="filterImageName" class="text-sm text-gray-600"></p>
                 </div>
               </div>
             </div>
-      
+
             <div class="mb-4">
               <label class="block text-gray-700 text-sm font-bold mb-2" for="editCta">CTA</label>
               <input
@@ -1044,7 +1046,7 @@
                 class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
               />
             </div>
-      
+
             <div class="mb-4">
               <label class="block text-gray-700 text-sm font-bold mb-2" for="editAnimationTemplate">Animation Template</label>
               <select
@@ -1055,7 +1057,7 @@
                 <!-- Options will be dynamically populated -->
               </select>
             </div>
-      
+
             <div id="customAnimationFields" class="mb-4 hidden">
               <label class="block text-gray-700 text-sm font-bold mb-2" for="editAnimations">Custom Animations (JSON)</label>
               <textarea
@@ -1064,8 +1066,35 @@
                 class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                 rows="5"
               ></textarea>
+              <button type="button" id="saveAsNewTemplateBtn" class="mt-2 px-4 py-2 bg-blue-500 text-white rounded">Save as New Template</button>
+              <button type="button" id="updateTemplateBtn" class="mt-2 px-4 py-2 bg-yellow-500 text-white rounded hidden">Update Template</button>
             </div>
-      
+            <button type="button" id="editTemplateBtn" class="mt-2 px-4 py-2 bg-green-500 text-white rounded">Edit Template</button>
+
+            <div class="grid grid-col-1 xl:grid-cols-3 items-start">
+              <div class="flex items-center justify-between">
+                <span class="mr-2 text-xs">Loop Animation</span>
+                <label class="switch">
+                  <input type="checkbox" id="isLooped" name="isLooped" />
+                  <span class="slider round"></span>
+                </label>
+              </div>
+              <div class="flex items-center">
+                <span class="mr-2 text-xs">Exit Animation</span>
+                <label class="switch">
+                  <input type="checkbox" id="isExitAnimated" name="isExitAnimated" />
+                  <span class="slider round"></span>
+                </label>
+              </div>
+              <div class="flex items-center">
+                <span class="mr-2 text-xs">Entry Animation</span>
+                <label class="switch">
+                  <input type="checkbox" id="isEntryAnimated" name="isEntryAnimated" />
+                  <span class="slider round"></span>
+                </label>
+              </div>
+            </div>
+
             <div class="flex items-center justify-between">
               <button type="submit" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">Save Changes</button>
               <button type="button" id="cancelEdit" class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
