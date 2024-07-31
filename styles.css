@@ -1865,3 +1865,8 @@ input:checked + .slider:before {
   opacity: 1;
   pointer-events: auto;
 }
+
+.animate__animated {
+  max-width: none !important;
+  max-height: none !important;
+}

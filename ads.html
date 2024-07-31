@@ -41,14 +41,15 @@
             <div class="sidebar sticky h-full max-h-screen overflow-y-auto scroll-auto">
               <div class="flex justify-center mb-4">
                 <select id="bannerSelect" class="px-2 py-2 border-2 border-gray-400 rounded" onchange="highlightSelectedBanner()">
+                  <option value="1200x628">1200x628</option>
                   <option value="480x120">480x120</option>
                   <option value="300x250">300x250</option>
                   <option value="160x600">160x600</option>
                   <option value="300x250-text">300x250 Text</option>
                   <option value="728x90">728x90</option>
-                  <option value="1200x628">1200x628</option>
                   <option value="1200x628-2">1200x628-2</option>
                   <option value="1080x1080">1080x1080</option>
+                  <option value="720x1280">720x1280</option>
                 </select>
               </div>
 
@@ -225,8 +226,8 @@
                   <div class="flex justify-between items-center">
                     <span class="text-sm">Slides</span>
                     <div class="flex">
-                      <a class="px-2 py-1 rounded ml-2 cursor-pointer" onclick="downloadSlides()"><i class="fas fa-download"></i></a>
-                      <a class="px-2 py-1 rounded ml-2 cursor-pointer" onclick="uploadSlides()"><i class="fas fa-upload"></i></a>
+                      <a class="px-2 py-1 rounded ml-2 cursor-pointer" onclick="downloadAds()"><i class="fas fa-download"></i></a>
+                      <a class="px-2 py-1 rounded ml-2 cursor-pointer" onclick="uploadAds()"><i class="fas fa-upload"></i></a>
                       <span class="text-sm pt-2">[json]</span>
                     </div>
                   </div>
@@ -234,7 +235,7 @@
                     <span class="text-sm">Images</span>
                     <div class="flex">
                       <a class="px-2 py-1 rounded ml-2 cursor-pointer" onclick="downloadImages()"><i class="fas fa-download"></i></a>
-                      <a class="px-2 py-1 rounded ml-2 cursor-pointer" onclick="updateStoredImages()"><i class="fas fa-upload"></i></a>
+                      <a class="px-2 py-1 rounded ml-2 cursor-pointer" onclick="uploadImages()"><i class="fas fa-upload"></i></a>
                       <span class="text-sm pt-2">[json]</span>
                     </div>
                   </div>
@@ -332,19 +333,19 @@
             <!-- banner vs slide toggle -->
             <div class="sticky -bottom-0 w-full p-4 bg-white border-t flex items-center justify-center">
               <div class="flex items-center w-flll pr-auto pl-auto">
-                <span class="mr-3 text-xs"><i class="fas fa-ad" title="Ads Mode"></i></span>
+                <span class="mr-3 text-xs"><i class="fas fa-ad"></i></span>
                 <label class="switch">
                   <input type="checkbox" id="settingsToggle" />
                   <span class="slider round"></span>
                 </label>
-                <span class="ml-3 text-xs"><i class="fas fa-play" title="Animation Mode"></i></span>
+                <span class="ml-3 text-xs"><i class="fas fa-play"></i></span>
               </div>
               <div class="flex items-center">
-                <i class="fa-solid fa-person" title="Animations off"></i>
+                <span class="mr-2 text-xs">Animations</span>
                 <label class="switch">
                   <input type="checkbox" id="animationToggle" checked />
-                  <span class="slider round"></span> </label >
-                  <i class="fa-solid fa-person-running" title="Animations on"></i>
+                  <span class="slider round"></span>
+                </label>
               </div>
             </div>
           </nav>
@@ -357,7 +358,7 @@
             <!-- Your content -->
 
             <!-- 480x120 -->
-            <div class="flex flex-col items-center snap-center" onclick="selectBanner('480x120')">
+            <div class="ad-mode flex flex-col items-center snap-center" onclick="selectBanner('480x120')">
               <div class="text-center text-4xl text-gray-200 font-bold px-4 py-1 mb-2">480x120</div>
 
               <div
@@ -408,7 +409,7 @@
             </div>
 
             <!-- 300x250 -->
-            <div class="flex flex-col items-center" onclick="selectBanner('300x250')">
+            <div class="ad-mode flex flex-col items-center" onclick="selectBanner('300x250')">
               <div class="text-center text-4xl text-gray-200 font-bold px-4 py-1 mb-2">300x250</div>
               <div
                 id="ad-container-300x250"
@@ -464,7 +465,7 @@
             </div>
 
             <!-- 160x600 -->
-            <div class="flex flex-col items-center" onclick="selectBanner('160x600')">
+            <div class="ad-mode flex flex-col items-center" onclick="selectBanner('160x600')">
               <div class="text-center text-4xl text-gray-200 font-bold px-4 py-1 mb-2">160x600</div>
               <div
                 id="ad-container-160x600"
@@ -516,7 +517,7 @@
             </div>
 
             <!-- 300x250 Text Ad -->
-            <div class="flex flex-col items-center" onclick="selectBanner('300x250-text')">
+            <div class="ad-mode flex flex-col items-center" onclick="selectBanner('300x250-text')">
               <div class="text-center text-4xl text-gray-200 font-bold px-4 py-1 mb-2">300x250 Text Ad</div>
               <div
                 id="ad-container-300x250-text"
@@ -540,7 +541,7 @@
             </div>
 
             <!-- 728x90 -->
-            <div class="flex flex-col items-center" onclick="selectBanner('728x90')">
+            <div class="ad-mode flex flex-col items-center" onclick="selectBanner('728x90')">
               <div class="text-center text-4xl text-gray-200 font-bold px-4 py-1 mb-2">728x90</div>
               <div
                 id="ad-container-728x90"
@@ -650,7 +651,7 @@
               </div>
             </div>
             <!-- Facebook Ad 1200x628-2 -->
-            <div class="flex flex-col items-center" onclick="selectBanner('1200x628-2')">
+            <div class="ad-mode flex flex-col items-center" onclick="selectBanner('1200x628-2')">
               <div class="text-center text-4xl text-gray-200 font-bold px-4 py-1 mb-2">1200x628-2 Facebook Ad</div>
               <div
                 id="ad-container-1200x628-2"
@@ -701,7 +702,7 @@
             </div>
 
             <!-- 1080x1080 -->
-            <div class="flex flex-col items-center" onclick="selectBanner('1080x1080')">
+            <div class="ad-mode flex flex-col items-center" onclick="selectBanner('1080x1080')">
               <div class="text-center text-4xl text-gray-200 font-bold px-4 py-1 mb-2">1080x1080 Facebook 1:1 Ad</div>
               <div
                 id="ad-container-1080x1080"
@@ -751,51 +752,51 @@
               </div>
             </div>
 
-            <!-- 1080x1920 -->
-            <div class="relative flex flex-col items-center" onclick="selectBanner('1080x1920')">
-              <div class="text-center text-4xl text-gray-200 font-bold px-4 py-2 mb-2">1080x1920 TikTok Vertical Ad</div>
+            <!-- 720x1280 -->
+            <div class="relative flex flex-col items-center" onclick="selectBanner('720x1280')">
+              <div class="text-center text-4xl text-gray-200 font-bold px-4 py-2 mb-2">720x1280 TikTok Vertical Ad</div>
               <div
-                id="ad-container-1080x1920"
+                id="ad-container-720x1280"
                 class="ad-container ring-1 ring-gray-300 relative p-4 flex flex-col justify-between items-center overflow-hidden snap-center"
-                style="width: 1080px; height: 1920px"
+                style="width: 720px; height: 1280px"
               >
-                <div id="backbanner-1080x1920" class="absolute top-0 left-0 w-full h-full z-0 bg-gray-100"></div>
-                <img id="backdrop-1080x1920" src="img/transparent-background-animated-gif.gif" alt="Ad Image" class="w-full h-full z-0 absolute top-0 left-0" />
+                <div id="backbanner-720x1280" class="absolute top-0 left-0 w-full h-full z-0 bg-gray-100"></div>
+                <img id="backdrop-720x1280" src="img/transparent-background-animated-gif.gif" alt="Ad Image" class="w-full h-full z-0 absolute top-0 left-0" />
                 <div class="absolute bottom-0 left-0 w-full h-2/3 z-10">
-                  <svg width="100%" height="100%" id="svg-1080x1920" viewBox="0 0 1580 1180" xmlns="http://www.w3.org/2000/svg">
+                  <svg width="100%" height="100%" id="svg-720x1280" viewBox="0 0 1580 1180" xmlns="http://www.w3.org/2000/svg">
                     <path
                       d="M0,1600 L0,800 C266.67,866.67 533.33,933.33 800,933.33 C1066.67,933.33 1333.33,800 1600,666.67 L1600,1600 Z"
                       stroke="none"
                       stroke-width="0"
                       fill-opacity="0.53"
                       class="path-one"
-                      id="path-one-1080x1920"
+                      id="path-one-720x1280"
                     ></path>
                   </svg>
                 </div>
                 <div class="absolute bottom-0 left-0 w-full h-2/3 z-20">
-                  <svg width="100%" height="100%" id="svg-1080x1920" viewBox="0 0 1580 1180" xmlns="http://www.w3.org/2000/svg">
+                  <svg width="100%" height="100%" id="svg-720x1280" viewBox="0 0 1580 1180" xmlns="http://www.w3.org/2000/svg">
                     <path
                       d="M0,1600 L0,1066.67 C266.67,1000 533.33,933.33 800,933.33 C1066.67,933.33 1333.33,1066.67 1600,1200 L1600,1600 Z"
                       stroke="none"
                       stroke-width="0"
                       fill-opacity="1"
                       class="path-two"
-                      id="path-two-1080x1920"
+                      id="path-two-720x1280"
                     ></path>
                   </svg>
                 </div>
-                <div id="logo-icon-1080x1920" class="text-4xl mt-4 flex flex-row gap-2 z-30">
+                <div id="logo-icon-720x1280" class="text-4xl mt-4 flex flex-row gap-2 z-30">
                   <i class="fa fa-box" aria-hidden="true"></i><a href="https://octopus.energy"> <span style="font-weight: 700">Octopus</span> Energy</a>
                 </div>
-                <img id="filter-1080x1920" src="img/filter-comic.png" alt="Ad Image" class="w-full h-full z-0 absolute top-0 left-0" />
-                <img id="image-1080x1920" src="img/energy_savings_2.png" alt="Ad Image" class="w-3/4 z-30 mt-8 mb-4" />
+                <img id="filter-720x1280" src="img/filter-comic.png" alt="Ad Image" class="w-full h-full z-0 absolute top-0 left-0" />
+                <img id="image-720x1280" src="img/energy_savings_2.png" alt="Ad Image" class="w-3/4 z-30 mt-8 mb-4" />
 
-                <div id="textcontainer-1080x1920" class="flex flex-col gap-4 w-3/4 items-center z-30 text-center">
-                  <h1 class="ads-title text-4xl font-bold" id="headline-1080x1920">Sunglasses Deals Up to 50% Off</h1>
-                  <p class="text-2xl" id="text-1080x1920">From Aviator Shades to Retro sunglasses. Check out our new collection</p>
-                  <p class="text-xl" id="tags-1080x1920">#EnergySavings #SwitchAndSave</p>
-                  <button class="ads-button text-white px-8 py-4 mt-4 rounded-lg text-2xl" id="cta-1080x1920">Shop now</button>
+                <div id="textcontainer-720x1280" class="flex flex-col gap-4 w-3/4 items-center z-30 text-center">
+                  <h1 class="ads-title text-4xl font-bold" id="headline-720x1280">Sunglasses Deals Up to 50% Off</h1>
+                  <p class="text-2xl" id="text-720x1280">From Aviator Shades to Retro sunglasses. Check out our new collection</p>
+                  <p class="text-xl" id="tags-720x1280">#EnergySavings #SwitchAndSave</p>
+                  <button class="ads-button text-white px-8 py-4 mt-4 rounded-lg text-2xl" id="cta-720x1280">Shop now</button>
                 </div>
               </div>
             </div>
@@ -826,13 +827,13 @@
                       <button id="openGalleryButton" class="px-2 py-1 bg-blue-500 text-white rounded" onclick="openImageGallery('main')">
                         <i class="fas fa-image"></i><span class="text-xs"> Img</span>
                       </button>
-                      <button id="changeFrontdropButton" class="px-2 py-1 bg-purple-500 text-white rounded" onclick="openSpecificGallery('frontdrop')">
+                      <button id="changeFrontdropButton" class="px-2 py-1 bg-purple-500 text-white rounded" onclick="openImageGallery('frontdrop')">
                         <i class="fas fa-image"></i><span class="text-xs"> Front</span>
                       </button>
-                      <button id="changeBackdropButton" class="px-2 py-1 bg-purple-500 text-white rounded" onclick="openSpecificGallery('backdrop')">
+                      <button id="changeBackdropButton" class="px-2 py-1 bg-purple-500 text-white rounded" onclick="openImageGallery('backdrop')">
                         <i class="fas fa-image"></i><span class="text-xs"> Back</span>
                       </button>
-                      <button id="changeFilterButton" class="px-2 py-1 bg-indigo-500 text-white rounded" onclick="openSpecificGallery('filter')">
+                      <button id="changeFilterButton" class="px-2 py-1 bg-indigo-500 text-white rounded" onclick="openImageGallery('filter')">
                         <i class="fas fa-image"></i><span class="text-xs"> Filter</span>
                       </button>
                     </div>

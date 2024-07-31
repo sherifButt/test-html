@@ -20,6 +20,18 @@ Links:
   - https://octopus.energy
   - https://octopus.energy
 
+File: ads_latest-ok.html
+Links:
+  - https://octopus.energy
+  - https://octopus.energy
+  - https://octopus.energy
+  - https://octopus.energy
+  - https://octopus.energy
+  - https://octopus.energy
+  - https://octopus.energy
+  - https://octopus.energy
+  - https://octopus.energy
+
 File: blog/business/index.html
 Links:
   - https://octopus.energy
@@ -27,6 +39,17 @@ Links:
   - /blog/
   - /blog/business/marketing
   - /blog/business/sales
+  - /blog/business/marketing/01-why-businesses-hesitate-to-implement-lead-generation.html
+  - /blog/business/marketing
+  - /blog/business/marketing/01-why-businesses-hesitate-to-implement-lead-generation.html
+  - /blog/business/sales/01-why-businesses-hesitate-to-implement-lead-generation.html
+  - /blog/business/sales/01-why-businesses-hesitate-to-implement-lead-generation.html
+  - /blog/business/sales
+  - /blog/business/sales/01-why-businesses-hesitate-to-implement-lead-generation.html
+  - /blog/business/sales/08-why-businesses-hesitate-to-implement-lead-generation-in-their-sales-pipeline.html
+  - /blog/business/sales/08-why-businesses-hesitate-to-implement-lead-generation-in-their-sales-pipeline.html
+  - /blog/business/sales
+  - /blog/business/sales/08-why-businesses-hesitate-to-implement-lead-generation-in-their-sales-pipeline.html
 
 File: blog/business/marketing/01-why-businesses-hesitate-to-implement-lead-generation-ar.html
 Links:
@@ -613,6 +636,10 @@ Links:
   - /blog/default
 
 File: video.html
+Links:
+  - https://octopus.energy
+
+File: video_old.html
 Links:
 
 

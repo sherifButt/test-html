@@ -1055,6 +1055,305 @@ let animationTemplates = [
         }
     }
 ]
+
+let settingsTemplates = [
+    {
+        "id": "default",
+        "name": "Default",
+        "description": "Default template with all possible settings",
+        "img": "/img/default-template.gif",
+        "width": 480,
+        "height": 120,
+        "date": "2023-07-29",
+        "author": "System",
+        "elements": {
+            "logoIcon": true,
+            "image": true,
+            "headline": true,
+            "text": true,
+            "tags": true,
+            "cta": true,
+            "svgWave": true,
+            "textContainer": true,
+            "backdrop": true,
+            "filter": true,
+            "frontdrop": true,
+            "backbanner": true,
+            "pathOne": true,
+            "pathTwo": true,
+            "logo-title": true
+        },
+        "layout": {
+            "logoLayout": "flex-row",
+            "ctaStyle": "default",
+            "imageOpacity": "1",
+            "svgOneOpacity": "1",
+            "svgTwoOpacity": "1",
+            "logoRotation": 0,
+            "backgroundImage": false,
+            "imageSize": "27%",
+            "titleSize": "1.2rem",
+            "bodySize": "1rem",
+            "switchPosition": false,
+            "imageZIndex": 29,
+            "textLength": 0,
+            "zIndex": {
+                "logoIcon": 10,
+                "image": 20,
+                "headline": 30,
+                "text": 40,
+                "tags": 50,
+                "cta": 60,
+                "svgWave": 5,
+                "textContainer": 15,
+                "backdrop": 1,
+                "filter": 2,
+                "frontdrop": 3,
+                "backbanner": 0,
+                "pathOne": 6,
+                "pathTwo": 7,
+                "logo-title": 11
+            },
+            "scales": {
+                "logoIcon": 1,
+                "image": 1,
+                "headline": 1,
+                "text": 1,
+                "tags": 1,
+                "cta": 1,
+                "svgWave": 1,
+                "textContainer": 1,
+                "backdrop": 1,
+                "filter": 1,
+                "frontdrop": 1,
+                "backbanner": 1,
+                "pathOne": 1,
+                "pathTwo": 1,
+                "logo-title": 1
+            },
+            "positions": {
+                "logoIcon": { "top": "0px", "left": "0px" },
+                "image": { "top": "0px", "left": "125px" },
+                "headline": { "top": "30px", "left": "0px" },
+                "text": { "top": "60px", "left": "0px" },
+                "tags": { "top": "-25px", "left": "0px" },
+                "cta": { "top": "-45px", "left": "230px" },
+                "svgWave": { "top": "0px", "left": "0px" },
+                "textContainer": { "top": "0px", "left": "0px" },
+                "backdrop": { "top": "0px", "left": "0px" },
+                "filter": { "top": "0px", "left": "0px" },
+                "frontdrop": { "top": "0px", "left": "0px" },
+                "backbanner": { "top": "0px", "left": "0px" },
+                "pathOne": { "top": "0px", "left": "0px" },
+                "pathTwo": { "top": "0px", "left": "0px" },
+                "logo-title": { "top": "0px", "left": "0px" }
+            },
+            "colors": {
+                "logoIcon": "#000000",
+                "image": "#FFFFFF",
+                "headline": "#000000",
+                "text": "#000000",
+                "tags": "#000000",
+                "cta": "#FFFFFF",
+                "svgWave": "#000000",
+                "textContainer": "#FFFFFF",
+                "backdrop": "#FFFFFF",
+                "filter": "#FFFFFF",
+                "frontdrop": "#FFFFFF",
+                "backbanner": "#FFFFFF",
+                "pathOne": "#000000",
+                "pathTwo": "#000000",
+                "logo-title": "#000000"
+            },
+            "opacities": {
+                "logoIcon": 1,
+                "image": 1,
+                "headline": 1,
+                "text": 1,
+                "tags": 1,
+                "cta": 1,
+                "svgWave": 1,
+                "textContainer": 1,
+                "backdrop": 1,
+                "filter": 1,
+                "frontdrop": 1,
+                "backbanner": 1,
+                "pathOne": 1,
+                "pathTwo": 1,
+                "logo-title": 1
+            },
+            "rotations": {
+                "logoIcon": 0,
+                "image": 0,
+                "headline": 0,
+                "text": 0,
+                "tags": 0,
+                "cta": 0,
+                "svgWave": 0,
+                "textContainer": 0,
+                "backdrop": 0,
+                "filter": 0,
+                "frontdrop": 0,
+                "backbanner": 0,
+                "pathOne": 0,
+                "pathTwo": 0,
+                "logo-title": 0
+            },
+            "filters": {
+                "logoIcon": "none",
+                "image": "none",
+                "headline": "none",
+                "text": "none",
+                "tags": "none",
+                "cta": "none",
+                "svgWave": "none",
+                "textContainer": "none",
+                "backdrop": "none",
+                "filter": "none",
+                "frontdrop": "none",
+                "backbanner": "none",
+                "pathOne": "none",
+                "pathTwo": "none",
+                "logo-title": "none"
+            }
+        }
+    }, {
+        "id": "establishing-shot",
+        "name": "Establishing shot",
+        "description": "this is a description for the settings template",
+        "img": "/img/establishing-shot.gif",
+        "width": 480,
+        "height": 120,
+        "date": "2022-01-01",
+        "author": "john doe",
+
+        "elements": {
+            "logoIcon": true,
+            "image": true,
+            "headline": true,
+            "text": false,
+            "tags": true,
+            "cta": true,
+            "svgWave": true,
+            "textContainer": true,
+            "backdrop": false,
+            "filter": false,
+            "backbanner": false
+        },
+        "layout": {
+            "logoLayout": "flex-row",
+            "ctaStyle": "circle",
+            "imageOpacity": "1",
+            "svgOneOpacity": "1",
+            "svgTwoOpacity": "1",
+            "logoRotation": 0,
+            "backgroundImage": false,
+            "imageSize": "27%",
+            "titleSize": "1.2rem",
+            "bodySize": "1rem",
+            "switchPosition": false,
+            "imageZIndex": 29,
+            "textLength": 0,
+            "zIndex": {
+                "backdropimage": 10
+            },
+            "scales": {
+                "backdropimage": 0.9900000000000001
+            },
+            "positions": {
+                "logo": {
+                    "top": "0px",
+                    "left": "-5px"
+                },
+                "headline": {
+                    "top": "30px",
+                    "left": "0px"
+                },
+                "image": {
+                    "top": "0px",
+                    "left": "125px"
+                },
+                "cta": {
+                    "top": "-45px",
+                    "left": "230px"
+                },
+                "tags": {
+                    "top": "-25px",
+                    "left": "0px"
+                }
+            }
+        }
+
+    },
+    {
+        "id": "full-shot",
+        "name": "Full shot",
+        "description": "this is a description for the settings template",
+        "width": 480,
+        "height": 120,
+        "date": "2022-01-01",
+        "author": "https://boords.com/blog/16-types-of-camera-shots-and-angles-with-gifs",
+
+        "elements": {
+            "logoIcon": true,
+            "image": true,
+            "headline": true,
+            "text": false,
+            "tags": true,
+            "cta": true,
+            "svgWave": true,
+            "textContainer": true,
+            "backdrop": false,
+            "filter": false,
+            "backbanner": false
+        },
+        "layout": {
+            "logoLayout": "flex-row",
+            "ctaStyle": "circle",
+            "imageOpacity": "1",
+            "svgOneOpacity": "1",
+            "svgTwoOpacity": "1",
+            "logoRotation": 0,
+            "backgroundImage": false,
+            "imageSize": "27%",
+            "titleSize": "1.2rem",
+            "bodySize": "1rem",
+            "switchPosition": false,
+            "imageZIndex": 29,
+            "textLength": 0,
+            "zIndex": {
+                "backdropimage": 10
+            },
+            "scales": {
+                "backdropimage": 0.9900000000000001
+            },
+            "positions": {
+                "logo": {
+                    "top": "0px",
+                    "left": "-5px"
+                },
+                "headline": {
+                    "top": "30px",
+                    "left": "0px"
+                },
+                "image": {
+                    "top": "0px",
+                    "left": "125px"
+                },
+                "cta": {
+                    "top": "-45px",
+                    "left": "230px"
+                },
+                "tags": {
+                    "top": "-25px",
+                    "left": "0px"
+                }
+            }
+        }
+
+    }
+]
+
 const bannerTemplates = [
     {
         "id": "480x120",
@@ -2066,7 +2365,7 @@ const campaigns = [
                 "imgDescription": "A 3D sketch style drawing of a podcast studio viewed from a slightly elevated angle, showing the top and one side. The design is minimalistic, featuring clean lines with two accents: black and #ffd84d (bright yellow). The podcast studio should appear modern and abstract, set against a strictly white background.",
                 "cta": "Stay Tuned",
                 "animation": {
-                    "template": "slide-from-left",
+                    "template": "fade-in",
                     "isEntryAnimated": true,
                     "isExitAnimated": true
                 }
@@ -2094,7 +2393,7 @@ const campaigns = [
                     "isLooped": false,
                     "isExitAnimated": true,
                     "isEntryAnimated": true,
-                    "template": "slide-from-left-some-to-right"
+                    "template": "fade-in"
                 }
             },
             {
@@ -4007,361 +4306,79 @@ const ads3 = [
 ]
 
 
-
-
-
 const bannerSettings = [
-    
+
+    {
+        "size": "1200x628",
+        "settings": {
+            "elements": {
+                "logoIcon": true,
+                "image": true,
+                "headline": true,
+                "text": false,
+                "tags": true,
+                "cta": true,
+                "svgWave": true,
+                "textContainer": true,
+                "backdrop": false,
+                "filter": false,
+                "backbanner": false,
+                "frontdrop": false,
+            },
+            "layout": {
+                "logoLayout": "flex-row",
+                "ctaStyle": "default",
+                "imageOpacity": 1,
+                "svgOneOpacity": 0.53,
+                "svgTwoOpacity": 1,
+                "logoRotation": 0,
+                "backgroundImage": false,
+                "imageSize": "43%",
+                "titleSize": "2.9rem",
+                "bodySize": "1.25rem",
+                "switchPosition": false,
+                "imageZIndex": 16,
+                "textLength": 0,
+                "zIndex": {
+                    "image": 24
+                }
+            }
+        }
+    },
     {
         "size": "480x120",
         "settings": {
-          "elements": {
-            "logoIcon": true,
-            "image": true,
-            "headline": true,
-            "text": false,
-            "tags": true,
-            "cta": true,
-            "svgWave": true,
-            "textContainer": true,
-            "backdrop": false,
-            "filter": false,
-            "backbanner": false
-          },
-          "layout": {
-            "logoLayout": "flex-row",
-            "ctaStyle": "circle",
-            "imageOpacity": "1",
-            "svgOneOpacity": "1",
-            "svgTwoOpacity": "1",
-            "logoRotation": 0,
-            "backgroundImage": false,
-            "imageSize": "27%",
-            "titleSize": "1.2rem",
-            "bodySize": "1rem",
-            "switchPosition": false,
-            "imageZIndex": 29,
-            "textLength": 0
-          }
-        }
-      },
-      {
-        "size": "300x250",
-        "settings": {
-          "elements": {
-            "logoIcon": true,
-            "image": true,
-            "headline": true,
-            "text": false,
-            "tags": true,
-            "cta": true,
-            "svgWave": true,
-            "textContainer": true,
-            "backdrop": false,
-            "filter": false,
-            "backbanner": false
-          },
-          "layout": {
-            "logoLayout": "flex-col",
-            "ctaStyle": "circle",
-            "imageOpacity": 1,
-            "svgOneOpacity": "1",
-            "svgTwoOpacity": "1",
-            "logoRotation": 0,
-            "backgroundImage": false,
-            "imageSize": "53%",
-            "titleSize": "1.4rem",
-            "bodySize": "1rem",
-            "switchPosition": true,
-            "imageZIndex": 9,
-            "textLength": 2
-          }
-        }
-      },
-      {
-        "size": "160x600",
-        "settings": {
-          "elements": {
-            "logoIcon": true,
-            "image": true,
-            "headline": true,
-            "text": false,
-            "tags": true,
-            "cta": true,
-            "svgWave": true,
-            "textContainer": true,
-            "backdrop": false,
-            "filter": false,
-            "backbanner": false
-          },
-          "layout": {
-            "logoLayout": "flex-row",
-            "ctaStyle": "circle",
-            "imageOpacity": 1,
-            "svgOneOpacity": "1",
-            "svgTwoOpacity": 1,
-            "logoRotation": 0,
-            "backgroundImage": false,
-            "imageSize": "100%",
-            "titleSize": "1.6rem",
-            "bodySize": "0.9rem",
-            "switchPosition": false,
-            "imageZIndex": 9,
-            "textLength": 0
-          }
-        }
-      },
-      {
-        "size": "300x250-text",
-        "settings": {
-          "elements": {
-            "logoIcon": true,
-            "image": true,
-            "headline": true,
-            "text": false,
-            "tags": true,
-            "cta": true,
-            "svgWave": true,
-            "textContainer": true,
-            "backdrop": false,
-            "filter": false,
-            "backbanner": false
-          },
-          "layout": {
-            "logoLayout": "flex-row",
-            "ctaStyle": "circle",
-            "imageOpacity": 1,
-            "svgOneOpacity": "1",
-            "svgTwoOpacity": "1",
-            "logoRotation": 0,
-            "backgroundImage": false,
-            "imageSize": "0%",
-            "titleSize": "1.3rem",
-            "bodySize": "0.9rem",
-            "switchPosition": false,
-            "imageZIndex": 30,
-            "textLength": 0
-          }
-        }
-      },
-      {
-        "size": "728x90",
-        "settings": {
-          "elements": {
-            "logoIcon": true,
-            "image": true,
-            "headline": true,
-            "text": false,
-            "tags": true,
-            "cta": true,
-            "svgWave": true,
-            "textContainer": true,
-            "backdrop": false,
-            "filter": false,
-            "backbanner": false
-          },
-          "layout": {
-            "logoLayout": "flex-row",
-            "ctaStyle": "circle",
-            "imageOpacity": 1,
-            "svgOneOpacity": "1",
-            "svgTwoOpacity": 1,
-            "logoRotation": 0,
-            "backgroundImage": false,
-            "imageSize": "15%",
-            "titleSize": "1.2rem",
-            "bodySize": "1rem",
-            "switchPosition": false,
-            "imageZIndex": 30,
-            "textLength": 0
-          }
-        }
-      },
-      {
-        "size": "1200x628",
-        "settings": {
-          "elements": {
-            "logoIcon": true,
-            "image": true,
-            "headline": true,
-            "text": false,
-            "tags": true,
-            "cta": true,
-            "svgWave": true,
-            "textContainer": true,
-            "backdrop": false,
-            "filter": false,
-            "backbanner": false
-          },
-          "layout": {
-            "logoLayout": "flex-row",
-            "ctaStyle": "default",
-            "imageOpacity": 1,
-            "svgOneOpacity": 0.53,
-            "svgTwoOpacity": 1,
-            "logoRotation": 0,
-            "backgroundImage": false,
-            "imageSize": "43%",
-            "titleSize": "2.9rem",
-            "bodySize": "1.25rem",
-            "switchPosition": false,
-            "imageZIndex": 16,
-            "textLength": 0,
-            "zIndex": {
-              "image": 24
+            "elements": {
+                "logoIcon": true,
+                "image": true,
+                "headline": true,
+                "text": false,
+                "tags": true,
+                "cta": true,
+                "svgWave": true,
+                "textContainer": true,
+                "backdrop": false,
+                "filter": false,
+                "backbanner": false,
+                "frontdrop": false,
+            },
+            "layout": {
+                "logoLayout": "flex-row",
+                "ctaStyle": "circle",
+                "imageOpacity": "1",
+                "svgOneOpacity": "1",
+                "svgTwoOpacity": "1",
+                "logoRotation": 0,
+                "backgroundImage": false,
+                "imageSize": "27%",
+                "titleSize": "1.2rem",
+                "bodySize": "1rem",
+                "switchPosition": false,
+                "imageZIndex": 29,
+                "textLength": 0
             }
-          }
         }
-      },
-      {
-        "size": "1200x628-2",
-        "settings": {
-          "elements": {
-            "logoIcon": true,
-            "image": true,
-            "headline": true,
-            "text": false,
-            "tags": true,
-            "cta": true,
-            "svgWave": true,
-            "textContainer": true,
-            "backdrop": false,
-            "filter": false,
-            "backbanner": false
-          },
-          "layout": {
-            "logoLayout": "flex-row",
-            "ctaStyle": "default",
-            "imageOpacity": 1,
-            "svgOneOpacity": 0.53,
-            "svgTwoOpacity": 1,
-            "logoRotation": 0,
-            "backgroundImage": false,
-            "imageSize": "50%",
-            "titleSize": "2rem",
-            "bodySize": "1.25rem",
-            "switchPosition": false,
-            "imageZIndex": 30,
-            "textLength": 0,
-            "zIndex": {
-              "image": 20
-            }
-          }
-        }
-      },
-      {
-        "size": "1080x1080",
-        "settings": {
-          "elements": {
-            "logoIcon": true,
-            "image": true,
-            "headline": true,
-            "text": false,
-            "tags": true,
-            "cta": true,
-            "svgWave": true,
-            "textContainer": true,
-            "backdrop": false,
-            "filter": false,
-            "backbanner": false
-          },
-          "layout": {
-            "logoLayout": "flex-row",
-            "ctaStyle": "default",
-            "imageOpacity": 1,
-            "svgOneOpacity": 0.53,
-            "svgTwoOpacity": 1,
-            "logoRotation": 0,
-            "backgroundImage": false,
-            "imageSize": "50%",
-            "titleSize": "4.9rem",
-            "bodySize": "1.25rem",
-            "switchPosition": false,
-            "imageZIndex": 30,
-            "textLength": 0,
-            "positions": {
-              "path": "translate(-10, -30)",
-              "svg": {
-                "top": "-5px",
-                "left": ""
-              },
-              "ad": {
-                "top": "",
-                "left": "20px"
-              },
-              "text": {
-                "top": "-45px",
-                "left": ""
-              },
-              "textcontainer": {
-                "top": "875px",
-                "left": "100px"
-              },
-              "headline": {
-                "top": "-75px",
-                "left": "175px"
-              },
-              "cta": {
-                "top": "105px",
-                "left": "300px"
-              },
-              "image": {
-                "top": "150px",
-                "left": "240px"
-              }
-            }
-          }
-        }
-      },
-      {
-        "size": "1080x1920",
-        "settings": {
-          "elements": {
-            "logoIcon": true,
-            "image": true,
-            "headline": true,
-            "text": false,
-            "tags": true,
-            "cta": true,
-            "svgWave": true,
-            "textContainer": true,
-            "backdrop": false,
-            "filter": false,
-            "backbanner": false
-          },
-          "layout": {
-            "logoLayout": "flex-row",
-            "ctaStyle": "default",
-            "imageOpacity": 1,
-            "svgOneOpacity": 0.53,
-            "svgTwoOpacity": 1,
-            "logoRotation": 0,
-            "backgroundImage": false,
-            "imageSize": "50%",
-            "titleSize": "4.9rem",
-            "bodySize": "1.25rem",
-            "switchPosition": false,
-            "imageZIndex": 30,
-            "textLength": 0,
-            "positions": {
-              "path": "translate(-10, -30)",
-              "svg": {
-                "top": "-5px",
-                "left": ""
-              },
-              "ad": {
-                "top": "",
-                "left": "20px"
-              },
-              "text": {
-                "top": "-45px",
-                "left": ""
-              }
-            }
-          }
-        }
-      }
-    ,
+    },
     {
         "size": "300x250",
         "settings": {
@@ -4376,11 +4393,12 @@ const bannerSettings = [
                 "textContainer": true,
                 "backdrop": false,
                 "filter": false,
-                "backbanner": false
+                "backbanner": false,
+                "frontdrop": false,
             },
             "layout": {
                 "logoLayout": "flex-col",
-                "ctaStyle": "default",
+                "ctaStyle": "circle",
                 "imageOpacity": 1,
                 "svgOneOpacity": "1",
                 "svgTwoOpacity": "1",
@@ -4409,7 +4427,8 @@ const bannerSettings = [
                 "textContainer": true,
                 "backdrop": false,
                 "filter": false,
-                "backbanner": false
+                "backbanner": false,
+                "frontdrop": false,
             },
             "layout": {
                 "logoLayout": "flex-row",
@@ -4442,11 +4461,12 @@ const bannerSettings = [
                 "textContainer": true,
                 "backdrop": false,
                 "filter": false,
-                "backbanner": false
+                "backbanner": false,
+                "frontdrop": false,
             },
             "layout": {
                 "logoLayout": "flex-row",
-                "ctaStyle": "default",
+                "ctaStyle": "circle",
                 "imageOpacity": 1,
                 "svgOneOpacity": "1",
                 "svgTwoOpacity": "1",
@@ -4475,7 +4495,8 @@ const bannerSettings = [
                 "textContainer": true,
                 "backdrop": false,
                 "filter": false,
-                "backbanner": false
+                "backbanner": false,
+                "frontdrop": false,
             },
             "layout": {
                 "logoLayout": "flex-row",
@@ -4495,39 +4516,6 @@ const bannerSettings = [
         }
     },
     {
-        "size": "1200x628",
-        "settings": {
-            "elements": {
-                "logoIcon": true,
-                "image": true,
-                "headline": true,
-                "text": false,
-                "tags": true,
-                "cta": true,
-                "svgWave": true,
-                "textContainer": true,
-                "backdrop": false,
-                "filter": false,
-                "backbanner": false
-            },
-            "layout": {
-                "logoLayout": "flex-row",
-                "ctaStyle": "default",
-                "imageOpacity": 1,
-                "svgOneOpacity": 0.53,
-                "svgTwoOpacity": 1,
-                "logoRotation": 0,
-                "backgroundImage": false,
-                "imageSize": "43%",
-                "titleSize": "2.9rem",
-                "bodySize": "1.25rem",
-                "switchPosition": false,
-                "imageZIndex": 16,
-                "textLength": 0
-            }
-        }
-    },
-    {
         "size": "1200x628-2",
         "settings": {
             "elements": {
@@ -4541,7 +4529,8 @@ const bannerSettings = [
                 "textContainer": true,
                 "backdrop": false,
                 "filter": false,
-                "backbanner": false
+                "backbanner": false,
+                "frontdrop": false,
             },
             "layout": {
                 "logoLayout": "flex-row",
@@ -4556,7 +4545,10 @@ const bannerSettings = [
                 "bodySize": "1.25rem",
                 "switchPosition": false,
                 "imageZIndex": 30,
-                "textLength": 0
+                "textLength": 0,
+                "zIndex": {
+                    "image": 20
+                }
             }
         }
     },
@@ -4574,7 +4566,8 @@ const bannerSettings = [
                 "textContainer": true,
                 "backdrop": false,
                 "filter": false,
-                "backbanner": false
+                "backbanner": false,
+                "frontdrop": false,
             },
             "layout": {
                 "logoLayout": "flex-row",
@@ -4603,13 +4596,29 @@ const bannerSettings = [
                     "text": {
                         "top": "-45px",
                         "left": ""
+                    },
+                    "textcontainer": {
+                        "top": "875px",
+                        "left": "100px"
+                    },
+                    "headline": {
+                        "top": "-75px",
+                        "left": "175px"
+                    },
+                    "cta": {
+                        "top": "105px",
+                        "left": "300px"
+                    },
+                    "image": {
+                        "top": "150px",
+                        "left": "240px"
                     }
                 }
             }
         }
     },
     {
-        "size": "1080x1920",
+        "size": "720x1280",
         "settings": {
             "elements": {
                 "logoIcon": true,
@@ -4622,7 +4631,8 @@ const bannerSettings = [
                 "textContainer": true,
                 "backdrop": false,
                 "filter": false,
-                "backbanner": false
+                "backbanner": false,
+                "frontdrop": false,
             },
             "layout": {
                 "logoLayout": "flex-row",
@@ -4632,7 +4642,7 @@ const bannerSettings = [
                 "svgTwoOpacity": 1,
                 "logoRotation": 0,
                 "backgroundImage": false,
-                "imageSize": "50%",
+                "imageSize": "65%",
                 "titleSize": "4.9rem",
                 "bodySize": "1.25rem",
                 "switchPosition": false,
@@ -4647,15 +4657,12 @@ const bannerSettings = [
                     "ad": {
                         "top": "",
                         "left": "20px"
-                    },
-                    "text": {
-                        "top": "-45px",
-                        "left": ""
                     }
                 }
             }
         }
     }
+
 ]
 
 const filters = [

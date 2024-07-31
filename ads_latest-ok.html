@@ -15,8 +15,8 @@
       rel="stylesheet"
     />
     <script defer src="cache/images.js"></script>
-    <script defer src="js/adsJson_current.js"></script>
-    <script defer src="js/ads_6am-3pm-not-working.js"></script>
+    <script defer src="js/adsJson.js"></script>
+    <script defer src="js/ads.js"></script>
     <link rel="stylesheet" href="styles.css" />
   </head>
   <body class="h-full">
@@ -357,19 +357,235 @@
             <!-- Your content -->
 
             <!-- 480x120 -->
-            
+            <div class="flex flex-col items-center snap-center" onclick="selectBanner('480x120')">
+              <div class="text-center text-4xl text-gray-200 font-bold px-4 py-1 mb-2">480x120</div>
+
+              <div
+                id="ad-container-480x120"
+                class="ad-container ring-1 ring-gray-300 relative p-4 flex flex-row justify-between items-center overflow-hidden"
+                style="width: 480px; height: 120px"
+              >
+                <div id="backbanner-480x120" class="absolute top-0 left-0 w-full h-full z-0 bg-gray-100"></div>
+                <img id="backdrop-480x120" src="img/transparent-background-animated-gif.gif" alt="Ad Image" class="w-full z-0 absolute top-0 left-0" />
+                <div class="absolute -bottom-3 left-0 w-full h-full z-10">
+                  <svg width="480" height="120" id="svg-480x120" viewBox="0 -5 480 120" xmlns="http://www.w3.org/2000/svg">
+                    <path
+                      d="m0.11,120.89l0,-52.78c269.43,-51.35 199.85,33.94 479.94,-31.5l0,84.28l-479.94,0z"
+                      stroke="none"
+                      stroke-width="0"
+                      fill-opacity="0.53"
+                      class="path-one"
+                      id="path-one-480x120"
+                    ></path>
+                  </svg>
+                </div>
+                <div class="absolute -bottom-3 left-0 w-full h-full z-20">
+                  <svg width="480" height="120" id="svg-480x120" viewBox="0 10 480 120" xmlns="http://www.w3.org/2000/svg">
+                    <path
+                      d="m-0.28,120.44l0,-37.03c304.38,84.4 295.51,-35.19 481.11,0l0,37.03l-481.11,0z"
+                      stroke="none"
+                      stroke-width="0"
+                      fill-opacity="1"
+                      class="path-two"
+                      id="path-two-480x120"
+                    ></path>
+                  </svg>
+                </div>
+                <div id="logo-icon-480x120" class="text-sm mr-4 flex flex-row gap-1 z-30">
+                  <i class="fa fa-box" aria-hidden="true"></i><a href="https://octopus.energy"> <span style="font-weight: 700">Octopus</span> Energy</a>
+                </div>
+                <img id="filter-480x120" src="img/filter-comic.png" alt="Ad Image" class="w-full z-0 absolute top-0 left-0" />
+                <img id="image-480x120" src="img/energy_savings_2.png" alt="Ad Image" class="w-1/4 z-30 relative top-0" />
+                <div id="textcontainer-480x120" class="w-2/3 ml-4 relative z-40">
+                  <h5 class="ads-title text-lg font-bold relative z-40 top-0" id="headline-480x120">Sunglasses Deals Up to 50% Off</h5>
+                  <div class="flex justify-between items-center">
+                    <p class="hidden text-sm" id="text-480x120">From Aviator Shades to Retro sunglasses. Check out our new collection</p>
+                    <p class="text-sm hidden" id="tags-480x120">#EnergySavings #SwitchAndSave</p>
+                    <button class="ads-button text-white px-4 py-2 mt-2 rounded" id="cta-480x120">Shop now</button>
+                  </div>
+                </div>
+              </div>
+            </div>
 
             <!-- 300x250 -->
-
+            <div class="flex flex-col items-center" onclick="selectBanner('300x250')">
+              <div class="text-center text-4xl text-gray-200 font-bold px-4 py-1 mb-2">300x250</div>
+              <div
+                id="ad-container-300x250"
+                class="ad-container ring-1 ring-gray-300 relative p-4 flex flex-col justify-between overflow-hidden snap-center"
+                style="width: 300px; height: 250px"
+              >
+                <div id="backbanner-300x250" class="absolute top-0 left-0 w-full h-full z-0 bg-gray-100"></div>
+                <img id="backdrop-300x250" src="img/transparent-background-animated-gif.gif" alt="Ad Image" class="w-full z-0 absolute top-0 left-0" />
+                <div class="absolute -bottom-14 left-0 w-full h-full z-10">
+                  <svg width="300" height="250" id="svg-300x250" viewBox="0 70 440 360" xmlns="http://www.w3.org/2000/svg">
+                    <path
+                      d="m0.11,439.89l0,-258.28c212.07,24.97 193.46,19.74 440.44,0l0,258.28l-440.44,0z"
+                      stroke="none"
+                      stroke-width="0"
+                      fill-opacity="0.53"
+                      class="path-one"
+                      style="transition-property: all; transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1); transition-duration: 300ms; transition-delay: 150ms"
+                      id="path-one-300x250"
+                    ></path>
+                  </svg>
+                </div>
+                <div class="absolute -bottom-14 left-0 w-full h-full z-20">
+                  <svg width="300" height="250" id="svg-300x250" viewBox="0 90 440 360" xmlns="http://www.w3.org/2000/svg">
+                    <path
+                      d="m-0.28,439.44l0,-128.02c143.67,-64.3 241.78,-45.6 440.61,0l0,128.02l-440.61,0z"
+                      stroke="none"
+                      stroke-width="0"
+                      fill-opacity="1"
+                      class="path-two hidden"
+                      style="transition-property: all; transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1); transition-duration: 300ms; transition-delay: 150ms"
+                      id="path-two-300x250"
+                    ></path>
+                  </svg>
+                </div>
+                <div class="flex items-start relative z-20">
+                  <div id="logo-title-300x250" class="flex flex-col gap-2 relative z-20">
+                    <div id="logo-icon-300x250" class="text-sm mr-4 flex flex-row gap-1">
+                      <i class="fa fa-box" aria-hidden="true"></i> <a href="https://octopus.energy"> <span style="font-weight: 700">Octopus</span> Energy</a>
+                    </div>
+                    <h5 class="ads-title text-xl font-bold mb-2 self-center relative z-20" id="headline-300x250">Sunglasses Deals Up to 50% Off</h5>
+                  </div>
+                  <img id="filter-300x250" src="img/filter-comic.png" alt="Ad Image" class="w-full z-0 absolute top-0 left-0" />
+                  <img id="image-300x250" src="img/energy_savings_2.png" alt="Ad Image" class="w-1/2" />
+                </div>
+                <div id="textcontainer-300x250" class="z-40 relative">
+                  <p class="text-sm -mt-4" id="text-300x250">Discover the latest collection of Men's sunglasses. Summer Sale Up to 50% Off</p>
+                  <div class="flex justify-between items-center">
+                    <p class="text-sm" id="tags-300x250">#EnergySavings #SwitchAndSave</p>
+                    <button class="ads-button text-white px-4 py-2 mt-2 rounded" id="cta-300x250">SHOP NOW</button>
+                  </div>
+                </div>
+              </div>
+            </div>
 
             <!-- 160x600 -->
-
+            <div class="flex flex-col items-center" onclick="selectBanner('160x600')">
+              <div class="text-center text-4xl text-gray-200 font-bold px-4 py-1 mb-2">160x600</div>
+              <div
+                id="ad-container-160x600"
+                class="ad-container ring-1 ring-gray-300 relative p-4 flex flex-col justify-between overflow-hidden snap-center"
+                style="height: 600px; width: 160px"
+              >
+                <div id="backbanner-160x600" class="absolute top-0 left-0 w-full h-full z-0 bg-gray-100"></div>
+                <img id="backdrop-160x600" src="img/transparent-background-animated-gif.gif" alt="Ad Image" class="w-full z-0 absolute top-0 left-0" />
+                <div class="absolute -bottom-40 left-0 w-full h-full z-10">
+                  <svg width="160" height="600" id="svg-160x600" viewBox="5 105 190 480" xmlns="http://www.w3.org/2000/svg">
+                    <path
+                      d="m1.11,438.89l0,-431.78c95.55,41.74 87.16,33 198.44,0l0,431.78l-198.44,0z"
+                      stroke="none"
+                      stroke-width="0"
+                      fill="rgba(250, 204, 21, 1)"
+                      fill-opacity="0.53"
+                      class="path-one"
+                      style="transition-property: all; transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1); transition-duration: 300ms; transition-delay: 150ms"
+                      id="path-one-160x600"
+                    ></path>
+                  </svg>
+                </div>
+                <div class="absolute -bottom-40 left-0 w-full h-full z-20">
+                  <svg width="160" height="600" id="svg-160x600" viewBox="5 0 190 480" xmlns="http://www.w3.org/2000/svg">
+                    <path
+                      d="m2.22,438.33l0,-248.23c66.94,-30.64 104.41,-9.89 195.11,0l0,248.23l-195.11,0z"
+                      stroke="none"
+                      stroke-width="0"
+                      fill="rgba(250, 204, 21, 1)"
+                      fill-opacity="1"
+                      class="path-two"
+                      style="transition-property: all; transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1); transition-duration: 300ms; transition-delay: 150ms"
+                      id="path-two-160x600"
+                    ></path>
+                  </svg>
+                </div>
+                <div id="logo-icon-160x600" class="text-sm mb-4 flex gap-1 items-center">
+                  <i class="fa fa-box" aria-hidden="true"></i> <a href="https://octopus.energy"> <span style="font-weight: 700">Octopus</span>Energy</a>
+                </div>
+                <img id="filter-160x600" src="img/filter-comic.png" alt="Ad Image" class="w-full z-0 absolute top-0 left-0" />
+                <img id="image-160x600" src="img/energy_savings.jpg" alt="Ad Image" class="w-full mb-4 absolute right-0 top-10" />
+                <div id="textcontainer-160x600" class="relative z-20">
+                  <h5 class="ads-title text-xl font-bold mb-2" id="headline-160x600">Sunglasses Deals Up to 50% Off</h5>
+                  <p class="text-sm" id="text-160x600">Discover the latest collection of Men's sunglasses. Summer Sale Up to 50% Off</p>
+                  <p class="text-sm" id="tags-160x600">#EnergySavings #SwitchAndSave</p>
+                  <button class="ads-button text-white px-2 py-2 mt-2 rounded" id="cta-160x600">SHOP NOW</button>
+                </div>
+              </div>
+            </div>
 
             <!-- 300x250 Text Ad -->
-
+            <div class="flex flex-col items-center" onclick="selectBanner('300x250-text')">
+              <div class="text-center text-4xl text-gray-200 font-bold px-4 py-1 mb-2">300x250 Text Ad</div>
+              <div
+                id="ad-container-300x250-text"
+                class="ad-container ring-1 ring-gray-300 p-4 flex flex-col justify-between overflow-hidden snap-center"
+                style="width: 300px; height: 250px"
+              >
+                <div id="backbanner-300x250-text" class="absolute top-0 left-0 w-full h-full z-0 bg-gray-100"></div>
+                <img id="backdrop-300x250-text" src="img/transparent-background-animated-gif.gif" alt="Ad Image" class="w-full z-0 absolute top-0 left-0" />
+                <div id="logo-icon-300x250-text" class="text-sm mb-4">
+                  <i class="fa fa-box" aria-hidden="true"></i> <a href="https://octopus.energy"> <span style="font-weight: 700">Octopus</span>Energy</a>
+                </div>
+                <img id="filter-300x250-text" src="img/filter-comic.png" alt="Ad Image" class="w-full z-0 absolute top-0 left-0" />
+                <img id="image-300x250-text" src="img/energy_savings_2.png" alt="Ad Image" />
+                <div id="textcontainer-300x250-text" class="relative z-20">
+                  <h5 class="ads-title text-xl font-bold mb-2" id="headline-300x250-text">Sunglasses Deals Up to 50% Off</h5>
+                  <p class="text-sm" id="text-300x250-text">Discover the latest collection of Men's sunglasses. Summer Sale Up to 50% Off</p>
+                  <p class="text-sm" id="tags-300x250-text">#EnergySavings #SwitchAndSave</p>
+                  <button class="ads-button text-white px-4 py-2 mt-2 rounded" id="cta-300x250-text">SHOP NOW</button>
+                </div>
+              </div>
+            </div>
 
             <!-- 728x90 -->
-
+            <div class="flex flex-col items-center" onclick="selectBanner('728x90')">
+              <div class="text-center text-4xl text-gray-200 font-bold px-4 py-1 mb-2">728x90</div>
+              <div
+                id="ad-container-728x90"
+                class="ad-container ring-1 ring-gray-300 relative p-4 flex flex-row justify-between items-center overflow-hidden snap-center"
+                style="width: 728px; height: 90px"
+              >
+                <div id="backbanner-728x90" class="absolute top-0 left-0 w-full h-full z-0 bg-gray-100"></div>
+                <img id="backdrop-728x90" src="img/transparent-background-animated-gif.gif" alt="Ad Image" class="w-full z-0 absolute top-0 left-0" />
+                <div class="absolute -bottom-3 left-0 w-full h-full">
+                  <svg width="100%" height="100%" id="svg-728x90" viewBox="0 0 1340 170" xmlns="http://www.w3.org/2000/svg">
+                    <path
+                      d="M 0,445 C 0,445 0,148 0,148 C 142.28571428571428,158.21428571428572 284.57142857142856,168.42857142857142 412,170 C 539.4285714285714,171.57142857142858 652,164.5 754,148 C 856,131.5 947.4285714285713,105.57142857142858 1060,104 C 1172.5714285714287,102.42857142857142 1306.2857142857142,125.21428571428571 1440,148 C 1440,148 1440,445 1440,445 Z"
+                      stroke="none"
+                      stroke-width="0"
+                      fill="rgba(250, 204, 21, 1)"
+                      fill-opacity="0.53"
+                      class="path-one"
+                      style="transition-property: all; transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1); transition-duration: 300ms; transition-delay: 150ms"
+                      id="path-one-728x90"
+                    ></path>
+                    <path
+                      d="M 0,533 C 0,533 0,355 0,355 C 126.78571428571428,377.3571428571429 253.57142857142856,399.7142857142857 357,390 C 460.42857142857144,380.2857142857143 540.4999999999999,338.5 668,336 C 795.5000000000001,333.5 970.4285714285716,370.2857142857143 1107,380 C 1243.5714285714284,389.7142857142857 1341.7857142857142,372.3571428571429 1440,355 C 1440,355 1440,533 1440,533 Z"
+                      stroke="none"
+                      stroke-width="0"
+                      fill="rgba(250, 204, 21, 1)"
+                      fill-opacity="1"
+                      class="path-two"
+                      style="transition-property: all; transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1); transition-duration: 300ms; transition-delay: 150ms"
+                      id="path-two-728x90"
+                    ></path>
+                  </svg>
+                </div>
+                <div id="logo-icon-728x90" class="text-sm mr-4 flex flex-row gap-1 z-40">
+                  <i class="fa fa-box" aria-hidden="true"></i><a href="https://octopus.energy"> <span style="font-weight: 700">Octopus</span> Energy</a>
+                </div>
+                <img id="filter-728x90" src="img/filter-comic.png" alt="Ad Image" class="w-full z-0 absolute top-0 left-0" />
+                <img id="image-728x90" src="img/energy_savings_2.png" alt="Ad Image" class="w-24 z-40 relative" />
+                <div id="textcontainer-728x90" class="flex justify-between w-2/3 ml-4 z-40 relative items-center">
+                  <h5 class="ads-title text-lg font-bold" id="headline-728x90">Sunglasses Deals Up to 50% Off</h5>
+                  <p class="hidden text-sm px-4" id="text-728x90">Discover the latest collection of Men's sunglasses. Summer Sale Up to 50% Off</p>
+                  <p class="text-sm hidden" id="tags-728x90">#EnergySavings #SwitchAndSave</p>
+                  <button class="ads-button text-white px-4 py-2 mt-2 rounded-full" id="cta-728x90">SHOP NOW</button>
+                </div>
+              </div>
+            </div>
 
             <!-- Facebook Ad 1200x628 -->
             <div class="flex flex-col items-center" onclick="selectBanner('1200x628')">
@@ -434,13 +650,155 @@
               </div>
             </div>
             <!-- Facebook Ad 1200x628-2 -->
+            <div class="flex flex-col items-center" onclick="selectBanner('1200x628-2')">
+              <div class="text-center text-4xl text-gray-200 font-bold px-4 py-1 mb-2">1200x628-2 Facebook Ad</div>
+              <div
+                id="ad-container-1200x628-2"
+                class="ad-container ring-1 ring-gray-300 relative p-4 flex flex-row justify-between items-center overflow-hidden snap-center"
+                style="width: 1200px; height: 628px"
+              >
+                <div id="backbanner-1200x628-2" class="absolute top-0 left-0 w-full h-full z-0 bg-gray-100"></div>
+                <img id="backdrop-1200x628-2" src="img/transparent-background-animated-gif.gif" alt="Ad Image" class="w-full z-0 absolute top-0 left-0" />
+                <div class="absolute -bottom-3 left-0 w-full h-3/4 z-10">
+                  <svg width="100%" height="100%" id="svg-1200x628-2" viewBox="0 0 1440 523" xmlns="http://www.w3.org/2000/svg">
+                    <path
+                      d="M 0,533 C 0,533 0,177 0,177 C 111.64285714285714,171.32142857142856 223.28571428571428,165.64285714285714 336,151 C 448.7142857142857,136.35714285714286 562.4999999999999,112.74999999999997 674,134 C 785.5000000000001,155.25000000000003 894.7142857142858,221.3571428571429 1022,236 C 1149.2857142857142,250.6428571428571 1294.642857142857,213.82142857142856 1440,177 C 1440,177 1440,533 1440,533 Z"
+                      stroke="none"
+                      stroke-width="0"
+                      fill-opacity="0.53"
+                      class="path-one"
+                      style="transition-property: all; transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1); transition-duration: 300ms; transition-delay: 150ms"
+                      id="path-one-1200x628-2"
+                    ></path>
+                  </svg>
+                </div>
+                <div class="absolute -bottom-3 left-0 w-full h-3/4 z-20">
+                  <svg width="100%" height="100%" id="svg-1200x628-2" viewBox="0 0 1440 523" xmlns="http://www.w3.org/2000/svg">
+                    <path
+                      d="M 0,533 C 0,533 0,355 0,355 C 126.78571428571428,377.3571428571429 253.57142857142856,399.7142857142857 357,390 C 460.42857142857144,380.2857142857143 540.4999999999999,338.5 668,336 C 795.5000000000001,333.5 970.4285714285716,370.2857142857143 1107,380 C 1243.5714285714284,389.7142857142857 1341.7857142857142,372.3571428571429 1440,355 C 1440,355 1440,533 1440,533 Z"
+                      stroke="none"
+                      stroke-width="0"
+                      fill-opacity="1"
+                      class="path-two"
+                      style="transition-property: all; transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1); transition-duration: 300ms; transition-delay: 150ms"
+                      id="path-two-1200x628-2"
+                    ></path>
+                  </svg>
+                </div>
 
+                <div id="logo-icon-1200x628-2" class="text-sm mr-4 flex flex-row gap-1 z-30">
+                  <i class="fa fa-box" aria-hidden="true"></i><a href="https://octopus.energy"> <span style="font-weight: 700">Octopus</span> Energy</a>
+                </div>
+                <img id="filter-1200x628-2" src="img/filter-comic.png" alt="Ad Image" class="w-full z-0 absolute top-0 left-0" />
+                <img id="image-1200x628-2" src="img/energy_savings_2.png" alt="Ad Image" class="w-1/2 z-10 relative" />
+                <div id="textcontainer-1200x628-2" class="flex flex-col gap-2 w-1/3 ml-4 items-start z-10 relative">
+                  <h4 class="ads-title text-3xl font-bold" id="headline-1200x628-2">Sunglasses Deals Up to 50% Off</h4>
+                  <p class="hidden" id="text-1200x628-2">From Aviator Shades to Retro sunglasses. Check out our new collection</p>
+                  <p class="text-sm" id="tags-1200x628-2">#EnergySavings #SwitchAndSave</p>
+                  <button class="ads-button text-white px-4 py-2 mt-2 rounded" id="cta-1200x628-2">Shop now</button>
+                </div>
+              </div>
+            </div>
 
             <!-- 1080x1080 -->
-            
+            <div class="flex flex-col items-center" onclick="selectBanner('1080x1080')">
+              <div class="text-center text-4xl text-gray-200 font-bold px-4 py-1 mb-2">1080x1080 Facebook 1:1 Ad</div>
+              <div
+                id="ad-container-1080x1080"
+                class="ad-container ring-1 ring-gray-300 relative p-8 flex flex-col justify-between items-center overflow-hidden snap-center"
+                style="width: 1080px; height: 1080px"
+              >
+                <div id="backbanner-1080x1080" class="absolute top-0 left-0 w-full h-full z-0 bg-gray-100"></div>
+                <img id="backdrop-1080x1080" src="img/transparent-background-animated-gif.gif" alt="Ad Image" class="w-full z-0 absolute top-0 left-0" />
+                <div class="absolute -bottom-3 left-0 w-full h-3/4 z-10">
+                  <svg width="100%" height="100%" id="svg-1080x1080" viewBox="0 0 1580 1180" xmlns="http://www.w3.org/2000/svg">
+                    <path
+                      d="M0,1600 L0,800 C266.67,866.67 533.33,933.33 800,933.33 C1066.67,933.33 1333.33,800 1600,666.67 L1600,1600 Z"
+                      stroke="none"
+                      stroke-width="0"
+                      fill-opacity="0.53"
+                      class="path-one"
+                      id="path-one-1080x1080"
+                    ></path>
+                  </svg>
+                </div>
+                <div class="absolute -bottom-3 left-0 w-full h-3/4 z-20">
+                  <svg width="100%" height="100%" id="svg-1080x1080" viewBox="0 0 1580 1180" xmlns="http://www.w3.org/2000/svg">
+                    <path
+                      d="M0,1600 L0,1066.67 C266.67,1000 533.33,933.33 800,933.33 C1066.67,933.33 1333.33,1066.67 1600,1200 L1600,1600 Z"
+                      stroke="none"
+                      stroke-width="0"
+                      fill-opacity="1"
+                      class="path-two"
+                      id="path-two-1080x1080"
+                    ></path>
+                  </svg>
+                </div>
+
+                <div id="logo-icon-1080x1080" class="text-4xl mb-8 flex flex-row gap-2 z-30">
+                  <i class="fa fa-box" aria-hidden="true"></i><a href="https://octopus.energy"> <span style="font-weight: 700">Octopus</span> Energy</a>
+                </div>
+
+                <img id="filter-1080x1080" src="img/filter-comic.png" alt="Ad Image" class="w-full z-40" />
+                <img id="image-1080x1080" src="img/energy_savings_2.png" alt="Ad Image" class="w-3/4 z-30 mb-8" />
+
+                <div id="textcontainer-1080x1080" class="flex flex-col gap-6 w-3/4 items-center z-30 text-center">
+                  <h1 class="ads-title text-4xl font-bold" id="headline-1080x1080">Sunglasses Deals Up to 50% Off</h1>
+                  <p class="text-2xl" id="text-1080x1080">From Aviator Shades to Retro sunglasses. Check out our new collection</p>
+                  <p class="text-xl" id="tags-1080x1080">#EnergySavings #SwitchAndSave</p>
+                  <button class="ads-button text-white px-8 py-4 mt-4 rounded-lg text-2xl" id="cta-1080x1080">Shop now</button>
+                </div>
+              </div>
+            </div>
 
             <!-- 1080x1920 -->
+            <div class="relative flex flex-col items-center" onclick="selectBanner('1080x1920')">
+              <div class="text-center text-4xl text-gray-200 font-bold px-4 py-2 mb-2">1080x1920 TikTok Vertical Ad</div>
+              <div
+                id="ad-container-1080x1920"
+                class="ad-container ring-1 ring-gray-300 relative p-4 flex flex-col justify-between items-center overflow-hidden snap-center"
+                style="width: 1080px; height: 1920px"
+              >
+                <div id="backbanner-1080x1920" class="absolute top-0 left-0 w-full h-full z-0 bg-gray-100"></div>
+                <img id="backdrop-1080x1920" src="img/transparent-background-animated-gif.gif" alt="Ad Image" class="w-full h-full z-0 absolute top-0 left-0" />
+                <div class="absolute bottom-0 left-0 w-full h-2/3 z-10">
+                  <svg width="100%" height="100%" id="svg-1080x1920" viewBox="0 0 1580 1180" xmlns="http://www.w3.org/2000/svg">
+                    <path
+                      d="M0,1600 L0,800 C266.67,866.67 533.33,933.33 800,933.33 C1066.67,933.33 1333.33,800 1600,666.67 L1600,1600 Z"
+                      stroke="none"
+                      stroke-width="0"
+                      fill-opacity="0.53"
+                      class="path-one"
+                      id="path-one-1080x1920"
+                    ></path>
+                  </svg>
+                </div>
+                <div class="absolute bottom-0 left-0 w-full h-2/3 z-20">
+                  <svg width="100%" height="100%" id="svg-1080x1920" viewBox="0 0 1580 1180" xmlns="http://www.w3.org/2000/svg">
+                    <path
+                      d="M0,1600 L0,1066.67 C266.67,1000 533.33,933.33 800,933.33 C1066.67,933.33 1333.33,1066.67 1600,1200 L1600,1600 Z"
+                      stroke="none"
+                      stroke-width="0"
+                      fill-opacity="1"
+                      class="path-two"
+                      id="path-two-1080x1920"
+                    ></path>
+                  </svg>
+                </div>
+                <div id="logo-icon-1080x1920" class="text-4xl mt-4 flex flex-row gap-2 z-30">
+                  <i class="fa fa-box" aria-hidden="true"></i><a href="https://octopus.energy"> <span style="font-weight: 700">Octopus</span> Energy</a>
+                </div>
+                <img id="filter-1080x1920" src="img/filter-comic.png" alt="Ad Image" class="w-full h-full z-0 absolute top-0 left-0" />
+                <img id="image-1080x1920" src="img/energy_savings_2.png" alt="Ad Image" class="w-3/4 z-30 mt-8 mb-4" />
 
+                <div id="textcontainer-1080x1920" class="flex flex-col gap-4 w-3/4 items-center z-30 text-center">
+                  <h1 class="ads-title text-4xl font-bold" id="headline-1080x1920">Sunglasses Deals Up to 50% Off</h1>
+                  <p class="text-2xl" id="text-1080x1920">From Aviator Shades to Retro sunglasses. Check out our new collection</p>
+                  <p class="text-xl" id="tags-1080x1920">#EnergySavings #SwitchAndSave</p>
+                  <button class="ads-button text-white px-8 py-4 mt-4 rounded-lg text-2xl" id="cta-1080x1920">Shop now</button>
+                </div>
+              </div>
+            </div>
           </div>
         </main>
 

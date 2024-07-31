@@ -22,6 +22,17 @@ ads4.html:
   images: ["img/energy_savings_2.png","img/energy_savings.jpg"]
   internalLinks: ["https://octopus.energy"]
   externalLinks: ["https://octopus.energy"]
+ads_latest-ok.html:
+  url: "/ads_latest-ok.html"
+  title: "Responsive Ad Layout"
+  - description
+  - keywords
+  cat: "test-html"
+  - author
+  - readingTime
+  images: ["/img/loyalleads-logo.png","img/transparent-background-animated-gif.gif","img/filter-comic.png","img/energy_savings_2.png","img/energy_savings.jpg","img/frontdrop-studio-inside_03.png",""]
+  internalLinks: ["https://octopus.energy"]
+  externalLinks: ["https://octopus.energy"]
 - ai-update.js
 - ai-update.sh
 - analyze-website.js
@@ -39,8 +50,8 @@ blog:
       cat: "business"
       - author
       - readingTime
-      images: ["/blog/business/marketing/leads5.png","/blog/business/sales/car3.jpg"]
-      internalLinks: ["https://octopus.energy","/blog/","/blog/business/marketing","/blog/business/sales"]
+      images: ["/blog/business/marketing/leads5.png","/blog/business/sales/car3.jpg","/img/leads5.png","/img/leads10.webp","/img/leads9.webp"]
+      internalLinks: ["https://octopus.energy","/blog/","/blog/business/marketing","/blog/business/sales","/blog/business/marketing/01-why-businesses-hesitate-to-implement-lead-generation.html","/blog/business/sales/01-why-businesses-hesitate-to-implement-lead-generation.html","/blog/business/sales/08-why-businesses-hesitate-to-implement-lead-generation-in-their-sales-pipeline.html"]
       externalLinks: ["https://octopus.energy"]
     - leads4.png
     marketing:
@@ -300,6 +311,8 @@ img:
   - 01x01.png
   - 18ct-yellow-gold-and-floating-diamond-solitaire-ring-810-1-p-transformed.png
   - 18ct-yellow-gold-and-floating-diamond-solitaire-ring-810-1-p.png
+  - IMG_3907 2.jpg
+  - IMG_3907.jpg
   - S37-S3BBmzUKJsuy8kFU2-bg-removed.png
   - audience_understanding.webp
   backdrop:
@@ -307,6 +320,9 @@ img:
     - backdrop-studio-inside-02.png
     - backdrop-studio-inside-03.png
     - backdrop-studio-inside.png
+  - backdrop-000-EMPTY.png
+  - backdrop-IMG_3907 3.jpg
+  - backdrop-IMG_3907 4.jpg
   - backdrop-large-production-studio.webp
   - backdrop-podcast-studio-04.webp
   - backdrop-studio-inside-02.png
@@ -316,6 +332,13 @@ img:
   - backdrop-transparent-background-animated-gif.gif
   - banner_300x250.jpg
   - banner_300x250_2.jpg
+  camera:
+    - 1_Zoom_COMP_1.gif
+    - 2_Pan_COMP.gif
+    - 3_Tilt_COMP_2.gif
+    - 4_Dolly_COMP_3.gif
+    - 5_Truck_COMP_4.gif
+    - 6_Pedestal_COMP_5.gif
   - car.jpg
   - car.png
   - car3 2.png
@@ -339,6 +362,7 @@ img:
     - filter-comic.png
     - flat-design-black-white-halftone.jpg
     - flat-design-black-white-halftone.png
+  - filter-000-EMPTY.png
   - filter-10308569_18448119.png
   - filter-279.png
   - filter-32499109_7963948.png
@@ -350,6 +374,7 @@ img:
   - flat-design-black-white-halftone.png
   frontdrop:
     - frontdrop-studio-inside_03.png
+  - frontdrop-000-EMPTY.png
   - frontdrop-studio-inside_03.png
   - frontdrop-studio-inside_04_n.png
   - frontdrop-studio-inside_05_n.png
@@ -376,6 +401,16 @@ img:
   - overcoming_barriers.webp
   - sherif.png
   - sherif2.webp
+  shots:
+    - Boords_lingo_v02_POV.png.webp
+    - Boords_lingo_v02_close.png.webp
+    - Boords_lingo_v02_down.png.webp
+    - Boords_lingo_v02_full.png.webp
+    - Boords_lingo_v02_medium.png.webp
+    - Boords_lingo_v02_shoulder.png.webp
+    - Boords_lingo_v02_two.png.webp
+    - Boords_lingo_v02_up.png.webp
+    - Boords_lingo_v02_xtreme.png.webp
   - spinner.gif
   - transparent-background-animated-gif.gif
   - tree.png
@@ -402,6 +437,9 @@ js:
   - ads.js
   - ads4.js
   - adsJson.js
+  - adsJson_current.js
+  - ads_6am-3pm-not working.js
+  - ads_custom_slid_settings_trans.js
   - blog-search.js
   - convertToMySQLTimestamp.js
   - survey.js
@@ -500,6 +538,17 @@ test:
     externalLinks: ["https://octopus.energy"]
 video.html:
   url: "/video.html"
+  title: "Responsive Ad Layout"
+  - description
+  - keywords
+  cat: "test-html"
+  - author
+  - readingTime
+  images: ["/img/loyalleads-logo.png","img/transparent-background-animated-gif.gif","img/energy_savings_2.png","img/filter-comic.png","img/frontdrop-studio-inside_03.png",""]
+  internalLinks: ["https://octopus.energy"]
+  externalLinks: ["https://octopus.energy"]
+video_old.html:
+  url: "/video_old.html"
   title: "Dynamic Slides"
   - description
   - keywords
