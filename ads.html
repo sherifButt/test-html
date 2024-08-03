@@ -29,7 +29,7 @@
       <!-- Static sidebar for desktop -->
       <div id="sideBar" class="hidden lg:fixed lg:inset-y-0 lg:z-50 lg:flex lg:w-96 lg:flex-col">
         <!-- Sidebar component, swap this element with another sidebar if you like -->
-        <div class="flex grow flex-col gap-y-5 overflow-y-auto border-r border-gray-200 bg-white px-6 pb-4">
+        <div class="flex grow flex-col gap-y-5 overflow-y-auto border-r border-gray-200 bg-white px-6">
           <div class="flex h-16 shrink-0 items-center justify-between">
             <img class="h-8 w-auto" src="/img/loyalleads-logo.png" alt="Your Company" />
             <button type="button" onclick="toggleSideBar()" class="-m-2.5 p-2.5 text-gray-700 lg:hidden z-50">
@@ -331,24 +331,24 @@
               </details>
             </div>
             <!-- banner vs slide toggle -->
-            <div class="sticky -bottom-0 w-full p-4 bg-white border-t flex items-center justify-center">
-              <div class="flex items-center w-flll pr-auto pl-auto">
-                <span class="mr-3 text-xs"><i class="fas fa-ad"></i></span>
-                <label class="switch">
-                  <input type="checkbox" id="settingsToggle" />
-                  <span class="slider round"></span>
-                </label>
-                <span class="ml-3 text-xs"><i class="fas fa-play"></i></span>
-              </div>
-              <div class="flex items-center">
-                <span class="mr-2 text-xs">Animations</span>
-                <label class="switch">
-                  <input type="checkbox" id="animationToggle" checked />
-                  <span class="slider round"></span>
-                </label>
-              </div>
-            </div>
           </nav>
+          <div class="sticky -bottom-0 w-full p-4 bg-white border-t flex items-center justify-center gap-6">
+            <div class="flex items-center w-flll pr-auto pl-auto">
+              <span class="mr-3 text-xs"><i class="fas fa-ad"></i></span>
+              <label class="switch">
+                <input type="checkbox" id="settingsToggle" />
+                <span class="slider round"></span>
+              </label>
+              <span class="ml-3 text-xs"><i class="fas fa-play"></i></span>
+            </div>
+            <div class="flex items-center">
+              <span class="mr-2 text-xs">Animations</span>
+              <label class="switch">
+                <input type="checkbox" id="animationToggle" checked />
+                <span class="slider round"></span>
+              </label>
+            </div>
+          </div>
         </div>
       </div>
 
@@ -641,12 +641,12 @@
                 </div>
                 <div
                   id="textcontainer-1200x628"
-                  class="absolute top-1/2 left-2/3 transform -translate-x-16 -translate-y-1/2 flex flex-col gap-4 items-start z-20 flex flex-col gap-4 items-start z-20"
+                  class="absolute  top-1/2 left-2/3 transform -translate-x-16 -translate-y-1/2 flex flex-col gap-4 items-start z-20 flex flex-col gap-4 items-start z-20"
                 >
-                  <h2 id="headline-1200x628" class="ads-title font-bold">Sunglasses Deals Up to 50% Off</h2>
-                  <p class="hidden" id="text-1200x628">From Aviator Shades to Retro sunglasses. Check out our new collection</p>
-                  <p class="text-sm" id="tags-1200x628">#EnergySavings #SwitchAndSave</p>
-                  <button class="ads-button px-4 py-2 mt-2 rounded" id="cta-1200x628">Shop now</button>
+                  <h2 id="headline-1200x628" class=" top-0 left-0 ads-title font-bold">Sunglasses Deals Up to 50% Off</h2>
+                  <p id="text-1200x628" class="hidden  top-2/3 left-0">From Aviator Shades to Retro sunglasses. Check out our new collection</p>
+                  <p id="tags-1200x628" class="text-sm  top-1/3 left-0">#EnergySavings #SwitchAndSave</p>
+                  <button id="cta-1200x628" class="ads-button buttom-0 left-0 px-4 ">Shop now</button>
                 </div>
               </div>
             </div>
@@ -1050,27 +1050,58 @@
 
             <div class="mb-4">
               <label class="block text-gray-700 text-sm font-bold mb-2" for="editAnimationTemplate">Animation Template</label>
-              <select
-                id="editAnimationTemplate"
-                name="animationTemplate"
-                class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-              >
-                <!-- Options will be dynamically populated -->
-              </select>
+              <div class="flex gap-4 items-center">
+                <select
+                  id="editAnimationTemplate"
+                  name="animationTemplate"
+                  class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                >
+                  <!-- Options will be dynamically populated -->
+                </select>
+                <button type="button" id="editTemplateBtn" class="px-4 py-2 bg-green-500 w-56 text-white rounded">Edit Template</button>
+              </div>
             </div>
 
             <div id="customAnimationFields" class="mb-4 hidden">
-              <label class="block text-gray-700 text-sm font-bold mb-2" for="editAnimations">Custom Animations (JSON)</label>
+              <label class="block text-gray-700 text-sm font-bold mb-4" for="editAnimations">Custom Animations (JSON)</label>
               <textarea
                 id="editAnimations"
                 name="animations"
-                class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                rows="5"
+                class="font-mono bg-white text-xs text-gray-800 shadow appearance-none border rounded w-full py-4 px-3 leading-tight focus:outline-none focus:shadow-outline"
+                rows="25"
               ></textarea>
-              <button type="button" id="saveAsNewTemplateBtn" class="mt-2 px-4 py-2 bg-blue-500 text-white rounded">Save as New Template</button>
-              <button type="button" id="updateTemplateBtn" class="mt-2 px-4 py-2 bg-yellow-500 text-white rounded hidden">Update Template</button>
+              <div class="flex gap-4">
+                <button type="button" id="updateTemplateBtn" class="mt-2 px-4 py-2 bg-yellow-500 text-white rounded hidden">Update Template</button>
+                <button type="button" id="saveAsNewTemplateBtn" class="mt-2 px-4 py-2 bg-blue-500 text-white rounded">Save as New Template</button>
+              </div>
             </div>
-            <button type="button" id="editTemplateBtn" class="mt-2 px-4 py-2 bg-green-500 text-white rounded">Edit Template</button>
+
+            <div class="mb-4">
+              <label class="block text-gray-700 text-sm font-bold mb-2" for="editSettingsTemplate">Settings Template</label>
+              <div class="flex gap-4 items-center">
+                <select
+                  id="editSettingsTemplate"
+                  name="settingsTemplate"
+                  class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                >
+                  <!-- Options will be dynamically populated -->
+                </select>
+                <button type="button" id="editSettingsTemplateBtn" class="px-4 py-2 bg-green-500 w-56 text-white rounded">Edit Template</button>
+              </div>
+            </div>
+            <div id="customSettingsFields" class="mb-4 hidden">
+              <label class="block text-gray-700 text-sm font-bold mb-4" for="editSettings">Custom Settings (JSON)</label>
+              <textarea
+                id="editSettings"
+                name="settings"
+                class="font-mono bg-white text-xs text-gray-800 shadow appearance-none border rounded w-full py-4 px-3 leading-tight focus:outline-none focus:shadow-outline"
+                rows="25"
+              ></textarea>
+              <div class="flex gap-4">
+                <button type="button" id="updateSettingsTemplateBtn" class="mt-2 px-4 py-2 bg-yellow-500 text-white rounded hidden">Update Template</button>
+                <button type="button" id="saveAsNewSettingsTemplateBtn" class="mt-2 px-4 py-2 bg-blue-500 text-white rounded">Save as New Template</button>
+              </div>
+            </div>
 
             <div class="grid grid-col-1 xl:grid-cols-3 items-start">
               <div class="flex items-center justify-between">
@@ -1093,6 +1124,13 @@
                   <input type="checkbox" id="isEntryAnimated" name="isEntryAnimated" />
                   <span class="slider round"></span>
                 </label>
+                <div id="editSlideModal" class="modal hidden">
+                  <!-- ... other modal content ... -->
+                  <button id="saveAsNewTemplateBtn">Save as New Template</button>
+                  <button id="updateTemplateBtn">Update Template</button>
+                  <button id="editTemplateBtn">Edit Template</button>
+                  <!-- ... -->
+                </div>
               </div>
             </div>
 

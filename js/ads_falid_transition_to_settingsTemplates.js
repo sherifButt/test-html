@@ -16,40 +16,17 @@ let isDragging = false;
 let draggedMarker = null;
 let dragStartX = 0;
 let originalMarkerPosition = 0;
-
-// Important snapping issue:
-// bringing back moving slide to time line location 
-// fixing timeline length issue
-// time line zoom
-// zoom scroller
-
-
-
 let zoomLevel = 1;
 const maxZoom = 5;
 const minZoom = 0.2;
 let zoomCenter = 0;
-
-// add scroller below the timeline
 let scrollContainerWidth = 0;
-
-// gapping scroll bar and moving it
-// enhancing gapping scroll bar accuracy
-// show marker exact time on draping
 let originalCounterValue = '';
-
-// time line to jump to marker location when clicked
-// update slides object
 let currentCampaignIndex = 0;
-
-// fix jumbig issue
-// fix jumping issue
 let isAutoPlayActive = false;
-
-// update animationTemplates array object
-const sizes = ["480x120", "300x250", "160x600", "300x250-text", "728x90", "1200x628", "1200x628-2", "1080x1080", "720x1280"];
-
+let sizes = []
 let currentImageType = 'main';
+let editingTemplateId = null;
 
 let uiSettings = {
     isSlideSettings: false,
@@ -58,12 +35,24 @@ let uiSettings = {
     // Add other UI settings here as needed
 };
 
-let editingTemplateId = null;
-
-// enhance elements edit locaion and sclging
-
-
-
+const elementMap = {
+    'logo-icon': 'logoIcon',
+    'svg-wave': 'svgWave',
+    'path-one': 'pathOne',
+    'path-two': 'pathTwo',
+    'image': 'image',
+    'headline': 'headline',
+    'text': 'text',
+    'tags': 'tags',
+    'cta': 'cta',
+    'background': 'backgroundImage',
+    'logo-title': 'logoTitle',
+    'textcontainer': 'textContainer',
+    'backdrop': 'backdrop',
+    'filter': 'filter',
+    'frontdrop': 'frontdrop',
+    'backbanner': 'backbanner'
+};
 
 // implanting campaign object
 let slides = campaigns[currentCampaignIndex].slides.map(ad => {
@@ -77,33 +66,574 @@ let slides = campaigns[currentCampaignIndex].slides.map(ad => {
 let campaign = campaigns[currentCampaignIndex];
 delete campaign.slides;
 
-function getSlideSettings(size) {
-    if (uiSettings.isSlideSettings) {
-        if (!storedSlides[currentAdIndex].settings) {
-            initializeSlideSettings(size);
-        }
-        if (storedSlides[currentAdIndex].settings && storedSlides[currentAdIndex].settings.template && storedSlides[currentAdIndex].settings.template !== null) {
-            return storedBannerSettings.find(setting => setting.size === size).settings;
-        }
-        return storedSlides[currentAdIndex].settings;
-    } else {
-        return storedBannerSettings.find(setting => setting.size === size).settings;
+/****************************************/
+/*  Initialization and Setup Functions  */
+/****************************************/
+
+// Function to initialize the ad editor
+function initializeSizes() {
+    sizes = Array.from(document.querySelectorAll('.ad-container')).map(ad => ad.id.replace('ad-container-', ''));
+    console.log("sizes:", sizes);
+}
+
+// Function to load UI settings from localStorage
+function loadUISettings() {
+    const savedSettings = localStorage.getItem('uiSettings');
+    if (savedSettings) {
+        uiSettings = JSON.parse(savedSettings);
+    }
+    // Ensure both settings are set, defaulting to false if not present
+    if (uiSettings.isSlideSettings === undefined) {
+        uiSettings.isSlideSettings = false;
+    }
+    if (uiSettings.isAnimationsEnabled === undefined) {
+        uiSettings.isAnimationsEnabled = false;
     }
 }
 
-function initializeSlideSettings(size) {
-    const globalSettings = storedBannerSettings.find(setting => setting.size === size).settings;
-    storedSlides[currentAdIndex].settings = JSON.parse(JSON.stringify(globalSettings));
+// Function to save UI settings to localStorage
+function getSlideSettings(size) {
+    if (uiSettings.isSlideSettings) {
+        const currentSlide = storedSlides[currentAdIndex];
+        if (!currentSlide) {
+            console.error(`No slide found at index: ${currentAdIndex}`);
+            return null;
+        }
+        if (currentSlide.settings && currentSlide.settings.template === "custom") {
+            return currentSlide.settings[size] || initializeSlideSettings(size, "default");
+        } else if (currentSlide.settings && currentSlide.settings.template) {
+            return settingsTemplates[currentSlide.settings.template].size[size] || initializeSlideSettings(size, "default");
+        } else {
+            return initializeSlideSettings(size, "default");
+        }
+    } else {
+        const bannerSetting = storedBannerSettings.find(setting => setting.size === size);
+        if (!bannerSetting) {
+            console.error(`No banner settings found for size: ${size}`);
+            return null;
+        }
+        return bannerSetting.settings;
+    }
 }
 
+// Load animation templates from localStorage on page load or use default
+function loadAnimationTemplates() {
+    const savedTemplates = localStorage.getItem('animationTemplates');
+    if (savedTemplates) {
+        const parsedTemplates = JSON.parse(savedTemplates);
+        // Instead of reassigning, we'll update the array contents
+        animationTemplates.length = 0; // Clear the array
+        animationTemplates.push(...parsedTemplates); // Add all saved templates
+    }
+}
+
+// Function to save UI settings to localStorage
+function initializeTimeline() {
+    const timelineSlider = document.getElementById('timelineSlider');
+    const timelineMarkers = document.getElementById('timelineMarkers');
+    const audioPlayer = document.getElementById('audioPlayer');
+
+    // Calculate total duration based on the last ad timestamp or audio duration, whichever is greater
+    const lastAdTimestamp = Math.max(...storedSlides.map(ad => ad.timestamp));
+    const audioDuration = isFinite(audioPlayer.duration) ? audioPlayer.duration * 1000 : 0;
+    const campaignDuration = isFinite(storedCampaign.audio.duration) ? storedCampaign.audio.duration : 0;
+
+    totalDuration = Math.max(lastAdTimestamp, audioDuration, campaignDuration);
+
+    // Ensure totalDuration is a valid, finite number
+    if (!isFinite(totalDuration) || totalDuration <= 0) {
+        console.warn('Invalid total duration, using default:', totalDuration);
+        totalDuration = 60000; // Default to 1 minute if we can't determine a valid duration
+    }
+
+    console.log(`Last ad timestamp: ${lastAdTimestamp}, Audio duration: ${audioDuration}, Campaign duration: ${campaignDuration}`);
+    console.log(`Total duration set to: ${totalDuration}`);
+
+    // Set initial slider values
+    timelineSlider.min = 0;
+    timelineSlider.max = totalDuration;
+    timelineSlider.value = 0;
+
+    // Clear existing markers
+    timelineMarkers.innerHTML = '';
+
+    // Create draggable markers
+    storedSlides.forEach((ad, index) => {
+        createDraggableMarker(index, ad.timestamp);
+    });
+
+    updateSlideNavigationButtons();
+    updateTimelineMarkers();
+    updateTimelineZoom(); // This will apply the current zoom level
+
+    console.log(`Timeline initialized. Total duration: ${formatTimestamp(totalDuration)}`);
+
+    timelineSlider.addEventListener('input', handleSliderChange);
+}
+
+// Function to save UI settings to localStorage
+function initializeEnhancedTimeline() {
+    initializeScroller();
+    updateTimelineZoom();
+}
+
+// Function to save UI settings to localStorage
+function initScaling() {
+    storeOriginalSizes();
+    scaleBanners();
+    createAndInsertZoomButton();
+    window.addEventListener('resize', () => {
+        if (isZoomed) {
+            scaleBanners();
+        }
+    });
+}
+
+// Function to save UI settings to localStorage
+function setupButtonListeners() {
+    const buttons = [
+        { id: 'saveAsNewTemplateBtn', handler: saveAsNewSettingsTemplate },
+        { id: 'updateTemplateBtn', handler: updateTemplate },
+        { id: 'editTemplateBtn', handler: editTemplate }
+    ];
+
+    buttons.forEach(({ id, handler }) => {
+        const button = document.getElementById(id);
+        if (button) {
+            button.removeEventListener('click', handler); // Remove any existing listener
+            button.addEventListener('click', handler);
+        } else {
+            console.warn(`Button with id '${id}' not found`);
+        }
+    });
+}
+
+// Function to save UI settings to localStorage
+function setupEditModalEventListeners() {
+    // Set up event listeners for buttons, dropdowns, etc.
+    // This function should only be called once to avoid duplicate listeners
+
+    const saveAsNewTemplateBtn = document.getElementById('saveAsNewTemplateBtn');
+    if (saveAsNewTemplateBtn) {
+        saveAsNewTemplateBtn.addEventListener('click', saveAsNewSettingsTemplate);
+    }
+
+    // ... (set up other event listeners)
+}
+
+/****************************************/
+/*       UI Update Functions            */
+/****************************************/
+
+// Function to update the timeline markers based on the stored slides array and total duration value (in milliseconds)
+function updateSlides() {
+    if (currentAdIndex < 0 || currentAdIndex >= storedSlides.length) {
+        console.error(`Invalid currentAdIndex: ${currentAdIndex}. storedSlides length: ${storedSlides.length}`);
+        return; // Exit the function if the index is invalid
+    }
+    sizes.forEach(size => {
+        const elements = {
+            pathOne: document.getElementById(`path-one-${size}`),
+            pathTwo: document.getElementById(`path-two-${size}`),
+            headline: document.getElementById(`headline-${size}`),
+            text: document.getElementById(`text-${size}`),
+            tags: document.getElementById(`tags-${size}`),
+            cta: document.getElementById(`cta-${size}`),
+            image: document.getElementById(`image-${size}`),
+            logoIcon: document.getElementById(`logo-icon-${size}`),
+            logoTitle: document.getElementById(`logo-title-${size}`),
+            textContainer: document.getElementById(`textcontainer-${size}`),
+            backdrop: document.getElementById(`backdrop-${size}`),
+            backdropImage: document.getElementById(`backdropimage-${size}`),
+            filter: document.getElementById(`filter-${size}`),
+            filterImage: document.getElementById(`filterimage-${size}`),
+            frontdrop: document.getElementById(`frontdrop-${size}`),
+            frontdropImage: document.getElementById(`frontdropimage-${size}`),
+            backbanner: document.getElementById(`backbanner-${size}`),
+            svgWave: document.getElementById(`svg-wave-${size}`)
+        };
+
+        const ad = storedSlides[currentAdIndex];
+        let settings = getSlideSettings(size);
+        // Check if settings and layout exist before accessing properties
+        if (settings && settings.layout) {
+            // Apply all saved settings for the current slide/banner
+            applyAllSavedSettings(size);
+
+            const animation = ad.animation || {};
+
+            // Update content
+            if (elements.headline) elements.headline.innerText = ad.headline;
+            const adTextArray = ad.text;
+            if (elements.text && settings.layout.textLength !== undefined && adTextArray) {
+                elements.text.innerText = adTextArray[settings.layout.textLength] || adTextArray[0];
+            }
+            if (elements.tags) elements.tags.innerText = ad.tags;
+
+            const cta = document.getElementById(`cta-${size}`);
+            if (cta && settings.layout.ctaStyle) {
+                if (settings.layout.ctaStyle === 'circle') {
+                    cta.innerText = '>';
+                    cta.style.padding = '5px 12px';
+                    cta.style.borderRadius = '100%';
+                } else {
+                    cta.innerText = ad.cta;
+                    cta.style.padding = '5px 12px';
+                    cta.style.borderRadius = '4px';
+                }
+            }
+
+            updateLogo(size);
+
+            // Update images
+            if (ad.img) updateMainImage(ad.img);
+            if (ad.backdrop) updateBackdropImage(ad.backdrop);
+            if (ad.frontdrop) updateFrontdropImage(ad.frontdrop);
+            if (ad.filter) updateFilterImage(ad.filter);
+
+            // Apply backbanner color
+            if (ad.backbanner && elements.backbanner) {
+                elements.backbanner.style.backgroundColor = ad.backbanner;
+            }
+
+            // Apply visibility settings
+            Object.entries(elements).forEach(([key, element]) => {
+                if (element && settings.elements && settings.elements[key] !== undefined) {
+                    const isVisible = settings.elements[key];
+                    console.log(`${key} visibility:`, isVisible); // check visibility
+                    if (key === 'pathOne' || key === 'pathTwo') {
+                        if (elements.svgWave) {
+                            elements.svgWave.style.display = isVisible ? 'block' : 'none';
+                        }
+                    } else {
+                        element.style.display = isVisible ? 'block' : 'none';
+                    }
+                }
+            });
+
+            // Apply entry animations
+            if (animation.isEntryAnimated) {
+                const template = animation.template === 'custom' ? animation.custom : animationTemplates.find(t => t.id === animation.template);
+                if (template) {
+                    const { settings: animationSettings, elements: animationElements } = template.entry;
+                    Object.entries(animationElements).forEach(([key, animationClass]) => {
+                        const element = elements[key];
+                        if (element && !['frontdropImage', 'backdropImage', 'filterImage'].includes(key)) {
+                            // Remove only animation-related classes
+                            removeAnimationClasses(element);
+                            // Apply new animation
+                            applyAnimation(element, animationClass, animationSettings);
+                        }
+                    });
+                }
+            }
+        } else {
+            console.warn(`Settings or layout not found for size: ${size || 'undefined'}`);
+        }
+    });
+
+    // Update the visibility checklist for the currently selected banner
+    const selectedBanner = getSelectedBanner();
+    if (selectedBanner) {
+        updateVisibilityChecklist(selectedBanner);
+    }
+
+    updateSlideNavigationButtons();
+    updateTimelineMarkers();
+    updateElementsList();
+}
+
+
+function updateImages() {
+    sizes.forEach(size => {
+        document.getElementById(`image-${size}`).src = storedImages[currentImageIndex];
+    });
+}
+
+function updateElementsList() {
+    const size = getSelectedBanner();
+    const elementsList = document.getElementById('elements-list');
+
+    console.log('Selected banner size:', size);
+    console.log('storedBannerSettings:', storedBannerSettings);
+
+    const settingForSize = storedBannerSettings.find(setting => setting.size === size);
+
+    if (!settingForSize) {
+        console.error(`No settings found for banner size: ${size}`);
+        return;
+    }
+
+    console.log('Settings for selected size:', settingForSize);
+
+    const settings = settingForSize.settings.layout;
+
+    if (!settings) {
+        console.error(`No layout settings found for banner size: ${size}`);
+        return;
+    }
+
+    elementsList.innerHTML = '';
+    // Define elements to display
+    const elements = [
+        { id: `logo-icon-${size}`, name: 'Logo' },
+        { id: `logo-title-${size}`, name: 'Logo Title' },
+        { id: `image-${size}`, name: 'Image' },
+        { id: `headline-${size}`, name: 'Headline' },
+        { id: `textcontainer-${size}`, name: 'TextContainer' },
+        { id: `text-${size}`, name: 'Text' },
+        { id: `tags-${size}`, name: 'Tags' },
+        { id: `cta-${size}`, name: 'CTA' },
+        { id: `path-one-${size}`, name: 'SVG Wave 1' },
+        { id: `path-two-${size}`, name: 'SVG Wave 2' },
+        { id: `background-${size}`, name: 'Background' },
+        { id: `backdrop-${size}`, name: 'Backdrop' },
+        { id: `backdropimage-${size}`, name: 'Backdropimage' },
+        { id: `frontdrop-${size}`, name: 'Frontdrop' },
+        { id: `frontdropimage-${size}`, name: 'Frontdropimage' },
+        { id: `filter-${size}`, name: 'Filter' },
+        { id: `filterimage-${size}`, name: 'Filterimage' },
+        { id: `backbanner-${size}`, name: 'backbanner' }
+    ];
+
+    // Add buttons for each element
+    elements.forEach(element => {
+        const el = document.getElementById(element.id);
+        if (el && (el.style.display !== 'none' || element.name.startsWith('SVG Wave'))) {
+            const button = document.createElement('button');
+            button.textContent = element.name;
+            button.classList.add('px-3', 'py-2', 'rounded', 'mr-2', 'mb-2', 'bg-gray-300', 'hover:bg-gray-400');
+            button.onclick = () => selectElement(element.id);
+            elementsList.appendChild(button);
+            if (settings.zIndex && settings.zIndex[element.name.toLowerCase()]) {
+                el.style.zIndex = settings.zIndex[element.name.toLowerCase()];
+            }
+        }
+    });
+}
+
+// Update the applyElementPositions function
+function applyElementPositions() {
+    const size = getSelectedBanner();
+    let settings = uiSettings.isSlideSettings ? storedSlides[currentAdIndex].settings : storedBannerSettings.find(setting => setting.size === size).settings;
+
+    if (!settings) {
+        console.error('Settings not found for the current slide or banner');
+        return;
+    }
+
+    if (!settings.layout) {
+        console.error('Layout settings not found');
+        return;
+    }
+
+    // Apply positions
+    if (settings.layout.positions) {
+        Object.entries(settings.layout.positions).forEach(([elementType, position]) => {
+            const element = document.getElementById(`${elementType}-${size}`);
+            if (element) {
+                if (element.tagName.toLowerCase() === 'path') {
+                    element.setAttribute('transform', position);
+                } else {
+                    element.style.position = 'absolute';
+                    element.style.top = position.top;
+                    element.style.left = position.left;
+                }
+            }
+        });
+    } else {
+        console.warn('Position settings not found');
+    }
+
+    // Apply rotations
+    if (settings.layout.rotations) {
+        Object.entries(settings.layout.rotations).forEach(([elementType, rotation]) => {
+            const element = document.getElementById(`${elementType}-${size}`);
+            if (element) {
+                element.style.transform = `rotate(${rotation}deg)`;
+            }
+        });
+    }
+
+    // Apply scales
+    if (settings.layout.scales) {
+        Object.entries(settings.layout.scales).forEach(([elementType, scale]) => {
+            const element = document.getElementById(`${elementType}-${size}`);
+            if (element) {
+                element.style.transform = `scale(${scale})`;
+            }
+        });
+    }
+
+    // Apply opacities
+    if (settings.layout.opacities) {
+        Object.entries(settings.layout.opacities).forEach(([elementType, opacity]) => {
+            const element = document.getElementById(`${elementType}-${size}`);
+            if (element) {
+                if (elementType.startsWith('svg')) {
+                    element.setAttribute('fill-opacity', opacity);
+                } else {
+                    element.style.opacity = opacity;
+                }
+            }
+        });
+    }
+
+    applyStoredColors();
+}
+
+function highlightSelectedBanner() {
+    const size = getSelectedBanner();
+    document.querySelectorAll('.border-blue-500').forEach(el => el.classList.remove('border-blue-500', 'shadow-xl'));
+    const selectedBanner = document.getElementById(`ad-container-${size}`);
+    if (selectedBanner) {
+        selectedBanner.classList.add('border-blue-500', 'shadow-xl');
+        updateSliderValues(size);
+        updateCheckboxStates(size);
+    }
+}
+// TODO: missing
+// updateSliderValues()
+// updateCheckboxStates()
+// updateVisibilityChecklist()
+// updateAnimationTemplateSelect()
+// updateSettingsTemplateSelect()
+// updateUIVisibility()
+
+// this function is to update the button text 
+function updateZoomButtonText() {
+    const zoomButton = document.getElementById('zoomToggleButton');
+    if (zoomButton) {
+        zoomButton.innerHTML = isZoomed ? '<i class="fa-solid fa-up-right-and-down-left-from-center"></i> <span class="text-xs"></span>' : '<i class="fa-solid fa-down-left-and-up-right-to-center"></i><span class="text-xs"></span>';
+    }
+}
+
+function updateScenelinePlayerVisibility() {
+    const scenelinePlayer = document.querySelector('.sceneline-player');
+    const adModeElements = document.querySelectorAll('.ad-mode');
+
+    if (settingsToggle.checked) {
+        scenelinePlayer.classList.remove('hidden');
+        // Hide all ad-mode elements
+        adModeElements.forEach(element => {
+            element.classList.add('hidden');
+        });
+    } else {
+        scenelinePlayer.classList.add('hidden');
+        // Show all ad-mode elements
+        adModeElements.forEach(element => {
+            element.classList.remove('hidden');
+        });
+    }
+}
+
+/****************************************/
+/*    Slide and Campaign Management     */
+/****************************************/
+
+function addSlideAtCurrentTime() {
+    const audioPlayer = document.getElementById('audioPlayer');
+    const currentTime = Math.floor(audioPlayer.currentTime * 1000); // Convert to milliseconds
+
+    // Find the index where the new slide should be inserted
+    let insertIndex = 0;
+    while (insertIndex < storedSlides.length && getCurrentAdTimestamp(insertIndex) < currentTime) {
+        insertIndex++;
+    }
+
+    // Copy data from the previous slide (or the next slide if it's the first one)
+    const sourceIndex = insertIndex > 0 ? insertIndex - 1 : Math.min(insertIndex, storedSlides.length - 1);
+    const newSlide = JSON.parse(JSON.stringify(storedSlides[sourceIndex]));
+
+    // Ensure the new slide has a settings property
+    if (!newSlide.settings) {
+        const size = getSelectedBanner();
+        if (!size) {
+            console.error('No banner selected');
+            return;
+        }
+
+        const bannerSetting = storedBannerSettings.find(setting => setting.size === size);
+        if (!bannerSetting || !bannerSetting.settings) {
+            console.error(`No settings found for banner size: ${size}`);
+            return;
+        }
+
+        newSlide.settings = JSON.parse(JSON.stringify(bannerSetting.settings));
+    }
+
+    // Update the timestamp of the new slide
+    newSlide.timestamp = currentTime;
+
+    // Insert the new slide
+    storedSlides.splice(insertIndex, 0, newSlide);
+
+    // Update currentAdIndex to point to the new slide
+    currentAdIndex = insertIndex;
+
+    // Save changes to localStorage
+    localStorage.setItem('slides', JSON.stringify(storedSlides));
+
+    // Update the UI
+    updateSlides();
+    initializeTimeline();
+
+    // Open edit modal for the new slide
+    openEditModal();
+
+    console.log('New slide added and saved:', newSlide);
+}
+
+// deleteMarker()
+// editMarker()
+
+-0-
+
+// Function to save UI settings to localStorage
+function initializeSlideSettings(size, templateName = "default") {
+    const template = settingsTemplates[templateName];
+    if (!template || !template.size || !template.size[size]) {
+        console.error(`Template ${templateName} or size ${size} not found, using default`);
+        return {
+            layout: {},
+            elements: {}
+            // Add other necessary default properties
+        };
+    }
+    return JSON.parse(JSON.stringify(template.size[size]));
+}
+
+function convertToCustomTemplate(slideIndex) {
+    const slide = storedSlides[slideIndex];
+    if (slide.settings.template !== "custom") {
+        const originalTemplate = slide.settings.template;
+        slide.settings = {
+            template: "custom"
+        };
+        sizes.forEach(size => {
+            slide.settings[size] = initializeSlideSettings(size, originalTemplate);
+        });
+        saveSettings();
+    }
+}
+
+function isTemplateEdited(slideIndex) {
+    const slide = storedSlides[slideIndex];
+    if (slide.settings.template === "custom") return true;
+    const size = getSelectedBanner();
+    const originalTemplate = settingsTemplates[slide.settings.template].size[size];
+    return JSON.stringify(slide.settings[size]) !== JSON.stringify(originalTemplate);
+}
+
+
 // Load settings from local storage or use default
-const storedBannerSettings = JSON.parse(localStorage.getItem('bannerSettings')) || bannerSettings;
-const storedSlides = JSON.parse(localStorage.getItem('slides')) || slides;
-const storedImages = JSON.parse(localStorage.getItem('images')) || images;
-const storedFilters = JSON.parse(localStorage.getItem('filters')) || filters;
-const storedCampaigns = JSON.parse(localStorage.getItem('campaigns')) || campaigns;
-const storedCampaign = JSON.parse(localStorage.getItem('campaign')) || campaign;
-const storedCurrentCampaignIndex = JSON.parse(localStorage.getItem('currentCampaignIndex')) || currentCampaignIndex;
+let storedBannerSettings = JSON.parse(localStorage.getItem('bannerSettings')) || bannerSettings;
+let storedSlides = JSON.parse(localStorage.getItem('slides')) || slides;
+let storedImages = JSON.parse(localStorage.getItem('images')) || images;
+let storedFilters = JSON.parse(localStorage.getItem('filters')) || filters;
+let storedCampaigns = JSON.parse(localStorage.getItem('campaigns')) || campaigns;
+let storedCampaign = JSON.parse(localStorage.getItem('campaign')) || campaign;
+let storedCurrentCampaignIndex = JSON.parse(localStorage.getItem('currentCampaignIndex')) || currentCampaignIndex;
 let currentAdIndex = JSON.parse(localStorage.getItem('currentAdIndex')) || 0;
 let currentImageIndex = JSON.parse(localStorage.getItem('currentImageIndex')) || 0;
 
@@ -122,188 +652,13 @@ if (currentAdIndex === undefined || currentAdIndex < 0 || currentAdIndex >= stor
     currentAdIndex = 0;
 }
 
-function toggleSlideSettings() {
-    uiSettings.isSlideSettings = !uiSettings.isSlideSettings;
-    saveUISettings();
-    const size = '1200x628';
-
-    if (uiSettings.isSlideSettings) {
-        // Entering slide settings mode
-        const bannerSettings = storedBannerSettings.find(setting => setting.size === size);
-        if (bannerSettings) {
-            // Populate all slides with the 1200x628 banner settings
-            storedSlides.forEach(slide => {
-                if (!slide.settings && !slide.settingsTemplate) {
-                    slide.settings = JSON.parse(JSON.stringify(bannerSettings.settings));
-                } else if (slide.settingsTemplate) {
-                    const template = settingsTemplates[slide.settingsTemplate];
-                    if (template && template.size && template.size[size]) {
-                        slide.settings = JSON.parse(JSON.stringify(template.size[size]));
-                    } else {
-                        console.error(`Template ${slide.settingsTemplate} or size ${size} not found for slide`);
-                        // Fallback to default template if available
-                        if (settingsTemplates.default && settingsTemplates.default.size[size]) {
-                            slide.settings = JSON.parse(JSON.stringify(settingsTemplates.default.size[size]));
-                        } else {
-                            console.error(`Default template or size ${size} not found, using banner settings`);
-                            slide.settings = JSON.parse(JSON.stringify(bannerSettings.settings));
-                        }
-                    }
-                }
-            });
-            // Save the updated slides
-            localStorage.setItem('slides', JSON.stringify(storedSlides));
-            console.log('Slides populated with settings based on templates or 1200x628 banner settings');
-        } else {
-            console.error('1200x628 banner settings not found');
-        }
-    }
-
-    const settings = getSlideSettings(size);
-    console.log('Current settings:', settings);
-    console.log('Image size:', settings.layout?.imageSize);
-    console.log('Text container size:', settings.layout?.textContainerSize);
-
-    applyAllSavedSettings(size);
-
-    // After applying settings, log the actual sizes
-    const image = document.getElementById(`image-${size}`);
-    const textContainer = document.getElementById(`textcontainer-${size}`);
-    console.log('Applied image size:', image.style.width);
-    console.log('Applied text container size:', textContainer.style.width, textContainer.style.height);
-
-    updateCheckboxStates(size);
-    updateElementsList();
-}
-
-function storeInitialElementProperties(size) {
-    const elements = [
-        'logo-icon', 'logo-title', 'image', 'headline', 'text', 'tags', 'cta', 
-        'path-one', 'path-two', 'textcontainer', 'backdrop', 'filter', 'frontdrop', 'backbanner'
-    ];
-
-    const bannerSetting = storedBannerSettings.find(setting => setting.size === size);
-    if (!bannerSetting.settings.initialProperties) {
-        bannerSetting.settings.initialProperties = {};
-    }
-
-    elements.forEach(elementType => {
-        const element = document.getElementById(`${elementType}-${size}`);
-        if (element) {
-            const computedStyle = window.getComputedStyle(element);
-            bannerSetting.settings.initialProperties[elementType] = {
-                position: computedStyle.position,
-                top: computedStyle.top,
-                left: computedStyle.left,
-                width: computedStyle.width,
-                height: computedStyle.height,
-                fontSize: computedStyle.fontSize,
-                zIndex: computedStyle.zIndex,
-                opacity: computedStyle.opacity,
-                transform: computedStyle.transform,
-                display: computedStyle.display
-            };
-        }
-    });
-
-    saveSettings();
-}
-
-// Function to merge pre-set properties with current settings
-function mergePresetWithCurrentSettings(size) {
-    const bannerSetting = storedBannerSettings.find(setting => setting.size === size);
-    if (!bannerSetting.settings.layout) {
-        bannerSetting.settings.layout = {};
-    }
-
-    const elements = [
-        'logo-icon', 'logo-title', 'image', 'headline', 'text', 'tags', 'cta', 
-        'path-one', 'path-two', 'textcontainer', 'backdrop', 'filter', 'frontdrop', 'backbanner'
-    ];
-
-    elements.forEach(elementType => {
-        const element = document.getElementById(`${elementType}-${size}`);
-        if (element) {
-            const computedStyle = window.getComputedStyle(element);
-            
-            if (!bannerSetting.settings.layout[elementType]) {
-                bannerSetting.settings.layout[elementType] = {};
-            }
-
-            // Merge computed style properties with existing settings
-            Object.assign(bannerSetting.settings.layout[elementType], {
-                position: computedStyle.position,
-                top: computedStyle.top,
-                left: computedStyle.left,
-                width: computedStyle.width,
-                height: computedStyle.height,
-                fontSize: computedStyle.fontSize,
-                zIndex: computedStyle.zIndex,
-                opacity: computedStyle.opacity,
-                transform: computedStyle.transform,
-                display: computedStyle.display
-            });
-        }
-    });
-
-    saveSettings();
-}
-
-// Update the initialization code
-document.addEventListener('DOMContentLoaded', () => {
-    // ... (existing initialization code)
-
-    sizes.forEach(size => {
-        applyAllSavedSettings(size);
-        mergePresetWithCurrentSettings(size);
-    });
-
-    // ... (rest of the existing initialization code)
-});
-
-
-function saveCurrentSlideSettings(size) {
-    if (uiSettings.isSlideSettings) {
-        const currentSettings = getSlideSettings(size);
-
-        // Update currentSettings with any changes made
-        const image = document.getElementById(`image-${size}`);
-        const textContainer = document.getElementById(`textcontainer-${size}`);
-
-        if (!currentSettings.layout) currentSettings.layout = {};
-        currentSettings.layout.imageSize = image.style.width;
-        currentSettings.layout.textContainerSize = {
-            width: textContainer.style.width,
-            height: textContainer.style.height
-        };
-
-        // ... update other settings ...
-
-        storedSlides[currentAdIndex].settings = currentSettings;
-        localStorage.setItem('slides', JSON.stringify(storedSlides));
-    }
-}
-
 
 // Function to save UI settings to localStorage
 function saveUISettings() {
     localStorage.setItem('uiSettings', JSON.stringify(uiSettings));
 }
 
-// Function to load UI settings from localStorage
-function loadUISettings() {
-    const savedSettings = localStorage.getItem('uiSettings');
-    if (savedSettings) {
-        uiSettings = JSON.parse(savedSettings);
-    }
-    // Ensure both settings are set, defaulting to false if not present
-    if (uiSettings.isSlideSettings === undefined) {
-        uiSettings.isSlideSettings = false;
-    }
-    if (uiSettings.isAnimationsEnabled === undefined) {
-        uiSettings.isAnimationsEnabled = false;
-    }
-}
+
 
 function applyUISettings() {
     // Apply animation settings
@@ -329,67 +684,14 @@ function getSelectedBanner() {
 // Add this function to apply all saved settings for a specific banner size
 function applyAllSavedSettings(size) {
     let settings = getSlideSettings(size);
-
     if (!settings) {
         console.error(`No settings found for size: ${size}`);
         return;
     }
-
-    const layoutSettings = settings.layout || {};
-    const elementSettings = settings.elements || {};
-
-    // Define all elements, including the text container
-    const elements = {
-        'logo-icon': 'logoIcon',
-        'logo-title': 'logoTitle',
-        'image': 'image',
-        'headline': 'headline',
-        'text': 'text',
-        'tags': 'tags',
-        'cta': 'cta',
-        'textcontainer': 'textContainer',
-        'backdrop': 'backdrop',
-        'filter': 'filter',
-        'frontdrop': 'frontdrop',
-        'backbanner': 'backbanner',
-        'path-one': 'pathOne',
-        'path-two': 'pathTwo'
-    };
-
-    //Apply positions and other properties for all elements
-    Object.entries(elements).forEach(([elementId, settingKey]) => {
-        const element = document.getElementById(`${elementId}-${size}`);
-        if (element) {
-            // Apply visibility
-            if (elementSettings[settingKey] !== undefined) {
-                element.style.display = elementSettings[settingKey] ? 'block' : 'none';
-            }
-
-            // Apply position and other properties
-            if (layoutSettings[settingKey]) {
-                const elementSettings = layoutSettings[settingKey];
-                if (elementSettings.position) element.style.position = elementSettings.position;
-                if (elementSettings.top) element.style.top = elementSettings.top;
-                if (elementSettings.left) element.style.left = elementSettings.left;
-                if (elementSettings.width) element.style.width = elementSettings.width;
-                if (elementSettings.height) element.style.height = elementSettings.height;
-                if (elementSettings.fontSize) element.style.fontSize = elementSettings.fontSize;
-                if (elementSettings.zIndex) element.style.zIndex = elementSettings.zIndex;
-                if (elementSettings.opacity) element.style.opacity = elementSettings.opacity;
-                if (elementSettings.transform) element.style.transform = elementSettings.transform;
-                if (elementSettings.display) element.style.display = elementSettings.display;
-                if (elementSettings.backgroundColor) element.style.backgroundColor = elementSettings.backgroundColor;
-                if (elementSettings.fill) element.setAttribute('fill', elementSettings.fill);
-                if (elementSettings.fillOpacity) element.setAttribute('fill-opacity', elementSettings.fillOpacity);
-                if (elementSettings.stroke) element.setAttribute('stroke', elementSettings.stroke);
-                if (elementSettings.strokeWidth) element.setAttribute('stroke-width', elementSettings.strokeWidth);
-                if (elementSettings.strokeOpacity) element.setAttribute('stroke-opacity', elementSettings.strokeOpacity);
-                if (elementSettings.filter) element.style.filter = elementSettings.filter;
-                
-            }
-        }
-    });
-
+    if (!settings.layout) {
+        console.error(`No layout settings found for size: ${size}`);
+        return;
+    }
 
     // Apply image size
     const image = document.getElementById(`image-${size}`);
@@ -403,9 +705,6 @@ function applyAllSavedSettings(size) {
     if (textContainer && settings.layout && settings.layout.textContainerSize) {
         textContainer.style.setProperty('width', settings.layout.textContainerSize.width, 'important');
         textContainer.style.setProperty('height', settings.layout.textContainerSize.height, 'important');
-
-
-
     }
 
     // Apply other settings
@@ -593,22 +892,60 @@ function applyAllSavedSettings(size) {
     }
 }
 
-// settingsToggle.addEventListener('change', function () {
-// uiSettings.isSlideSettings = this.checked;
-// saveUISettings();
-// const size = getSelectedBanner();
-// if (size) {
-//     applyAllSavedSettings(size);
-//     updateCheckboxStates(size);
-//     updateElementsList();
-// }
-// });
+function updateVisibilityCheckboxes(templateId) {
+    const size = getSelectedBanner();
+    let settings;
+
+    if (templateId === 'custom') {
+        settings = getSlideSettings(size);
+    } else {
+        settings = settingsTemplates[templateId]?.size[size];
+    }
+
+    if (!settings) {
+        console.warn(`No valid settings found for template: ${templateId}, size: ${size}`);
+        return;
+    }
+
+    const form = document.getElementById('editSlideForm');
+    if (!form) {
+        console.error('Edit slide form not found');
+        return;
+    }
+
+    // Update checkboxes based on settings
+    Object.entries(settings.elements).forEach(([element, isVisible]) => {
+        const checkbox = form[`${element}Visible`];
+        if (checkbox && checkbox.type === 'checkbox') {
+            checkbox.checked = isVisible;
+        }
+    });
+
+    // Update other form fields based on settings
+    // Update other form fields based on settings
+    if (settings.layout) {
+        const updateField = (fieldName, value) => {
+            const field = form[fieldName];
+            if (field) {
+                field.value = value || '';
+            }
+        };
+
+        updateField('logoLayout', settings.layout.logoLayout);
+        updateField('ctaStyle', settings.layout.ctaStyle);
+        updateField('imageSize', settings.layout.imageSize);
+        updateField('titleSize', settings.layout.titleSize);
+        updateField('bodySize', settings.layout.bodySize);
+    } else {
+        console.warn('No layout settings found');
+    }
+}
 
 function changeElementBlur(value) {
     if (!selectedElement) return;
     const size = getSelectedBanner();
     const elementType = selectedElement.id.split('-')[0];
-    let settings = uiSettings.isSlideSettings ? storedSlides[currentAdIndex].settings : storedBannerSettings.find(setting => setting.size === size).settings;
+    let settings = getSlideSettings(size);
 
     const blurValue = `blur(${value}px)`;
 
@@ -638,68 +975,6 @@ function changeElementBlur(value) {
 }
 
 
-
-function updateElementsList() {
-    const size = getSelectedBanner();
-    const elementsList = document.getElementById('elements-list');
-
-    console.log('Selected banner size:', size);
-    console.log('storedBannerSettings:', storedBannerSettings);
-
-    const settingForSize = storedBannerSettings.find(setting => setting.size === size);
-
-    if (!settingForSize) {
-        console.error(`No settings found for banner size: ${size}`);
-        return;
-    }
-
-    console.log('Settings for selected size:', settingForSize);
-
-    const settings = settingForSize.settings.layout;
-
-    if (!settings) {
-        console.error(`No layout settings found for banner size: ${size}`);
-        return;
-    }
-
-    elementsList.innerHTML = '';
-    // Define elements to display
-    const elements = [
-        { id: `logo-icon-${size}`, name: 'Logo' },
-        { id: `logo-title-${size}`, name: 'Logo Title' },
-        { id: `image-${size}`, name: 'Image' },
-        { id: `headline-${size}`, name: 'Headline' },
-        { id: `textcontainer-${size}`, name: 'TextContainer' },
-        { id: `text-${size}`, name: 'Text' },
-        { id: `tags-${size}`, name: 'Tags' },
-        { id: `cta-${size}`, name: 'CTA' },
-        { id: `path-one-${size}`, name: 'SVG Wave 1' },
-        { id: `path-two-${size}`, name: 'SVG Wave 2' },
-        { id: `background-${size}`, name: 'Background' },
-        { id: `backdrop-${size}`, name: 'Backdrop' },
-        { id: `backdropimage-${size}`, name: 'Backdropimage' },
-        { id: `frontdrop-${size}`, name: 'Frontdrop' },
-        { id: `frontdropimage-${size}`, name: 'Frontdropimage' },
-        { id: `filter-${size}`, name: 'Filter' },
-        { id: `filterimage-${size}`, name: 'Filterimage' },
-        { id: `backbanner-${size}`, name: 'backbanner' }
-    ];
-
-    // Add buttons for each element
-    elements.forEach(element => {
-        const el = document.getElementById(element.id);
-        if (el && (el.style.display !== 'none' || element.name.startsWith('SVG Wave'))) {
-            const button = document.createElement('button');
-            button.textContent = element.name;
-            button.classList.add('px-3', 'py-2', 'rounded', 'mr-2', 'mb-2', 'bg-gray-300', 'hover:bg-gray-400');
-            button.onclick = () => selectElement(element.id);
-            elementsList.appendChild(button);
-            if (settings.zIndex && settings.zIndex[element.name.toLowerCase()]) {
-                el.style.zIndex = settings.zIndex[element.name.toLowerCase()];
-            }
-        }
-    });
-}
 
 function selectElement(elementId) {
     const clickedElement = document.getElementById(elementId);
@@ -1225,60 +1500,7 @@ function changeElementOpacity(value) {
 }
 
 
-// Update the applyElementPositions function
-function applyElementPositions() {
-    const size = getSelectedBanner();
-    let settings = uiSettings.isSlideSettings ? storedSlides[currentAdIndex].settings : storedBannerSettings.find(setting => setting.size === size).settings;
 
-
-    if (settings.layout.positions) {
-        Object.entries(settings.layout.positions).forEach(([elementType, position]) => {
-            const element = document.getElementById(`${elementType}-${size}`);
-            if (element) {
-                if (element.tagName.toLowerCase() === 'path') {
-                    element.setAttribute('transform', position);
-                } else {
-                    element.style.position = 'absolute';
-                    element.style.top = position.top;
-                    element.style.left = position.left;
-                }
-            }
-        });
-    }
-
-    if (settings.layout.rotations) {
-        Object.entries(settings.layout.rotations).forEach(([elementType, rotation]) => {
-            const element = document.getElementById(`${elementType}-${size}`);
-            if (element) {
-                element.style.transform = `rotate(${rotation}deg)`;
-            }
-        });
-    }
-
-    if (settings.layout.scales) {
-        Object.entries(settings.layout.scales).forEach(([elementType, scale]) => {
-            const element = document.getElementById(`${elementType}-${size}`);
-            if (element) {
-                element.style.transform = `scale(${scale})`;
-            }
-        });
-    }
-
-    if (settings.layout.opacities) {
-        Object.entries(settings.layout.opacities).forEach(([elementType, opacity]) => {
-            const element = document.getElementById(`${elementType}-${size}`);
-            if (element) {
-                if (elementType.startsWith('svg')) {
-                    element.setAttribute('fill-opacity', opacity);
-                } else {
-                    element.style.opacity = opacity;
-                }
-            }
-        });
-    }
-
-    applyStoredColors();
-}
 
 function resetElement() {
     if (!selectedElement) return;
@@ -1331,11 +1553,11 @@ function resetElement() {
 }
 
 function updateCheckboxStates(size) {
-    let settings;
-    if (uiSettings.isSlideSettings && storedSlides[currentAdIndex].settings) {
-        settings = storedSlides[currentAdIndex].settings.elements;
-    } else {
-        settings = storedBannerSettings.find(setting => setting.size === size).settings.elements;
+    const settings = getSlideSettings(size).elements;
+
+    if (!settings) {
+        console.warn(`No valid settings found for size: ${size}`);
+        return;
     }
     const elements = {
         'logo-icon': 'logoIcon',
@@ -1459,17 +1681,14 @@ function updateSliderValues(size) {
 
 
 function saveSettings() {
-    const size = getSelectedBanner();
     if (uiSettings.isSlideSettings) {
-        // Save settings to current slide
-        if (!storedSlides[currentAdIndex].settings) {
-            storedSlides[currentAdIndex].settings = JSON.parse(JSON.stringify(storedBannerSettings.find(setting => setting.size === size).settings));
-        }
         localStorage.setItem('slides', JSON.stringify(storedSlides));
     } else {
-        // Save banner-wide settings
         localStorage.setItem('bannerSettings', JSON.stringify(storedBannerSettings));
     }
+    localStorage.setItem('animationTemplates', JSON.stringify(animationTemplates));
+    localStorage.setItem('settingsTemplates', JSON.stringify(settingsTemplates));
+
     // Save other settings as before
     localStorage.setItem('images', JSON.stringify(storedImages));
     localStorage.setItem('filters', JSON.stringify(storedFilters));
@@ -1492,15 +1711,12 @@ function toggleElement(element) {
     const isVisible = el.style.display !== 'none';
     el.style.display = isVisible ? 'none' : 'block';
 
-    let settings;
-    if (uiSettings.isSlideSettings) {
-        if (!storedSlides[currentAdIndex].settings) {
-            storedSlides[currentAdIndex].settings = JSON.parse(JSON.stringify(storedBannerSettings.find(setting => setting.size === size).settings));
-        }
-        settings = storedSlides[currentAdIndex].settings.elements;
-    } else {
-        settings = storedBannerSettings.find(setting => setting.size === size).settings.elements;
+    let settings = getSlideSettings(size).elements;
+    if (!settings) {
+        console.warn(`No valid settings found for size: ${size}`);
+        return;
     }
+
 
     const elementKey = {
         'logo-icon': 'logoIcon',
@@ -1536,9 +1752,12 @@ function updateSpecialElementVisibility(element, size) {
 }
 
 function updateVisibilityChecklist(size) {
-    const settings = uiSettings.isSlideSettings && storedSlides[currentAdIndex].settings
-        ? storedSlides[currentAdIndex].settings.elements
-        : storedBannerSettings.find(setting => setting.size === size).settings.elements;
+    const settings = getSlideSettings(size).elements;
+
+    if (!settings) {
+        console.warn(`while [updateVisibilityChecklist(size)] No valid settings found for size: ${size}`);
+        return;
+    }
 
     const elements = {
         'logo-icon': 'logoIcon',
@@ -1849,11 +2068,7 @@ function updateTextLength() {
     saveSettings();
 }
 
-function updateImages() {
-    sizes.forEach(size => {
-        document.getElementById(`image-${size}`).src = storedImages[currentImageIndex];
-    });
-}
+
 
 function playFirstAudioAndRunSlides() {
     const audioPlayer = document.getElementById('audioPlayer');
@@ -2255,10 +2470,7 @@ function updateTimelineFromScroller() {
     updateTimelineZoom();
 }
 
-function initializeEnhancedTimeline() {
-    initializeScroller();
-    updateTimelineZoom();
-}
+
 
 
 function updateZoomIndicator() {
@@ -2282,48 +2494,7 @@ function updateScroller() {
     scrollIndicator.style.left = `${indicatorLeft}%`;
 }
 
-function initializeTimeline() {
-    const timelineSlider = document.getElementById('timelineSlider');
-    const timelineMarkers = document.getElementById('timelineMarkers');
-    const audioPlayer = document.getElementById('audioPlayer');
 
-    // Calculate total duration based on the last ad timestamp or audio duration, whichever is greater
-    const lastAdTimestamp = Math.max(...storedSlides.map(ad => ad.timestamp));
-    const audioDuration = isFinite(audioPlayer.duration) ? audioPlayer.duration * 1000 : 0;
-    const campaignDuration = isFinite(storedCampaign.audio.duration) ? storedCampaign.audio.duration : 0;
-
-    totalDuration = Math.max(lastAdTimestamp, audioDuration, campaignDuration);
-
-    // Ensure totalDuration is a valid, finite number
-    if (!isFinite(totalDuration) || totalDuration <= 0) {
-        console.warn('Invalid total duration, using default:', totalDuration);
-        totalDuration = 60000; // Default to 1 minute if we can't determine a valid duration
-    }
-
-    console.log(`Last ad timestamp: ${lastAdTimestamp}, Audio duration: ${audioDuration}, Campaign duration: ${campaignDuration}`);
-    console.log(`Total duration set to: ${totalDuration}`);
-
-    // Set initial slider values
-    timelineSlider.min = 0;
-    timelineSlider.max = totalDuration;
-    timelineSlider.value = 0;
-
-    // Clear existing markers
-    timelineMarkers.innerHTML = '';
-
-    // Create draggable markers
-    storedSlides.forEach((ad, index) => {
-        createDraggableMarker(index, ad.timestamp);
-    });
-
-    updateSlideNavigationButtons();
-    updateTimelineMarkers();
-    updateTimelineZoom(); // This will apply the current zoom level
-
-    console.log(`Timeline initialized. Total duration: ${formatTimestamp(totalDuration)}`);
-
-    timelineSlider.addEventListener('input', handleSliderChange);
-}
 
 function onAudioLoaded() {
     const audioPlayer = document.getElementById('audioPlayer');
@@ -2769,58 +2940,7 @@ function animateZoom(startZoom, endZoom, duration) {
     requestAnimationFrame(step);
 }
 
-function addSlideAtCurrentTime() {
-    const audioPlayer = document.getElementById('audioPlayer');
-    const currentTime = Math.floor(audioPlayer.currentTime * 1000); // Convert to milliseconds
 
-    // Find the index where the new slide should be inserted
-    let insertIndex = 0;
-    while (insertIndex < storedSlides.length && getCurrentAdTimestamp(insertIndex) < currentTime) {
-        insertIndex++;
-    }
-
-    // Copy data from the previous slide (or the next slide if it's the first one)
-    const sourceIndex = insertIndex > 0 ? insertIndex - 1 : Math.min(insertIndex, storedSlides.length - 1);
-    const newSlide = JSON.parse(JSON.stringify(storedSlides[sourceIndex]));
-
-    // Ensure the new slide has a settings property
-    if (!newSlide.settings) {
-        const size = getSelectedBanner();
-        if (!size) {
-            console.error('No banner selected');
-            return;
-        }
-
-        const bannerSetting = storedBannerSettings.find(setting => setting.size === size);
-        if (!bannerSetting || !bannerSetting.settings) {
-            console.error(`No settings found for banner size: ${size}`);
-            return;
-        }
-
-        newSlide.settings = JSON.parse(JSON.stringify(bannerSetting.settings));
-    }
-
-    // Update the timestamp of the new slide
-    newSlide.timestamp = currentTime;
-
-    // Insert the new slide
-    storedSlides.splice(insertIndex, 0, newSlide);
-
-    // Update currentAdIndex to point to the new slide
-    currentAdIndex = insertIndex;
-
-    // Save changes to localStorage
-    localStorage.setItem('slides', JSON.stringify(storedSlides));
-
-    // Update the UI
-    updateSlides();
-    initializeTimeline();
-
-    // Open edit modal for the new slide
-    openEditModal();
-
-    console.log('New slide added and saved:', newSlide);
-}
 
 function updateTimelineWithNewMarker() {
     const timelineMarkers = document.getElementById('timelineMarkers');
@@ -2842,130 +2962,7 @@ function updateTimelineWithNewMarker() {
     }, 1000);
 }
 
-function updateSlides() {
-    if (currentAdIndex < 0 || currentAdIndex >= storedSlides.length) {
-        console.error(`Invalid currentAdIndex: ${currentAdIndex}. storedSlides length: ${storedSlides.length}`);
-        return; // Exit the function if the index is invalid
-    }
-    sizes.forEach(size => {
-        const elements = {
-            pathOne: document.getElementById(`path-one-${size}`),
-            pathTwo: document.getElementById(`path-two-${size}`),
-            headline: document.getElementById(`headline-${size}`),
-            text: document.getElementById(`text-${size}`),
-            tags: document.getElementById(`tags-${size}`),
-            cta: document.getElementById(`cta-${size}`),
-            image: document.getElementById(`image-${size}`),
-            logoIcon: document.getElementById(`logo-icon-${size}`),
-            logoTitle: document.getElementById(`logo-title-${size}`),
-            textContainer: document.getElementById(`textcontainer-${size}`),
-            backdrop: document.getElementById(`backdrop-${size}`),
-            backdropImage: document.getElementById(`backdropimage-${size}`),
-            filter: document.getElementById(`filter-${size}`),
-            filterImage: document.getElementById(`filterimage-${size}`),
-            frontdrop: document.getElementById(`frontdrop-${size}`),
-            frontdropImage: document.getElementById(`frontdropimage-${size}`),
-            backbanner: document.getElementById(`backbanner-${size}`),
-            svgWave: document.getElementById(`svg-wave-${size}`)
-        };
 
-        const ad = storedSlides[currentAdIndex];
-        let settings = getSlideSettings(size);
-        // Apply all saved settings for the current slide/banner
-        applyAllSavedSettings(size);
-
-        const animation = ad.animation || {};
-
-        // Update content
-        if (elements.headline) elements.headline.innerText = ad.headline;
-        const adTextArray = ad.text;
-        if (elements.text) elements.text.innerText = adTextArray[settings.layout.textLength] || adTextArray[0];
-        if (elements.tags) elements.tags.innerText = ad.tags;
-
-        const cta = document.getElementById(`cta-${size}`);
-        if (cta) {
-            if (settings.layout && settings.layout.ctaStyle === 'circle') {
-                cta.innerText = '>';
-                cta.style.padding = '5px 12px';
-                cta.style.borderRadius = '100%';
-            } else {
-                cta.innerText = ad.cta;
-                cta.style.padding = '5px 12px';
-                cta.style.borderRadius = '4px';
-            }
-        }
-
-        updateLogo(size);
-
-        // Update images
-        if (ad.img) updateMainImage(ad.img);
-        if (ad.backdrop) updateBackdropImage(ad.backdrop);
-        if (ad.frontdrop) updateFrontdropImage(ad.frontdrop);
-        if (ad.filter) updateFilterImage(ad.filter);
-
-        // Apply backbanner color
-        if (ad.backbanner && elements.backbanner) {
-            elements.backbanner.style.backgroundColor = ad.backbanner;
-        }
-
-
-
-        // Apply visibility settings
-        Object.entries(elements).forEach(([key, element]) => {
-            if (element && settings.elements && settings.elements[key] !== undefined) {
-                const isVisible = settings.elements[key];
-                console.log(`${key} visibility:`, isVisible); // check visibility
-                if (key === 'pathOne' || key === 'pathTwo') {
-                    if (elements.svgWave) {
-                        elements.svgWave.style.display = isVisible ? 'block' : 'none';
-                    }
-                } else {
-                    element.style.display = isVisible ? 'block' : 'none';
-                }
-            }
-        });
-
-        // // Special handling for frontdrop, backdrop, and filter
-        // ['frontdrop', 'backdrop', 'filter'].forEach(element => {
-        //     const container = elements[element];
-        //     const image = elements[`${element}Image`];
-        //     if (container && image) {
-        //         const isVisible = settings.elements[element];
-        //         container.style.display = isVisible ? 'block' : 'none';
-        //         image.style.display = isVisible ? 'block' : 'none';
-        //     }
-        // });
-
-
-        // Apply entry animations
-        // Apply entry animations
-        if (animation.isEntryAnimated && uiSettings.isAnimationsEnabled ) {
-            const template = animation.template === 'custom' ? animation.custom : animationTemplates.find(t => t.id === animation.template);
-            if (template) {
-                const { settings: animationSettings, elements: animationElements } = template.entry;
-                Object.entries(animationElements).forEach(([key, animationClass]) => {
-                    const element = elements[key];
-                    if (element && !['frontdropImage', 'backdropImage', 'filterImage'].includes(key)) {
-                        // Remove only animation-related classes
-                        removeAnimationClasses(element);
-                        // Apply new animation
-                        applyAnimation(element, animationClass, animationSettings);
-                    }
-                });
-            }
-        }
-    });
-
-    // Update the visibility checklist for the currently selected banner
-    const selectedBanner = getSelectedBanner();
-    if (selectedBanner) {
-        updateVisibilityChecklist(selectedBanner);
-    }
-
-    updateSlideNavigationButtons();
-    updateTimelineMarkers();
-    updateElementsList();
-}
 
 function removeAnimationClasses(element) {
     const animationClasses = [
@@ -3335,16 +3332,6 @@ function toggleTextLength() {
     saveSettings();
 }
 
-function highlightSelectedBanner() {
-    const size = getSelectedBanner();
-    document.querySelectorAll('.border-blue-500').forEach(el => el.classList.remove('border-blue-500', 'shadow-xl'));
-    const selectedBanner = document.getElementById(`ad-container-${size}`);
-    if (selectedBanner) {
-        selectedBanner.classList.add('border-blue-500', 'shadow-xl');
-        updateSliderValues(size);
-        updateCheckboxStates(size);
-    }
-}
 
 function downloadAllBannersAsZip() {
     const sizes = [
@@ -3831,18 +3818,26 @@ document.getElementById('openGalleryButton').addEventListener('click', () => {
 
 function openEditModal() {
     const modal = document.getElementById('editSlideModal');
+
+    if (!modal) {
+        console.error('Edit modal not found');
+        return;
+    }
+    modal.classList.remove('hidden');
+
     const form = document.getElementById('editSlideForm');
     const currentSlide = storedSlides[currentAdIndex];
+    const templateId = currentSlide.settings.template || 'custom';
+    updateSettingsTemplateSelect(templateId);
+    updateVisibilityCheckboxes(templateId);
 
     if (!modal || !form) {
         console.error('Modal or form not found');
         return;
     }
 
-    // Load slide-specific settings if they exist
-    if (currentSlide.settings) {
-        applyAllSavedSettings(getSelectedBanner());
-    }
+    const size = getSelectedBanner();
+    const settings = getSlideSettings(size);
 
     // Helper function to safely set form field values
     const setFieldValue = (fieldName, value) => {
@@ -3853,6 +3848,13 @@ function openEditModal() {
             console.warn(`Field ${fieldName} not found in the form`);
         }
     };
+
+    setupButtonListeners();
+
+    modal.classList.remove('hidden');
+
+
+
 
     // Populate form fields
     setFieldValue('timestamp', currentSlide.timestamp);
@@ -3868,6 +3870,28 @@ function openEditModal() {
     setFieldValue('text', currentSlide.text.join('\n'));
     setFieldValue('tags', currentSlide.tags);
     setFieldValue('cta', currentSlide.cta);
+
+    // Set visibility checkboxes
+    const setVisibilityCheckbox = (elementName) => {
+        const checkbox = form[`${elementName}Visible`];
+        if (checkbox) {
+            checkbox.checked = settings.elements[elementName];
+        }
+    };
+
+    setVisibilityCheckbox('logoIcon');
+    setVisibilityCheckbox('image');
+    setVisibilityCheckbox('headline');
+    setVisibilityCheckbox('text');
+    setVisibilityCheckbox('tags');
+    setVisibilityCheckbox('cta');
+
+    // Set layout values
+    setFieldValue('logoLayout', settings.layout.logoLayout);
+    setFieldValue('ctaStyle', settings.layout.ctaStyle);
+    setFieldValue('imageSize', settings.layout.imageSize);
+    setFieldValue('titleSize', settings.layout.titleSize);
+    setFieldValue('bodySize', settings.layout.bodySize);
 
     // Set animation toggle states
     const isLoopedToggle = document.getElementById('isLooped');
@@ -3885,6 +3909,10 @@ function openEditModal() {
     const saveAsNewTemplateBtn = document.getElementById('saveAsNewTemplateBtn');
     const updateTemplateBtn = document.getElementById('updateTemplateBtn');
     const editTemplateBtn = document.getElementById('editTemplateBtn');
+
+    if (saveAsNewTemplateBtn) saveAsNewTemplateBtn.addEventListener('click', saveAsNewSettingsTemplate);
+    if (updateTemplateBtn) updateTemplateBtn.addEventListener('click', updateTemplate);
+    if (editTemplateBtn) editTemplateBtn.addEventListener('click', editTemplate);
 
     if (animationTemplateSelect && customAnimationFields && editAnimations) {
         // Populate image previews
@@ -3918,7 +3946,6 @@ function openEditModal() {
         updateTemplateBtn.addEventListener('click', updateTemplate);
         editTemplateBtn.addEventListener('click', editTemplate);
 
-
         // Add event listener to handle template changes
         animationTemplateSelect.addEventListener('change', function () {
             const isCustom = this.value === 'custom';
@@ -3935,10 +3962,103 @@ function openEditModal() {
         console.warn('Some animation-related elements not found');
     }
 
-    modal.classList.remove('hidden');
+    // Display template information
+    const templateInfo = document.getElementById('templateInfo');
+    if (templateInfo) {
+        templateInfo.textContent = currentSlide.settings.template === "custom" ? "Custom Template" : `Template: ${currentSlide.settings.template}`;
+    }
+
+    // Show/hide "Save as New Template" button
+    if (saveAsNewTemplateBtn) {
+        saveAsNewTemplateBtn.style.display = (currentSlide.settings.template === "custom" || isTemplateEdited(currentAdIndex)) ? 'block' : 'none';
+    }
+
+    // Add UI for switching between banner-wide and slide-specific settings
+    const settingsToggle = document.getElementById('settingsToggle');
+    if (settingsToggle) {
+        settingsToggle.checked = uiSettings.isSlideSettings;
+        settingsToggle.addEventListener('change', function () {
+            uiSettings.isSlideSettings = this.checked;
+            saveUISettings();
+            refreshModalContent();
+        });
+    }
+
+    refreshModalContent();
+    // Set up event listeners if they haven't been set up already
+    setupEditModalEventListeners();
 }
 
+function refreshModalContent() {
+    const size = getSelectedBanner();
+    const settings = getSlideSettings(size);
 
+    // Update form fields based on current settings
+    const form = document.getElementById('editSlideForm');
+    if (!form) {
+        console.error('Edit slide form not found');
+        return;
+    }
+
+    // Helper function to safely set checkbox state
+    const setCheckboxState = (name, value) => {
+        const checkbox = form[name];
+        if (checkbox && checkbox.type === 'checkbox') {
+            checkbox.checked = value;
+        } else {
+            console.warn(`Checkbox ${name} not found or is not a checkbox`);
+        }
+    };
+
+    // Helper function to safely set input value
+    const setInputValue = (name, value) => {
+        const input = form[name];
+        if (input) {
+            input.value = value;
+        } else {
+            console.warn(`Input ${name} not found`);
+        }
+    };
+
+    // Update checkboxes
+    if (settings.elements) {
+        setCheckboxState('logoIconVisible', settings.elements.logoIcon);
+        setCheckboxState('imageVisible', settings.elements.image);
+        setCheckboxState('headlineVisible', settings.elements.headline);
+        setCheckboxState('textVisible', settings.elements.text);
+        setCheckboxState('tagsVisible', settings.elements.tags);
+        setCheckboxState('ctaVisible', settings.elements.cta);
+    }
+
+    // Update other form fields
+    if (settings.layout) {
+        setInputValue('logoLayout', settings.layout.logoLayout);
+        setInputValue('ctaStyle', settings.layout.ctaStyle);
+        setInputValue('imageSize', settings.layout.imageSize);
+        setInputValue('titleSize', settings.layout.titleSize);
+        setInputValue('bodySize', settings.layout.bodySize);
+    }
+
+    // Update visibility of template-related UI elements
+    const templateInfo = document.getElementById('templateInfo');
+    const saveAsNewTemplateBtn = document.getElementById('saveAsNewTemplateBtn');
+
+    if (templateInfo) {
+        templateInfo.classList.toggle('hidden', !uiSettings.isSlideSettings);
+    }
+
+    if (saveAsNewTemplateBtn) {
+        saveAsNewTemplateBtn.classList.toggle('hidden', !uiSettings.isSlideSettings);
+    }
+
+    // Update template information
+    if (templateInfo && uiSettings.isSlideSettings) {
+        const currentSlide = storedSlides[currentAdIndex];
+        templateInfo.textContent = currentSlide.settings.template === "custom"
+            ? "Custom Template"
+            : `Template: ${currentSlide.settings.template}`;
+    }
+}
 
 
 
@@ -3979,60 +4099,80 @@ function handleEditFormSubmit(event) {
     const form = event.target;
     const currentSlide = storedSlides[currentAdIndex];
     const animationTemplateSelect = document.getElementById('editAnimationTemplate');
+    const size = getSelectedBanner();
 
+    
+
+    // Helper function to safely get checkbox value
+    const getCheckboxValue = (name) => {
+        const checkbox = form[name];
+        return checkbox && checkbox.type === 'checkbox' ? checkbox.checked : false;
+    };
+
+    // Helper function to safely get input value
+    const getInputValue = (name) => {
+        const input = form[name];
+        return input ? input.value : '';
+    };
+
+    // Check if we need to convert to a custom template
+    if (currentSlide.settings.template !== "custom") {
+        convertToCustomTemplate(currentAdIndex);
+    }
 
     const updatedSlide = {
-        ...currentSlide, // Start with all existing properties
-        timestamp: parseInt(form.timestamp.value),
-        audio: form.audio.value,
+        ...currentSlide,
+        timestamp: parseInt(getInputValue('timestamp')) || 0,
+        audio: getInputValue('audio'),
         logo: {
-            icon: form.logoIcon.value,
-            firstWord: form.logoFirstWord.value,
-            secondWord: form.logoSecondWord.value
+            icon: getInputValue('logoIcon'),
+            firstWord: getInputValue('logoFirstWord'),
+            secondWord: getInputValue('logoSecondWord')
         },
-        headline: form.headline.value,
-        text: form.text.value.split('\n'),
-        tags: form.tags.value,
-        cta: form.cta.value,
+        headline: getInputValue('headline'),
+        text: getInputValue('text').split('\n'),
+        tags: getInputValue('tags'),
+        cta: getInputValue('cta'),
         animation: {
-            ...currentSlide.animation,  // Start with existing animation properties
-            template: form.animationTemplate.value,
-            isLooped: form.isLooped.checked,
-            isExitAnimated: form.isExitAnimated.checked,
-            isEntryAnimated: form.isEntryAnimated.checked
+            ...currentSlide.animation,
+            template: animationTemplateSelect ? animationTemplateSelect.value : 'default',
+            isLooped: getCheckboxValue('isLooped'),
+            isExitAnimated: getCheckboxValue('isExitAnimated'),
+            isEntryAnimated: getCheckboxValue('isEntryAnimated')
+        },
+        settings: {
+            ...currentSlide.settings,
+            template: "custom",
+            [size]: {
+                ...currentSlide.settings[size],
+                elements: {
+                    logoIcon: getCheckboxValue('logoIconVisible'),
+                    image: getCheckboxValue('imageVisible'),
+                    headline: getCheckboxValue('headlineVisible'),
+                    text: getCheckboxValue('textVisible'),
+                    tags: getCheckboxValue('tagsVisible'),
+                    cta: getCheckboxValue('ctaVisible'),
+                },
+                layout: {
+                    logoLayout: getInputValue('logoLayout'),
+                    ctaStyle: getInputValue('ctaStyle'),
+                    imageSize: getInputValue('imageSize'),
+                    titleSize: getInputValue('titleSize'),
+                    bodySize: getInputValue('bodySize'),
+                }
+            }
         }
     };
 
-    updatedSlide.animation.template = animationTemplateSelect.value;
-
     if (updatedSlide.animation.template === 'custom') {
         try {
-            updatedSlide.animation.custom = JSON.parse(form.animations.value);
+            updatedSlide.animation.custom = JSON.parse(getInputValue('animations'));
         } catch (error) {
             console.error('Invalid JSON for custom animation');
             alert('Invalid JSON for custom animation. Please check your input.');
             return;
         }
     } else {
-        // If not using custom, remove the custom property
-        delete updatedSlide.animation.custom;
-    }
-
-    // Update animation properties only if the form elements exist
-    if (form.isLooped) updatedSlide.animation.isLooped = form.isLooped.checked;
-    if (form.isExitAnimated) updatedSlide.animation.isExitAnimated = form.isExitAnimated.checked;
-    if (form.isEntryAnimated) updatedSlide.animation.isEntryAnimated = form.isEntryAnimated.checked;
-
-    if (form.animationTemplate.value === 'custom') {
-        try {
-            updatedSlide.animation.custom = JSON.parse(form.animations.value);
-        } catch (error) {
-            console.error('Invalid JSON for custom animation');
-            alert('Invalid JSON for custom animation. Please check your input.');
-            return;
-        }
-    } else {
-        // If not using custom, remove the custom property
         delete updatedSlide.animation.custom;
     }
 
@@ -4171,7 +4311,7 @@ function saveAsNewTemplate() {
         return;
     }
 
-    const templateName = prompt('Enter a name for this template:');
+    const templateName = prompt('Enter a name for this animation template:');
     if (!templateName) return;
 
     const newTemplate = {
@@ -4183,6 +4323,114 @@ function saveAsNewTemplate() {
     animationTemplates.push(newTemplate);
     saveAnimationTemplates();
     updateAnimationTemplateSelect(newTemplate.id);
+    alert(`Animation template "${templateName}" has been saved.`);
+}
+
+function saveAsNewSettingsTemplate() {
+    if (!uiSettings.isSlideSettings) {
+        alert("You can only save settings templates when in slide-specific settings mode.");
+        return;
+    }
+
+    const templateName = prompt("Enter a name for the new settings template:");
+    if (!templateName) return;
+
+    const currentSlide = storedSlides[currentAdIndex];
+    const size = getSelectedBanner();
+
+    // Create a new template based on the current slide's settings
+    const newTemplate = {
+        id: templateName.toLowerCase().replace(/\s+/g, '-'),
+        name: templateName,
+        description: "Custom template created from slide",
+        author: "User",
+        date: new Date().toISOString().split('T')[0],
+        version: "1.0.0",
+        tags: ["custom"],
+        categories: ["user-created"],
+        defaultSize: size,
+        size: {}
+    };
+
+    // Copy settings for all sizes
+    sizes.forEach(s => {
+        newTemplate.size[s] = JSON.parse(JSON.stringify(currentSlide.settings[s] || getSlideSettings(s)));
+    });
+
+    settingsTemplates[newTemplate.id] = newTemplate;
+
+    saveSettings();
+    updateSettingsTemplateSelect(newTemplate.id); // You'll need to implement this function
+
+    alert(`Settings template "${templateName}" has been saved.`);
+}
+
+// New function to update the settings template dropdown
+function updateSettingsTemplateSelect(selectedId = '') {
+    const editSettingsTemplateSelect = document.getElementById('editSettingsTemplate');
+    editSettingsTemplateSelect.innerHTML = '<option value="custom">Custom</option>';
+    Object.keys(settingsTemplates).forEach((templateId) => {
+        const option = document.createElement('option');
+        option.value = templateId;
+        option.textContent = settingsTemplates[templateId].name;
+        editSettingsTemplateSelect.appendChild(option);
+    });
+
+    editSettingsTemplateSelect.value = selectedId || 'custom';
+
+    // Trigger change event to update UI
+    editSettingsTemplateSelect.dispatchEvent(new Event('change'));
+}
+
+function revertToOriginalTemplate() {
+    if (!uiSettings.isSlideSettings) {
+        alert("Cannot revert template when not in slide settings mode");
+        return;
+    }
+
+    const currentSlide = storedSlides[currentAdIndex];
+    if (currentSlide.settings.template !== "custom") {
+        const confirmRevert = confirm("This will revert all custom changes. Are you sure?");
+        if (confirmRevert) {
+            const originalTemplate = currentSlide.settings.template;
+            currentSlide.settings = {
+                template: originalTemplate
+            };
+            updateSlides();
+            saveSettings();
+            closeEditModal();
+        }
+    }
+}
+
+// utility functions
+function diffTemplateChanges(slideIndex) {
+    if (!uiSettings.isSlideSettings) return null;
+
+    const slide = storedSlides[slideIndex];
+    if (slide.settings.template === "custom") return null;
+
+    const size = getSelectedBanner();
+    const originalTemplate = settingsTemplates[slide.settings.template].size[size];
+    const currentSettings = slide.settings[size];
+
+    const diff = {};
+    for (const [key, value] of Object.entries(currentSettings)) {
+        if (JSON.stringify(value) !== JSON.stringify(originalTemplate[key])) {
+            diff[key] = value;
+        }
+    }
+    return diff;
+}
+
+function migrateTemplateVersion(oldVersion, newVersion) {
+    // Implement logic to update template structure
+    // This will depend on how your template versions change over time
+}
+
+function validateTemplateStructure(settings) {
+    const requiredProperties = ['elements', 'layout', 'colors', 'positions'];
+    return requiredProperties.every(prop => prop in settings);
 }
 
 function updateAnimationTemplateSelect(selectedId = '') {
@@ -4209,16 +4457,7 @@ function saveAnimationTemplates() {
     localStorage.setItem('animationTemplates', JSON.stringify(animationTemplates));
 }
 
-// Load animation templates from localStorage on page load
-function loadAnimationTemplates() {
-    const savedTemplates = localStorage.getItem('animationTemplates');
-    if (savedTemplates) {
-        const parsedTemplates = JSON.parse(savedTemplates);
-        // Instead of reassigning, we'll update the array contents
-        animationTemplates.length = 0; // Clear the array
-        animationTemplates.push(...parsedTemplates); // Add all saved templates
-    }
-}
+
 
 function toggleSideBar() {
     // <div id="sideBar" class="hidden lg:fixed lg:inset-y-0 lg:z-50 lg:flex lg:w-96 lg:flex-col">
@@ -4293,11 +4532,35 @@ function storeOriginalSizes() {
     });
 }
 
-function updateZoomButtonText() {
-    const zoomButton = document.getElementById('zoomToggleButton');
-    if (zoomButton) {
-        zoomButton.innerHTML = isZoomed ? '<i class="fa-solid fa-up-right-and-down-left-from-center"></i> <span class="text-xs"></span>' : '<i class="fa-solid fa-down-left-and-up-right-to-center"></i><span class="text-xs"></span>';
+
+
+// Utility function
+
+function diffTemplateChanges(slideIndex) {
+    const slide = storedSlides[slideIndex];
+    if (slide.template === "custom" || !slide.settings) return null;
+
+    const size = getSelectedBanner();
+    const originalTemplate = settingsTemplates[slide.template].size[size];
+    const currentSettings = slide.settings[size];
+
+    const diff = {};
+    for (const [key, value] of Object.entries(currentSettings)) {
+        if (JSON.stringify(value) !== JSON.stringify(originalTemplate[key])) {
+            diff[key] = value;
+        }
     }
+    return diff;
+}
+
+function migrateTemplateVersion(oldVersion, newVersion) {
+    // Implement logic to update template structure
+    // This will depend on how your template versions change over time
+}
+
+function validateTemplateStructure(settings) {
+    const requiredProperties = ['elements', 'layout', 'colors', 'positions'];
+    return requiredProperties.every(prop => prop in settings);
 }
 
 function createAndInsertZoomButton() {
@@ -4325,22 +4588,56 @@ function createAndInsertZoomButton() {
     updateZoomButtonText();
 }
 
-function initScaling() {
-    storeOriginalSizes();
-    scaleBanners();
-    createAndInsertZoomButton();
-    window.addEventListener('resize', () => {
-        if (isZoomed) {
-            scaleBanners();
-        }
-    });
-}
+
 
 // Ensure initScaling runs after DOM is loaded
 if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', initScaling);
 } else {
     initScaling();
+}
+
+function toggleSlideSettings() {
+    uiSettings.isSlideSettings = !uiSettings.isSlideSettings;
+    saveUISettings();
+
+    if (uiSettings.isSlideSettings) {
+        storedSlides.forEach((slide, index) => {
+            if (!slide.settings || !slide.settings.template) {
+                slide.settings = {
+                    template: "default"
+                };
+            }
+        });
+    }
+
+    const size = getSelectedBanner();
+    applyAllSavedSettings(size);
+    updateCheckboxStates(size);
+    updateElementsList();
+}
+
+
+function saveCurrentSlideSettings(size) {
+    if (uiSettings.isSlideSettings) {
+        const currentSettings = getSlideSettings(size);
+
+        // Update currentSettings with any changes made
+        const image = document.getElementById(`image-${size}`);
+        const textContainer = document.getElementById(`textcontainer-${size}`);
+
+        if (!currentSettings.layout) currentSettings.layout = {};
+        currentSettings.layout.imageSize = image.style.width;
+        currentSettings.layout.textContainerSize = {
+            width: textContainer.style.width,
+            height: textContainer.style.height
+        };
+
+        // ... update other settings ...
+
+        storedSlides[currentAdIndex].settings = currentSettings;
+        localStorage.setItem('slides', JSON.stringify(storedSlides));
+    }
 }
 
 
@@ -4350,6 +4647,87 @@ document.getElementById('settingsToggle').addEventListener('change', toggleSlide
 
 // Initialize slides and images
 document.addEventListener('DOMContentLoaded', () => {
+
+    initializeSizes()
+
+    const saveAsNewTemplateBtn = document.getElementById('saveAsNewTemplateBtn');
+    if (saveAsNewTemplateBtn) {
+        saveAsNewTemplateBtn.addEventListener('click', saveAsNewTemplate);
+    } else {
+        console.warn("Element with ID 'saveAsNewTemplateBtn' not found");
+    }
+
+    console.log('DOMContentLoaded event fired');
+
+    const debugElement = (id) => {
+        const element = document.getElementById(id);
+        console.log(`Element with id '${id}':`, element);
+    };
+
+    debugElement('saveAsNewTemplateBtn');
+    debugElement('updateTemplateBtn');
+    debugElement('editTemplateBtn');
+
+    document.getElementById('saveAsNewTemplateBtn').addEventListener('click', saveAsNewTemplate);
+    // document.getElementById('revertTemplateBtn').addEventListener('click', revertToOriginalTemplate);
+
+    // Load templates from localStorage
+    const savedTemplates = localStorage.getItem('settingsTemplates');
+    if (savedTemplates) {
+        settingsTemplates = JSON.parse(savedTemplates);
+    }
+
+    setupButtonListeners(); // Call this function initially
+
+    const observer = new MutationObserver((mutations) => {
+        mutations.forEach((mutation) => {
+            if (mutation.type === 'childList') {
+                setupButtonListeners();
+            }
+        });
+    });
+
+    observer.observe(document.body, { childList: true, subtree: true });
+
+
+    const setupModalButtons = () => {
+        const buttons = [
+            { id: 'saveAsNewTemplateBtn', handler: saveAsNewSettingsTemplate },
+            { id: 'updateTemplateBtn', handler: updateTemplate },
+            { id: 'editTemplateBtn', handler: editTemplate }
+        ];
+
+        buttons.forEach(({ id, handler }) => {
+            const button = document.getElementById(id);
+            if (button) {
+                button.removeEventListener('click', handler); // Remove any existing listener
+                button.addEventListener('click', handler);
+            } else {
+                console.warn(`Button with id '${id}' not found`);
+            }
+        });
+    };
+
+    // Call this function when opening the edit modal
+    const originalOpenEditModal = openEditModal;
+    openEditModal = function () {
+        originalOpenEditModal.apply(this, arguments);
+        setupModalButtons();
+    };
+
+
+
+
+    // Call this function initially
+    setupButtonListeners();
+
+    // Also set up the function to be called when the edit modal is opened
+    const openEditModalOriginal = openEditModal;
+    openEditModal = function () {
+        openEditModalOriginal.apply(this, arguments);
+        setupButtonListeners();
+    };
+
 
     convertAllTimestampsToMilliseconds();
     loadUISettings();
@@ -4394,24 +4772,7 @@ document.addEventListener('DOMContentLoaded', () => {
     applyUISettings();
 
 
-    function updateScenelinePlayerVisibility() {
-        const scenelinePlayer = document.querySelector('.sceneline-player');
-        const adModeElements = document.querySelectorAll('.ad-mode');
 
-        if (settingsToggle.checked) {
-            scenelinePlayer.classList.remove('hidden');
-            // Hide all ad-mode elements
-            adModeElements.forEach(element => {
-                element.classList.add('hidden');
-            });
-        } else {
-            scenelinePlayer.classList.add('hidden');
-            // Show all ad-mode elements
-            adModeElements.forEach(element => {
-                element.classList.remove('hidden');
-            });
-        }
-    }
 
     // Initial visibility setup
     updateScenelinePlayerVisibility();
@@ -4476,17 +4837,6 @@ document.addEventListener('DOMContentLoaded', () => {
         updateSlides();
     });
 
-    // // Initialize the image gallery
-    // const openGalleryButton = document.getElementById('openGalleryButton');
-    // const closeGalleryButton = document.getElementById('closeGalleryButton');
-
-    // if (openGalleryButton) {
-    //     openGalleryButton.addEventListener('click', openImageGallery);
-    // }
-
-    // if (closeGalleryButton) {
-    //     closeGalleryButton.addEventListener('click', closeImageGallery);
-    // }
 
     // Initialize image URLs container
     const imageUrlsContainer = document.getElementById('imageUrlsContainer');
@@ -4676,3 +5026,199 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     });
 })
+
+document.addEventListener('DOMContentLoaded', function () {
+    const editSettingsTemplateSelect = document.getElementById('editSettingsTemplate');
+    const editSettingsTemplateBtn = document.getElementById('editSettingsTemplateBtn');
+    const customSettingsFields = document.getElementById('customSettingsFields');
+    const editSettings = document.getElementById('editSettings');
+    const updateSettingsTemplateBtn = document.getElementById('updateSettingsTemplateBtn');
+    const saveAsNewSettingsTemplateBtn = document.getElementById('saveAsNewSettingsTemplateBtn');
+
+    function updateSettingsTemplateSelect(selectedId = '') {
+        editSettingsTemplateSelect.innerHTML = '<option value="custom">Custom</option>';
+        Object.entries(settingsTemplates).forEach(([id, template]) => {
+            const option = document.createElement('option');
+            option.value = id;
+            option.textContent = template.name;
+            editSettingsTemplateSelect.appendChild(option);
+        });
+
+        editSettingsTemplateSelect.value = selectedId;
+
+        // Trigger change event to update UI
+        editSettingsTemplateSelect.dispatchEvent(new Event('change'));
+    }
+
+    
+
+    editSettingsTemplateSelect.addEventListener('change', function () {
+        const selectedTemplate = this.value;
+        updateUIVisibility(selectedTemplate);
+        updateVisibilityCheckboxes(selectedTemplate);
+        updateSlideSettings(selectedTemplate);
+    });
+
+    
+
+    editSettingsTemplateBtn.addEventListener('click', function () {
+        const selectedTemplate = editSettingsTemplateSelect.value;
+        if (selectedTemplate && selectedTemplate !== 'custom') {
+            populateSettingsFields(selectedTemplate);
+            customSettingsFields.classList.remove('hidden');
+            updateSettingsTemplateBtn.classList.remove('hidden');
+        }
+    });
+
+    updateSettingsTemplateBtn.addEventListener('click', function () {
+        const selectedTemplate = editSettingsTemplateSelect.value;
+        if (selectedTemplate && selectedTemplate !== 'custom') {
+            try {
+                const updatedSettings = JSON.parse(editSettings.value);
+                settingsTemplates[selectedTemplate] = updatedSettings;
+                saveSettings();
+                alert('Template updated successfully!');
+            } catch (error) {
+                alert('Invalid JSON. Please check your input.');
+            }
+        }
+    });
+
+    saveAsNewSettingsTemplateBtn.addEventListener('click', function () {
+        const templateName = prompt('Enter a name for the new settings template:');
+        if (templateName) {
+            try {
+                const newSettings = JSON.parse(editSettings.value);
+                const newTemplateId = templateName.toLowerCase().replace(/\s+/g, '-');
+                settingsTemplates[newTemplateId] = {
+                    id: newTemplateId,
+                    name: templateName,
+                    ...newSettings
+                };
+                saveSettings();
+                updateSettingsTemplateSelect(newTemplateId);
+                alert(`New template "${templateName}" saved successfully!`);
+            } catch (error) {
+                alert('Invalid JSON. Please check your input.');
+            }
+        }
+    });
+
+    function saveSettings() {
+        localStorage.setItem('settingsTemplates', JSON.stringify(settingsTemplates));
+        // Add any other saving logic you need
+    }
+
+
+
+    // Initialize the settings template when opening the edit modal
+    initializeSettingsTemplate();
+});;
+
+function updateSlideSettings(templateId) {
+    const currentSlide = storedSlides[currentAdIndex];
+    const size = getSelectedBanner();
+
+    if (templateId === 'custom') {
+        // If 'custom' is selected, don't change the existing settings
+        return;
+    }
+
+    // Check if the template exists
+    if (settingsTemplates[templateId] && settingsTemplates[templateId].size && settingsTemplates[templateId].size[size]) {
+        // Update the slide's settings with the new template
+        currentSlide.settings = {
+            template: templateId,
+            [size]: JSON.parse(JSON.stringify(settingsTemplates[templateId].size[size]))
+        };
+    } else {
+        console.warn(`Template ${templateId} or size ${size} not found. Using default template.`);
+        if (settingsTemplates['default'] && settingsTemplates['default'].size && settingsTemplates['default'].size[size]) {
+            currentSlide.settings = {
+                template: 'default',
+                [size]: JSON.parse(JSON.stringify(settingsTemplates['default'].size[size]))
+            };
+        } else {
+            console.error('Default template not found or does not have the required size. Unable to update settings.');
+            return;
+        }
+    }
+
+    // Apply the new settings
+    applyAllSavedSettings(size);
+    updateSlides();
+    saveSettings();
+}
+
+function populateSettingsFields(templateId) {
+    let settingsToEdit;
+    if (templateId === 'custom') {
+        settingsToEdit = JSON.parse(JSON.stringify(settingsTemplates['default']));
+    } else {
+        settingsToEdit = settingsTemplates[templateId];
+    }
+    editSettings.value = JSON.stringify(settingsToEdit, null, 2);
+}
+
+function initializeSettingsTemplate() {
+    const currentSlide = storedSlides[currentAdIndex];
+    let templateId = 'custom';
+
+    if (currentSlide && currentSlide.settings && currentSlide.settings.template) {
+        templateId = currentSlide.settings.template;
+    }
+
+    updateSettingsTemplateSelect(templateId);
+    updateUIVisibility(templateId);
+    updateVisibilityCheckboxes(templateId);
+}
+
+function updateUIVisibility(templateId) {
+    const customSettingsFields = document.getElementById('customSettingsFields');
+    const updateTemplateBtn = document.getElementById('updateTemplateBtn');
+    const editTemplateBtn = document.getElementById('editTemplateBtn');
+
+    const isCustom = templateId === 'custom';
+
+    if (customSettingsFields) customSettingsFields.classList.toggle('hidden', !isCustom);
+    if (updateTemplateBtn) updateTemplateBtn.classList.toggle('hidden', isCustom);
+    if (editTemplateBtn) editTemplateBtn.classList.toggle('hidden', isCustom);
+
+    if (isCustom) {
+        const editSettings = document.getElementById('editSettings');
+        if (editSettings) {
+            editSettings.value = JSON.stringify(getSlideSettings(getSelectedBanner()), null, 2);
+        }
+    }
+}
+
+function applySettingsTemplate() {
+    const templateId = document.getElementById('editSettingsTemplate').value;
+    if (!templateId) return;
+
+    const template = settingsTemplates[templateId];
+    if (!template) {
+        alert("Selected template not found.");
+        return;
+    }
+
+    const currentSlide = storedSlides[currentAdIndex];
+    const size = getSelectedBanner();
+
+    currentSlide.settings = {
+        template: templateId,
+        [size]: JSON.parse(JSON.stringify(template.size[size]))
+    };
+
+    updateVisibilityCheckboxes(templateId);
+    updateSlides();
+    saveSettings();
+    alert(`Applied template: ${template.name}`);
+}
+
+document.getElementById('editSettingsTemplate').addEventListener('change', function () {
+    const selectedTemplate = this.value;
+    updateUIVisibility(selectedTemplate);
+    updateVisibilityCheckboxes(selectedTemplate);
+    updateSlideSettings(selectedTemplate);
+});

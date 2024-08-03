@@ -67,17 +67,22 @@ img:
   - audience_understanding.webp
   backdrop:
     - backdrop-podcast-studio-04.webp
+    - backdrop-podcast-studio-05.png
     - backdrop-studio-inside-02.png
     - backdrop-studio-inside-03.png
     - backdrop-studio-inside.png
   - backdrop-000-EMPTY.png
   - backdrop-IMG_3907 3.jpg
   - backdrop-IMG_3907 4.jpg
+  - backdrop-car16.webp
+  - backdrop-car17.png
+  - backdrop-car18.jpg
   - backdrop-large-production-studio.webp
   - backdrop-podcast-studio-04.webp
   - backdrop-studio-inside-02.png
   - backdrop-studio-inside-03.png
   - backdrop-studio-inside-04.png
+  - backdrop-studio-inside-05.png
   - backdrop-studio-inside.png
   - backdrop-transparent-background-animated-gif.gif
   - banner_300x250.jpg
@@ -91,6 +96,17 @@ img:
     - 6_Pedestal_COMP_5.gif
   - car.jpg
   - car.png
+  - car10.png
+  - car11.png
+  - car12.png
+  - car13.png
+  - car14.png
+  - car15.png
+  - car16 2.webp
+  - car17 2.png
+  - car17.png
+  - car17.webp
+  - car18.webp
   - car3 2.png
   - car3.jpg
   - clock.webp
@@ -125,10 +141,13 @@ img:
   frontdrop:
     - frontdrop-studio-inside_03.png
   - frontdrop-000-EMPTY.png
+  - frontdrop-car17.jpg
+  - frontdrop-car17.png
   - frontdrop-studio-inside_03.png
   - frontdrop-studio-inside_04_n.png
   - frontdrop-studio-inside_05_n.png
   - frontdrop-studio-inside_06_n.png
+  - frontdrop-studio-inside_07_n.png
   gif:
     - spinner.gif
     - transparent-background-animated-gif.gif
@@ -176,10 +195,12 @@ img:
 js:
   - ads.js
   - ads4.js
+  - adsJson-ads_falid_transition_to_settingsTemplates.js
   - adsJson.js
   - adsJson_current.js
-  - ads_6am-3pm-not working.js
+  - ads_6am-3pm-not-working.js
   - ads_custom_slid_settings_trans.js
+  - ads_falid_transition_to_settingsTemplates.js
   - blog-search.js
   - convertToMySQLTimestamp.js
   - survey.js
