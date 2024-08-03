@@ -144,7 +144,7 @@ function toggleSlideSettings() {
                     const template = settingsTemplates[slide.settingsTemplate];
                     if (template && template.size && template.size[size]) {
                         slide.settings = JSON.parse(JSON.stringify(template.size[size]));
-                        
+
                     } else {
                         console.error(`Template ${slide.settingsTemplate} or size ${size} not found for slide`);
                         // Fallback to default template if available
@@ -182,39 +182,6 @@ function toggleSlideSettings() {
     updateElementsList();
 }
 
-function storeInitialElementProperties(size) {
-    const elements = [
-        'logo-icon', 'logo-title', 'image', 'headline', 'text', 'tags', 'cta', 
-        'path-one', 'path-two', 'textcontainer', 'backdrop', 'filter', 'frontdrop', 'backbanner'
-    ];
-
-    const bannerSetting = storedBannerSettings.find(setting => setting.size === size);
-    if (!bannerSetting.settings.initialProperties) {
-        bannerSetting.settings.initialProperties = {};
-    }
-
-    elements.forEach(elementType => {
-        const element = document.getElementById(`${elementType}-${size}`);
-        if (element) {
-            const computedStyle = window.getComputedStyle(element);
-            bannerSetting.settings.initialProperties[elementType] = {
-                position: computedStyle.position,
-                top: computedStyle.top,
-                left: computedStyle.left,
-                width: computedStyle.width,
-                height: computedStyle.height,
-                fontSize: computedStyle.fontSize,
-                zIndex: computedStyle.zIndex,
-                opacity: computedStyle.opacity,
-                transform: computedStyle.transform,
-                display: computedStyle.display
-            };
-        }
-    });
-
-    saveSettings();
-}
-
 // Function to merge pre-set properties with current settings
 function mergePresetWithCurrentSettings(size) {
     const bannerSetting = storedBannerSettings.find(setting => setting.size === size);
@@ -223,7 +190,7 @@ function mergePresetWithCurrentSettings(size) {
     }
 
     const elements = [
-        'logo-icon', 'logo-title', 'image', 'headline', 'text', 'tags', 'cta', 
+        'logo-icon', 'logo-title', 'image', 'headline', 'text', 'tags', 'cta',
         'path-one', 'path-two', 'textcontainer', 'backdrop', 'filter', 'frontdrop', 'backbanner'
     ];
 
@@ -231,7 +198,7 @@ function mergePresetWithCurrentSettings(size) {
         const element = document.getElementById(`${elementType}-${size}`);
         if (element) {
             const computedStyle = window.getComputedStyle(element);
-            
+
             if (!bannerSetting.settings.layout[elementType]) {
                 bannerSetting.settings.layout[elementType] = {};
             }
@@ -391,7 +358,7 @@ function applyAllSavedSettings(size) {
                 if (elementSettings.strokeWidth) element.setAttribute('stroke-width', elementSettings.strokeWidth);
                 if (elementSettings.strokeOpacity) element.setAttribute('stroke-opacity', elementSettings.strokeOpacity);
                 if (elementSettings.filter) element.style.filter = elementSettings.filter;
-                
+
             }
         }
     });
@@ -614,7 +581,7 @@ function changeElementBlur(value) {
     if (!selectedElement) return;
     const size = getSelectedBanner();
     const elementType = selectedElement.id.split('-')[0];
-    let settings = uiSettings.isSlideSettings ? storedSlides[currentAdIndex].settings : storedBannerSettings.find(setting => setting.size === size).settings;
+    let settings = getSlideSettings(size);
 
     const blurValue = `blur(${value}px)`;
 
@@ -883,7 +850,7 @@ function changeBackgroundColor(color) {
 
 function saveElementColor(color) {
     const size = getSelectedBanner();
-    const settings = storedBannerSettings.find(setting => setting.size === size).settings.layout;
+    const settings = getSlideSettings(size).layout;
 
     if (!settings.colors) {
         settings.colors = {};
@@ -898,7 +865,7 @@ function saveElementColor(color) {
 
 function saveBackgroundColor(color) {
     const size = getSelectedBanner();
-    const settings = storedBannerSettings.find(setting => setting.size === size).settings.layout;
+    const settings = getSlideSettings(size).layout;
 
     if (!settings.colors) {
         settings.colors = {};
@@ -911,7 +878,7 @@ function saveBackgroundColor(color) {
 
 function resetColors() {
     const size = getSelectedBanner();
-    const settings = storedBannerSettings.find(setting => setting.size === size).settings.layout;
+    const settings = getSlideSettings(size).layout;
 
     // Reset background color
     const container = document.getElementById(`ad-container-${size}`);
@@ -1101,7 +1068,7 @@ function changeZIndex(direction) {
     if (!selectedElement) return;
     const size = getSelectedBanner();
     const elementType = selectedElement.id.split('-')[0];
-    let settings = uiSettings.isSlideSettings ? storedSlides[currentAdIndex].settings : storedBannerSettings.find(setting => setting.size === size).settings;
+    let settings = getSlideSettings(size);
 
     const currentZIndex = parseInt(window.getComputedStyle(selectedElement).zIndex) || 0;
     const newZIndex = direction === 'up' ? currentZIndex + 10 : Math.max(0, currentZIndex - 10);
@@ -1119,7 +1086,7 @@ function rotateElement(direction) {
     if (!selectedElement) return;
     const size = getSelectedBanner();
     const elementType = selectedElement.id.split('-')[0];
-    let settings = uiSettings.isSlideSettings ? storedSlides[currentAdIndex].settings : storedBannerSettings.find(setting => setting.size === size).settings;
+    let settings = getSlideSettings(size);
 
     const currentRotation = selectedElement.style.transform ?
         parseInt(selectedElement.style.transform.replace(/[^\d-]/g, '')) : 0;
@@ -1141,7 +1108,7 @@ function mirrorElement() {
     if (!selectedElement) return;
     const size = getSelectedBanner();
     const elementType = selectedElement.id.split('-')[0];
-    let settings = uiSettings.isSlideSettings ? storedSlides[currentAdIndex].settings : storedBannerSettings.find(setting => setting.size === size).settings;
+    let settings = getSlideSettings(size);
 
     const currentScale = selectedElement.style.transform && selectedElement.style.transform.includes('scale')
         ? parseInt(selectedElement.style.transform.split('scale(')[1])
@@ -1214,7 +1181,7 @@ function changeElementOpacity(value) {
     if (!selectedElement) return;
     const size = getSelectedBanner();
     const elementType = selectedElement.id.split('-')[0];
-    let settings = uiSettings.isSlideSettings ? storedSlides[currentAdIndex].settings : storedBannerSettings.find(setting => setting.size === size).settings;
+    let settings = getSlideSettings(size);
 
     if (selectedElement.id.startsWith('path-')) {
         selectedElement.setAttribute('fill-opacity', value);
@@ -1234,7 +1201,7 @@ function changeElementOpacity(value) {
 // Update the applyElementPositions function
 function applyElementPositions() {
     const size = getSelectedBanner();
-    let settings = uiSettings.isSlideSettings ? storedSlides[currentAdIndex].settings : storedBannerSettings.find(setting => setting.size === size).settings;
+    let settings = getSlideSettings(size);
 
 
     if (settings.layout.positions) {
@@ -1291,7 +1258,7 @@ function resetElement() {
 
     const size = getSelectedBanner();
     const elementType = selectedElement.id.split('-')[0];
-    const settings = storedBannerSettings.find(setting => setting.size === size).settings.layout;
+    const settings = getSlideSettings(size).layout;
 
     // Reset position
     selectedElement.style.top = '';
@@ -1414,7 +1381,7 @@ function selectBanner(size) {
 
 
 function updateSliderValues(size) {
-    const settings = storedBannerSettings.find(setting => setting.size === size).settings.layout;
+    const settings = getSlideSettings(size).layout;
     if (settings) {
         if (settings.opacities) {
             if (settings.opacities.svgOneOpacity !== undefined) {
@@ -1620,7 +1587,7 @@ async function uploslidesettings() {
 function toggleLogoLayout() {
     const size = getSelectedBanner();
     const logoIcon = document.getElementById(`logo-icon-${size}`);
-    const settings = storedBannerSettings.find(setting => setting.size === size).settings.layout;
+    const settings = getSlideSettings(size).layout;
     if (logoIcon.classList.contains('flex-row')) {
         logoIcon.classList.remove('flex-row');
         logoIcon.classList.add('flex-col');
@@ -1639,7 +1606,7 @@ function rotateLogo() {
     const currentRotation = container.style.transform || 'rotate(0deg)';
     const newRotation = currentRotation === 'rotate(0deg)' ? 'rotate(90deg)' : 'rotate(0deg)';
     container.style.transform = newRotation;
-    const settings = storedBannerSettings.find(setting => setting.size === size).settings.layout;
+    const settings = getSlideSettings(size).layout;
     settings.logoRotation = newRotation === 'rotate(0deg)' ? 0 : 90;
 
     // Swap width and height and rotate 90 degrees and height to auto
@@ -1668,7 +1635,7 @@ function updateLogoRotation() {
     if (logoIcon) {
         logoIcon.style.transform = `rotate(${rotation}deg)`;
     }
-    const settings = storedBannerSettings.find(setting => setting.size === size).settings.layout;
+    const settings = getSlideSettings(size).layout;
     settings.logoRotation = rotation;
     saveSettings();
 }
@@ -1676,7 +1643,7 @@ function updateLogoRotation() {
 function updateTextLength() {
     const size = getSelectedBanner();
     const textElement = document.getElementById(`text-${size}`);
-    const settings = storedBannerSettings.find(setting => setting.size === size).settings.layout;
+    const settings = getSlideSettings(size).layout;
     const adTextArray = storedSlides[currentAdIndex].text;
 
     // Cycle through text lengths
@@ -1753,7 +1720,7 @@ function changeElementZIndex(elementType, action) {
 
     element.style.zIndex = zIndex;
 
-    const settings = storedBannerSettings.find(setting => setting.size === size).settings.layout;
+    const settings = getSlideSettings(size).layout;
     const settingKey = `${elementMap[elementType]}ZIndex`;
     settings[settingKey] = zIndex;
     saveSettings();
@@ -1777,7 +1744,7 @@ function increaseImageZIndex() {
     zIndex = isNaN(zIndex) ? 10 : zIndex + 10;
     image.style.zIndex = zIndex;
 
-    const settings = storedBannerSettings.find(setting => setting.size === size).settings.layout;
+    const settings = getSlideSettings(size).layout;
     settings.imageZIndex = zIndex;
     saveSettings();
 
@@ -1799,7 +1766,7 @@ function decreaseImageZIndex() {
     zIndex = isNaN(zIndex) ? 10 : Math.max(1, zIndex - 10);
     image.style.zIndex = zIndex;
 
-    const settings = storedBannerSettings.find(setting => setting.size === size).settings.layout;
+    const settings = getSlideSettings(size).layout;
     settings.imageZIndex = zIndex;
     saveSettings();
 
@@ -1814,7 +1781,7 @@ function updateTitleSize() {
         headline.style.fontSize = titleSize;
         headline.style.lineHeight = titleSize;
     }
-    const settings = storedBannerSettings.find(setting => setting.size === size).settings.layout;
+    const settings = getSlideSettings(size).layout;
     settings.titleSize = titleSize;
     saveSettings();
 }
@@ -1826,7 +1793,7 @@ function updateBodySize() {
     if (text) {
         text.style.fontSize = bodySize;
     }
-    const settings = storedBannerSettings.find(setting => setting.size === size).settings.layout;
+    const settings = getSlideSettings(size).layout;
     settings.bodySize = bodySize;
     saveSettings();
 }
@@ -1838,7 +1805,7 @@ function updateImageSize() {
     if (image) {
         image.style.width = imageSize;
     }
-    const settings = storedBannerSettings.find(setting => setting.size === size).settings.layout;
+    const settings = getSlideSettings(size).layout;
     settings.imageSize = imageSize;
     saveSettings();
 }
@@ -1846,7 +1813,7 @@ function updateImageSize() {
 function updateTextLength() {
     const size = getSelectedBanner();
     const textElement = document.getElementById(`text-${size}`);
-    const settings = storedBannerSettings.find(setting => setting.size === size).settings.layout;
+    const settings = getSlideSettings(size).layout;
     const adTextArray = storedSlides[currentAdIndex].text;
 
     // Cycle through text lengths
@@ -2886,8 +2853,8 @@ function updateSlides() {
         if (elements.headline) elements.headline.innerText = ad.headline || '';
         if (elements.text) {
             const textContent = Array.isArray(ad.text) ? ad.text : [ad.text];
-            const textIndex = settings && settings.layout && typeof settings.layout.textLength === 'number' 
-                ? settings.layout.textLength 
+            const textIndex = settings && settings.layout && typeof settings.layout.textLength === 'number'
+                ? settings.layout.textLength
                 : 0;
             elements.text.innerText = textContent[textIndex] || textContent[0] || '';
         }
@@ -2943,7 +2910,7 @@ function updateSlides() {
 
         // Apply entry animations
         // Apply entry animations
-        if (animation.isEntryAnimated && uiSettings.isAnimationsEnabled ) {
+        if (animation.isEntryAnimated && uiSettings.isAnimationsEnabled) {
             const template = animation.template === 'custom' ? animation.custom : animationTemplates.find(t => t.id === animation.template);
             if (template) {
                 const { settings: animationSettings, elements: animationElements } = template.entry;
@@ -3208,7 +3175,7 @@ function resizeImage(action) {
         width -= 10;
     }
     image.style.width = `${width}px`;
-    const settings = storedBannerSettings.find(setting => setting.size === size).settings.layout;
+    const settings = getSlideSettings(size).layout;
     settings.imageSize = `${width}px`;
     saveSettings();
 }
@@ -3223,7 +3190,7 @@ function resizeTitle(action) {
         fontSize -= 2;
     }
     title.style.fontSize = `${fontSize}px`;
-    const settings = storedBannerSettings.find(setting => setting.size === size).settings.layout;
+    const settings = getSlideSettings(size).layout;
     settings.titleSize = `${fontSize}px`;
     saveSettings();
 }
@@ -3238,7 +3205,7 @@ function resizeBody(action) {
         fontSize -= 2;
     }
     body.style.fontSize = `${fontSize}px`;
-    const settings = storedBannerSettings.find(setting => setting.size === size).settings.layout;
+    const settings = getSlideSettings(size).layout;
     settings.bodySize = `${fontSize}px`;
     saveSettings();
 }
@@ -3251,7 +3218,7 @@ function toggleBackground() {
     }
     const container = document.getElementById(`ad-container-${size}`);
     const image = document.getElementById(`image-${size}`);
-    const settings = storedBannerSettings.find(setting => setting.size === size).settings.layout;
+    const settings = getSlideSettings(size).layout;
     if (document.getElementById('toggle-background').checked) {
         container.style.backgroundImage = `url(${image.src})`;
         container.style.backgroundSize = 'cover';
@@ -3273,7 +3240,7 @@ function switchPosition() {
     const logoIcon = document.getElementById(`logo-icon-${size}`);
     const logoTitle = document.getElementById(`logo-title-${size}`);
     const image = document.getElementById(`image-${size}`);
-    const settings = storedBannerSettings.find(setting => setting.size === size).settings.layout;
+    const settings = getSlideSettings(size).layout;
 
     if (size === '300x250') {
         if (logoTitle && container.contains(logoTitle) && container.contains(image)) {
@@ -3299,7 +3266,7 @@ function switchPosition() {
 function toggleCtaStyle() {
     const size = getSelectedBanner();
     const cta = document.getElementById(`cta-${size}`);
-    let settings = uiSettings.isSlideSettings ? storedSlides[currentAdIndex].settings : storedBannerSettings.find(setting => setting.size === size).settings;
+    let settings = getSlideSettings(size);
 
     if (!settings.layout) {
         settings.layout = {};
@@ -3838,11 +3805,11 @@ function openEditModal() {
     if (!modal) {
         console.error('Edit slide modal not found');
         return;
-    }    const form = document.getElementById('editSlideForm');
+    } const form = document.getElementById('editSlideForm');
 
     const currentSlide = storedSlides[currentAdIndex];
     const settingsTemplateSelect = document.getElementById('editSettingsTemplate');
-    
+
     if (settingsTemplateSelect) {
         if (currentSlide.settingsTemplate) {
             settingsTemplateSelect.value = currentSlide.settingsTemplate;
@@ -3971,7 +3938,7 @@ function openEditModal() {
 function populateSettingsTemplateDropdown() {
     const select = document.getElementById('editSettingsTemplate');
     select.innerHTML = '<option value="">Select a template</option>';
-    
+
     Object.keys(settingsTemplates).forEach(templateId => {
         const option = document.createElement('option');
         option.value = templateId;
@@ -3993,14 +3960,14 @@ function handleSettingsTemplateSelection() {
     const editButton = document.getElementById('editSettingsTemplateBtn');
     const applyButton = document.getElementById('applySettingsTemplateBtn');
     const updateButton = document.getElementById('updateSettingsTemplateBtn');
-    
+
     if (!select) {
         console.error('Settings template select element not found');
         return;
     }
 
     const selectedTemplate = select.value;
-    
+
     if (customFields) {
         customFields.classList.toggle('hidden', selectedTemplate !== 'custom');
     } else {
@@ -4040,20 +4007,20 @@ function editSelectedTemplate() {
     const select = document.getElementById('editSettingsTemplate');
     const customFields = document.getElementById('customSettingsFields');
     const updateButton = document.getElementById('updateSettingsTemplateBtn');
-    
+
     currentEditingSettingsTemplateId = select.value;
     currentEditingSize = getSelectedBanner(); // Assuming this function exists and returns the current size
-    
+
     customFields.classList.remove('hidden');
     updateButton.classList.remove('hidden');
-    
+
     let settingsToEdit;
     if (currentEditingSize && settingsTemplates[currentEditingSettingsTemplateId].size) {
         settingsToEdit = settingsTemplates[currentEditingSettingsTemplateId].size[currentEditingSize];
     } else {
         settingsToEdit = settingsTemplates[currentEditingSettingsTemplateId];
     }
-    
+
     document.getElementById('editSettings').value = JSON.stringify(settingsToEdit, null, 2);
 }
 
@@ -4063,11 +4030,11 @@ function updateCurrentTemplate() {
         alert('No template selected for editing.');
         return;
     }
-console.log('update clicked.');
+    console.log('update clicked.');
     const settingsJSON = document.getElementById('editSettings').value;
     try {
         const newSettings = JSON.parse(settingsJSON);
-        
+
         if (currentEditingSize) {
             // Updating a specific size
             if (!settingsTemplates[currentEditingSettingsTemplateId].size) {
@@ -4100,7 +4067,7 @@ function saveAsNewTemplate() {
         const templateName = prompt('Enter a name for this template:');
         if (templateName) {
             const templateId = templateName.toLowerCase().replace(/\s+/g, '-');
-            
+
             if (currentEditingSize) {
                 // Saving a new size-specific template
                 settingsTemplates[templateId] = {
@@ -4427,7 +4394,7 @@ function saveAsNewTemplate() {
 function updateSettingsTemplateDropdown() {
     const select = document.getElementById('editSettingsTemplate');
     select.innerHTML = '<option value="">Select a template</option>';
-    
+
     Object.keys(settingsTemplates).forEach(templateId => {
         const option = document.createElement('option');
         option.value = templateId;
@@ -4610,7 +4577,7 @@ document.addEventListener('DOMContentLoaded', () => {
     convertAllTimestampsToMilliseconds();
     loadUISettings();
     loadAnimationTemplates();
-    
+
     const settingsTemplateSelect = document.getElementById('editSettingsTemplate');
     const editTemplateBtn = document.getElementById('editSettingsTemplateBtn');
     const updateSettingsTemplateBtn = document.getElementById('updateSettingsTemplateBtn');
