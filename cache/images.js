@@ -8,6 +8,7 @@ const images = [
     "/img/backdrop-000-EMPTY.png",
     "/img/backdrop-car16.webp",
     "/img/backdrop-car17.png",
+    "/img/backdrop-car18.jpg",
     "/img/backdrop-large-production-studio.webp",
     "/img/backdrop-podcast-studio-04.webp",
     "/img/backdrop-studio-inside-02.png",

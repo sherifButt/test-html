@@ -51,6 +51,10 @@ const sizes = ["480x120", "300x250", "160x600", "300x250-text", "728x90", "1200x
 
 let currentImageType = 'main';
 
+let currentEditingSettingsTemplateId = null;
+let isEditingSettingsTemplate = false;
+
+
 let uiSettings = {
     isSlideSettings: false,
     isAnimationsEnabled: false // Global variable to track animation state
@@ -135,10 +139,12 @@ function toggleSlideSettings() {
             storedSlides.forEach(slide => {
                 if (!slide.settings && !slide.settingsTemplate) {
                     slide.settings = JSON.parse(JSON.stringify(bannerSettings.settings));
+                    slide.settingsTemplate = 'custom'
                 } else if (slide.settingsTemplate) {
                     const template = settingsTemplates[slide.settingsTemplate];
                     if (template && template.size && template.size[size]) {
                         slide.settings = JSON.parse(JSON.stringify(template.size[size]));
+                        
                     } else {
                         console.error(`Template ${slide.settingsTemplate} or size ${size} not found for slide`);
                         // Fallback to default template if available
@@ -2877,22 +2883,20 @@ function updateSlides() {
         const animation = ad.animation || {};
 
         // Update content
-        if (elements.headline) elements.headline.innerText = ad.headline;
-        const adTextArray = ad.text;
-        if (elements.text) elements.text.innerText = adTextArray[settings.layout.textLength] || adTextArray[0];
-        if (elements.tags) elements.tags.innerText = ad.tags;
-
-        const cta = document.getElementById(`cta-${size}`);
-        if (cta) {
-            if (settings.layout && settings.layout.ctaStyle === 'circle') {
-                cta.innerText = '>';
-                cta.style.padding = '5px 12px';
-                cta.style.borderRadius = '100%';
-            } else {
-                cta.innerText = ad.cta;
-                cta.style.padding = '5px 12px';
-                cta.style.borderRadius = '4px';
-            }
+        if (elements.headline) elements.headline.innerText = ad.headline || '';
+        if (elements.text) {
+            const textContent = Array.isArray(ad.text) ? ad.text : [ad.text];
+            const textIndex = settings && settings.layout && typeof settings.layout.textLength === 'number' 
+                ? settings.layout.textLength 
+                : 0;
+            elements.text.innerText = textContent[textIndex] || textContent[0] || '';
+        }
+        if (elements.tags) elements.tags.innerText = ad.tags || '';
+        if (elements.cta) {
+            const ctaStyle = settings && settings.layout ? settings.layout.ctaStyle : 'default';
+            elements.cta.innerText = ctaStyle === 'circle' ? '>' : (ad.cta || 'CTA');
+            elements.cta.style.padding = '5px 12px';
+            elements.cta.style.borderRadius = ctaStyle === 'circle' ? '100%' : '4px';
         }
 
         updateLogo(size);
@@ -3831,8 +3835,33 @@ document.getElementById('openGalleryButton').addEventListener('click', () => {
 
 function openEditModal() {
     const modal = document.getElementById('editSlideModal');
-    const form = document.getElementById('editSlideForm');
+    if (!modal) {
+        console.error('Edit slide modal not found');
+        return;
+    }    const form = document.getElementById('editSlideForm');
+
     const currentSlide = storedSlides[currentAdIndex];
+    const settingsTemplateSelect = document.getElementById('editSettingsTemplate');
+    
+    if (settingsTemplateSelect) {
+        if (currentSlide.settingsTemplate) {
+            settingsTemplateSelect.value = currentSlide.settingsTemplate;
+        } else {
+            settingsTemplateSelect.value = '';
+        }
+
+        // Only call handleSettingsTemplateSelection if the select element exists
+        handleSettingsTemplateSelection();
+    } else {
+        console.warn('Settings template select element not found');
+    }
+
+    if (currentSlide.settingsTemplate) {
+        settingsTemplateSelect.value = currentSlide.settingsTemplate;
+    } else {
+        settingsTemplateSelect.value = '';
+    }
+    handleSettingsTemplateSelection();
 
     if (!modal || !form) {
         console.error('Modal or form not found');
@@ -3938,7 +3967,185 @@ function openEditModal() {
     modal.classList.remove('hidden');
 }
 
+// Function to populate the settings template dropdown
+function populateSettingsTemplateDropdown() {
+    const select = document.getElementById('editSettingsTemplate');
+    select.innerHTML = '<option value="">Select a template</option>';
+    
+    Object.keys(settingsTemplates).forEach(templateId => {
+        const option = document.createElement('option');
+        option.value = templateId;
+        option.textContent = settingsTemplates[templateId].name;
+        select.appendChild(option);
+    });
 
+    const customOption = document.createElement('option');
+    customOption.value = 'custom';
+    customOption.textContent = 'Custom';
+    select.appendChild(customOption);
+}
+
+
+// Function to handle settings template selection
+function handleSettingsTemplateSelection() {
+    const select = document.getElementById('editSettingsTemplate');
+    const customFields = document.getElementById('customSettingsFields');
+    const editButton = document.getElementById('editSettingsTemplateBtn');
+    const applyButton = document.getElementById('applySettingsTemplateBtn');
+    const updateButton = document.getElementById('updateSettingsTemplateBtn');
+    
+    if (!select) {
+        console.error('Settings template select element not found');
+        return;
+    }
+
+    const selectedTemplate = select.value;
+    
+    if (customFields) {
+        customFields.classList.toggle('hidden', selectedTemplate !== 'custom');
+    } else {
+        console.warn('Custom fields element not found');
+    }
+
+    if (editButton) {
+        editButton.classList.toggle('hidden', selectedTemplate === 'custom' || !selectedTemplate);
+    } else {
+        console.warn('Edit button not found');
+    }
+
+    if (applyButton) {
+        applyButton.classList.toggle('hidden', selectedTemplate !== 'custom');
+    } else {
+        console.warn('Apply button not found');
+    }
+
+    if (updateButton) {
+        updateButton.classList.toggle('hidden', selectedTemplate === 'custom' || !selectedTemplate);
+    } else {
+        console.warn('Update button not found');
+    }
+
+    if (selectedTemplate === 'custom') {
+        const editSettings = document.getElementById('editSettings');
+        if (editSettings && storedSlides[currentAdIndex]) {
+            editSettings.value = JSON.stringify(storedSlides[currentAdIndex].settings, null, 2);
+        } else {
+            console.warn('Edit settings textarea or current slide not found');
+        }
+    }
+}
+
+// Function to edit the selected template
+function editSelectedTemplate() {
+    const select = document.getElementById('editSettingsTemplate');
+    const customFields = document.getElementById('customSettingsFields');
+    const updateButton = document.getElementById('updateSettingsTemplateBtn');
+    
+    currentEditingSettingsTemplateId = select.value;
+    currentEditingSize = getSelectedBanner(); // Assuming this function exists and returns the current size
+    
+    customFields.classList.remove('hidden');
+    updateButton.classList.remove('hidden');
+    
+    let settingsToEdit;
+    if (currentEditingSize && settingsTemplates[currentEditingSettingsTemplateId].size) {
+        settingsToEdit = settingsTemplates[currentEditingSettingsTemplateId].size[currentEditingSize];
+    } else {
+        settingsToEdit = settingsTemplates[currentEditingSettingsTemplateId];
+    }
+    
+    document.getElementById('editSettings').value = JSON.stringify(settingsToEdit, null, 2);
+}
+
+// Function to update the current template
+function updateCurrentTemplate() {
+    if (!currentEditingSettingsTemplateId) {
+        alert('No template selected for editing.');
+        return;
+    }
+console.log('update clicked.');
+    const settingsJSON = document.getElementById('editSettings').value;
+    try {
+        const newSettings = JSON.parse(settingsJSON);
+        
+        if (currentEditingSize) {
+            // Updating a specific size
+            if (!settingsTemplates[currentEditingSettingsTemplateId].size) {
+                settingsTemplates[currentEditingSettingsTemplateId].size = {};
+            }
+            settingsTemplates[currentEditingSettingsTemplateId].size[currentEditingSize] = newSettings;
+        } else {
+            // Updating the entire template
+            settingsTemplates[currentEditingSettingsTemplateId] = {
+                ...settingsTemplates[currentEditingSettingsTemplateId],
+                ...newSettings
+            };
+        }
+
+        localStorage.setItem('settingsTemplates', JSON.stringify(settingsTemplates));
+        alert('Template updated successfully.');
+        populateSettingsTemplateDropdown(); // Refresh the dropdown
+    } catch (error) {
+        console.error('Invalid JSON for template settings:', error);
+        alert('Invalid JSON for template settings. Please check your input.');
+    }
+}
+
+
+// Function to save as a new template
+function saveAsNewTemplate() {
+    const settingsJSON = document.getElementById('editSettings').value;
+    try {
+        const newSettings = JSON.parse(settingsJSON);
+        const templateName = prompt('Enter a name for this template:');
+        if (templateName) {
+            const templateId = templateName.toLowerCase().replace(/\s+/g, '-');
+            
+            if (currentEditingSize) {
+                // Saving a new size-specific template
+                settingsTemplates[templateId] = {
+                    id: templateId,
+                    name: templateName,
+                    size: {
+                        [currentEditingSize]: newSettings
+                    }
+                };
+            } else {
+                // Saving a new full template
+                settingsTemplates[templateId] = {
+                    id: templateId,
+                    name: templateName,
+                    ...newSettings
+                };
+            }
+
+            localStorage.setItem('settingsTemplates', JSON.stringify(settingsTemplates));
+            populateSettingsTemplateDropdown();
+            alert('New template saved successfully.');
+        }
+    } catch (error) {
+        console.error('Invalid JSON for template settings:', error);
+        alert('Invalid JSON for template settings. Please check your input.');
+    }
+}
+
+
+// Event listeners
+document.addEventListener('DOMContentLoaded', () => {
+    const settingsTemplateSelect = document.getElementById('editSettingsTemplate');
+    const editTemplateBtn = document.getElementById('editSettingsTemplateBtn');
+    const applySettingsTemplateBtn = document.getElementById('applySettingsTemplateBtn');
+    const updateSettingsTemplateBtn = document.getElementById('updateSettingsTemplateBtn');
+    const saveAsNewSettingsTemplateBtn = document.getElementById('saveAsNewSettingsTemplateBtn');
+
+    populateSettingsTemplateDropdown();
+
+    settingsTemplateSelect.addEventListener('change', handleSettingsTemplateSelection);
+    editTemplateBtn.addEventListener('click', editSelectedTemplate);
+    applySettingsTemplateBtn.addEventListener('click', applySettingsToSlide);
+    updateSettingsTemplateBtn.addEventListener('click', updateCurrentTemplate);
+    saveAsNewSettingsTemplateBtn.addEventListener('click', saveAsNewTemplate);
+});
 
 
 
@@ -3979,10 +4186,11 @@ function handleEditFormSubmit(event) {
     const form = event.target;
     const currentSlide = storedSlides[currentAdIndex];
     const animationTemplateSelect = document.getElementById('editAnimationTemplate');
-
+    const settingsTemplateSelect = document.getElementById('editSettingsTemplate');
+    const currentSize = getSelectedBanner(); // Assuming you have a function to get the current banner size
 
     const updatedSlide = {
-        ...currentSlide, // Start with all existing properties
+        ...currentSlide,
         timestamp: parseInt(form.timestamp.value),
         audio: form.audio.value,
         logo: {
@@ -3995,16 +4203,16 @@ function handleEditFormSubmit(event) {
         tags: form.tags.value,
         cta: form.cta.value,
         animation: {
-            ...currentSlide.animation,  // Start with existing animation properties
-            template: form.animationTemplate.value,
+            ...currentSlide.animation,
+            template: animationTemplateSelect.value,
             isLooped: form.isLooped.checked,
             isExitAnimated: form.isExitAnimated.checked,
             isEntryAnimated: form.isEntryAnimated.checked
-        }
+        },
+        settingsTemplate: settingsTemplateSelect.value
     };
 
-    updatedSlide.animation.template = animationTemplateSelect.value;
-
+    // Handle animation settings
     if (updatedSlide.animation.template === 'custom') {
         try {
             updatedSlide.animation.custom = JSON.parse(form.animations.value);
@@ -4014,26 +4222,30 @@ function handleEditFormSubmit(event) {
             return;
         }
     } else {
-        // If not using custom, remove the custom property
         delete updatedSlide.animation.custom;
     }
 
-    // Update animation properties only if the form elements exist
-    if (form.isLooped) updatedSlide.animation.isLooped = form.isLooped.checked;
-    if (form.isExitAnimated) updatedSlide.animation.isExitAnimated = form.isExitAnimated.checked;
-    if (form.isEntryAnimated) updatedSlide.animation.isEntryAnimated = form.isEntryAnimated.checked;
-
-    if (form.animationTemplate.value === 'custom') {
+    // Handle settings template
+    if (updatedSlide.settingsTemplate === 'custom') {
         try {
-            updatedSlide.animation.custom = JSON.parse(form.animations.value);
+            updatedSlide.settings = JSON.parse(document.getElementById('editSettings').value);
         } catch (error) {
-            console.error('Invalid JSON for custom animation');
-            alert('Invalid JSON for custom animation. Please check your input.');
+            console.error('Invalid JSON for custom settings');
+            alert('Invalid JSON for custom settings. Please check your input.');
+            return;
+        }
+    } else if (updatedSlide.settingsTemplate) {
+        const templateSettings = settingsTemplates[updatedSlide.settingsTemplate];
+        if (templateSettings && templateSettings.size && templateSettings.size[currentSize]) {
+            updatedSlide.settings = JSON.parse(JSON.stringify(templateSettings.size[currentSize]));
+        } else {
+            console.error(`No settings found for template "${updatedSlide.settingsTemplate}" and size "${currentSize}"`);
+            alert(`No settings found for the selected template and current banner size. Please check your selection.`);
             return;
         }
     } else {
-        // If not using custom, remove the custom property
-        delete updatedSlide.animation.custom;
+        // If no template is selected, keep the existing settings or initialize with empty object
+        updatedSlide.settings = currentSlide.settings || {};
     }
 
     // Update the current slide in storedSlides
@@ -4162,27 +4374,71 @@ function saveEditedTemplate() {
 }
 
 function saveAsNewTemplate() {
-    const customAnimationJSON = document.getElementById('editAnimations').value;
-    let customAnimation;
+    const settingsJSON = document.getElementById('editSettings').value;
+    let newSettings;
     try {
-        customAnimation = JSON.parse(customAnimationJSON);
+        newSettings = JSON.parse(settingsJSON);
     } catch (error) {
-        alert('Invalid JSON for custom animation. Please check your input.');
+        alert('Invalid JSON for settings. Please check your input.');
         return;
     }
 
     const templateName = prompt('Enter a name for this template:');
     if (!templateName) return;
 
+    const templateId = templateName.toLowerCase().replace(/\s+/g, '-');
+    const currentSize = getSelectedBanner(); // Assuming this function exists
+
     const newTemplate = {
-        id: templateName.toLowerCase().replace(/\s+/g, '-'),
+        id: templateId,
         name: templateName,
-        ...customAnimation
+        description: "User created template",
+        img: "/img/default-template.gif",
+        author: "User",
+        date: new Date().toISOString().split('T')[0],
+        version: "1.0.0",
+        tags: [],
+        categories: [],
+        defaultSize: currentSize,
+        size: {}
     };
 
-    animationTemplates.push(newTemplate);
-    saveAnimationTemplates();
-    updateAnimationTemplateSelect(newTemplate.id);
+    // Add the current size settings to the new template
+    newTemplate.size[currentSize] = {
+        width: newSettings.width,
+        height: newSettings.height,
+        img: newSettings.img,
+        elements: newSettings.elements,
+        layout: newSettings.layout
+    };
+
+    // Add the new template to settingsTemplates
+    settingsTemplates[templateId] = newTemplate;
+
+    // Save to localStorage
+    localStorage.setItem('settingsTemplates', JSON.stringify(settingsTemplates));
+
+    // Update the dropdown
+    updateSettingsTemplateDropdown();
+
+    alert('New template saved successfully!');
+}
+
+function updateSettingsTemplateDropdown() {
+    const select = document.getElementById('editSettingsTemplate');
+    select.innerHTML = '<option value="">Select a template</option>';
+    
+    Object.keys(settingsTemplates).forEach(templateId => {
+        const option = document.createElement('option');
+        option.value = templateId;
+        option.textContent = settingsTemplates[templateId].name;
+        select.appendChild(option);
+    });
+
+    const customOption = document.createElement('option');
+    customOption.value = 'custom';
+    customOption.textContent = 'Custom';
+    select.appendChild(customOption);
 }
 
 function updateAnimationTemplateSelect(selectedId = '') {
@@ -4354,6 +4610,19 @@ document.addEventListener('DOMContentLoaded', () => {
     convertAllTimestampsToMilliseconds();
     loadUISettings();
     loadAnimationTemplates();
+    
+    const settingsTemplateSelect = document.getElementById('editSettingsTemplate');
+    const editTemplateBtn = document.getElementById('editSettingsTemplateBtn');
+    const updateSettingsTemplateBtn = document.getElementById('updateSettingsTemplateBtn');
+    const saveAsNewSettingsTemplateBtn = document.getElementById('saveAsNewSettingsTemplateBtn');
+    const customSettingsFields = document.getElementById('customSettingsFields');
+
+    populateSettingsTemplateDropdown();
+
+    settingsTemplateSelect.addEventListener('change', handleSettingsTemplateSelection);
+    editTemplateBtn.addEventListener('click', editSelectedTemplate);
+    updateSettingsTemplateBtn.addEventListener('click', updateCurrentTemplate);
+    saveAsNewSettingsTemplateBtn.addEventListener('click', saveAsNewTemplate);
 
     const toggleSwitch = document.getElementById('animationToggle');
     if (toggleSwitch) {
