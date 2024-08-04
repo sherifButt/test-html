@@ -83,22 +83,28 @@ delete campaign.slides;
 
 function getSlideSettings(size) {
     if (uiSettings.isSlideSettings) {
-        if (!storedSlides[currentAdIndex].settings) {
-            initializeSlideSettings(size);
-        }
-        if (storedSlides[currentAdIndex].settings && storedSlides[currentAdIndex].settings.template && storedSlides[currentAdIndex].settings.template !== null) {
-            return storedBannerSettings.find(setting => setting.size === size).settings;
-        }
-        return storedSlides[currentAdIndex].settings;
+      if (!storedSlides[currentAdIndex].settings) {
+        initializeSlideSettings();
+      }
+      if (storedSlides[currentAdIndex].settings && storedSlides[currentAdIndex].settings.size && storedSlides[currentAdIndex].settings.size[size]) {
+        return storedSlides[currentAdIndex].settings.size[size];
+      }
+      return initializeSlideSettings(size);
     } else {
-        return storedBannerSettings.find(setting => setting.size === size).settings;
+      return storedBannerSettings.find(setting => setting.size === size).settings;
     }
-}
+  }
 
-function initializeSlideSettings(size) {
-    const globalSettings = storedBannerSettings.find(setting => setting.size === size).settings;
-    storedSlides[currentAdIndex].settings = JSON.parse(JSON.stringify(globalSettings));
-}
+  function initializeSlideSettings(size) {
+    if (!storedSlides[currentAdIndex].settings) {
+      storedSlides[currentAdIndex].settings = { size: {} };
+    }
+    if (!storedSlides[currentAdIndex].settings.size[size]) {
+      const globalSettings = storedBannerSettings.find(setting => setting.size === size).settings;
+      storedSlides[currentAdIndex].settings.size[size] = JSON.parse(JSON.stringify(globalSettings));
+    }
+    return storedSlides[currentAdIndex].settings.size[size];
+  }
 
 // Load settings from local storage or use default
 const storedBannerSettings = JSON.parse(localStorage.getItem('bannerSettings')) || bannerSettings;
@@ -126,59 +132,72 @@ if (currentAdIndex === undefined || currentAdIndex < 0 || currentAdIndex >= stor
     currentAdIndex = 0;
 }
 
+// const sizes = ["480x120", "300x250", "160x600", "300x250-text", "728x90", "1200x628", "1200x628-2", "1080x1080", "720x1280"];
+
 function toggleSlideSettings() {
     uiSettings.isSlideSettings = !uiSettings.isSlideSettings;
     saveUISettings();
-    const size = '1200x628';
 
     if (uiSettings.isSlideSettings) {
         // Entering slide settings mode
-        const bannerSettings = storedBannerSettings.find(setting => setting.size === size);
-        if (bannerSettings) {
-            // Populate all slides with the 1200x628 banner settings
-            storedSlides.forEach(slide => {
-                if (!slide.settings && !slide.settingsTemplate) {
-                    slide.settings = JSON.parse(JSON.stringify(bannerSettings.settings));
-                    slide.settingsTemplate = 'custom'
-                } else if (slide.settingsTemplate) {
-                    const template = settingsTemplates[slide.settingsTemplate];
-                    if (template && template.size && template.size[size]) {
-                        slide.settings = JSON.parse(JSON.stringify(template.size[size]));
+        storedSlides.forEach(slide => {
+            if (!slide.settings || !slide.settings.size) {
+                slide.settings = { size: {} };
+            }
 
-                    } else {
-                        console.error(`Template ${slide.settingsTemplate} or size ${size} not found for slide`);
-                        // Fallback to default template if available
-                        if (settingsTemplates.default && settingsTemplates.default.size[size]) {
-                            slide.settings = JSON.parse(JSON.stringify(settingsTemplates.default.size[size]));
+            sizes.forEach(size => {
+                const bannerSettings = storedBannerSettings.find(setting => setting.size === size);
+                if (bannerSettings) {
+                    if (!slide.settings.size[size]) {
+                        if (!slide.settingsTemplate || slide.settingsTemplate === 'custom') {
+                            slide.settings.size[size] = JSON.parse(JSON.stringify(bannerSettings.settings));
                         } else {
-                            console.error(`Default template or size ${size} not found, using banner settings`);
-                            slide.settings = JSON.parse(JSON.stringify(bannerSettings.settings));
+                            const template = settingsTemplates[slide.settingsTemplate];
+                            if (template && template.size && template.size[size]) {
+                                slide.settings.size[size] = JSON.parse(JSON.stringify(template.size[size]));
+                            } else {
+                                console.warn(`Template ${slide.settingsTemplate} or size ${size} not found for slide`);
+                                // Fallback to default template if available
+                                if (settingsTemplates.default && settingsTemplates.default.size[size]) {
+                                    slide.settings.size[size] = JSON.parse(JSON.stringify(settingsTemplates.default.size[size]));
+                                } else {
+                                    console.warn(`Default template or size ${size} not found, using banner settings`);
+                                    slide.settings.size[size] = JSON.parse(JSON.stringify(bannerSettings.settings));
+                                }
+                            }
                         }
                     }
+                } else {
+                    console.warn(`Banner settings for size ${size} not found`);
                 }
             });
-            // Save the updated slides
-            localStorage.setItem('slides', JSON.stringify(storedSlides));
-            console.log('Slides populated with settings based on templates or 1200x628 banner settings');
-        } else {
-            console.error('1200x628 banner settings not found');
-        }
+        });
+
+        // Save the updated slides
+        localStorage.setItem('slides', JSON.stringify(storedSlides));
+        console.log('Slides populated with settings for all sizes');
     }
 
-    const settings = getSlideSettings(size);
+    // Apply settings for the currently selected size
+    const currentSize = getSelectedBanner();
+    const settings = getSlideSettings(currentSize);
     console.log('Current settings:', settings);
     console.log('Image size:', settings.layout?.imageSize);
     console.log('Text container size:', settings.layout?.textContainerSize);
 
-    applyAllSavedSettings(size);
+    applyAllSavedSettings(currentSize);
 
     // After applying settings, log the actual sizes
-    const image = document.getElementById(`image-${size}`);
-    const textContainer = document.getElementById(`textcontainer-${size}`);
-    console.log('Applied image size:', image.style.width);
-    console.log('Applied text container size:', textContainer.style.width, textContainer.style.height);
+    const image = document.getElementById(`image-${currentSize}`);
+    const textContainer = document.getElementById(`textcontainer-${currentSize}`);
+    if (image && textContainer) {
+        console.log('Applied image size:', image.style.width);
+        console.log('Applied text container size:', textContainer.style.width, textContainer.style.height);
+    } else {
+        console.warn(`Image or text container element not found for size ${currentSize}`);
+    }
 
-    updateCheckboxStates(size);
+    updateCheckboxStates(currentSize);
     updateElementsList();
 }
 
@@ -295,7 +314,12 @@ function applyUISettings() {
 }
 
 function getSelectedBanner() {
-    return document.getElementById('bannerSelect').value;
+    const size = document.getElementById('bannerSelect').value;
+    if (!size) {
+        console.warn('No banner selected');
+        return null;
+    }
+    return size;
 }
 
 
@@ -824,12 +848,11 @@ function changeElementColor(color) {
 
 
 function updateSetting(size, category, subcategory, key, value) {
-    const setting = storedBannerSettings.find(s => s.size === size);
-    if (setting && setting.settings[category] && setting.settings[category][subcategory]) {
-        setting.settings[category][subcategory][key] = value;
-        saveSettings();
-    }
-}
+    const settings = getSlideSettings(size);
+    if (!settings[category]) settings[category] = {};
+    settings[category][key] = value;
+    saveSettings();
+  }
 
 function getSetting(size, category, subcategory, key) {
     const setting = storedBannerSettings.find(s => s.size === size);
@@ -963,17 +986,7 @@ function moveElement(direction, step = 5) {
     const elementType = selectedElement.id.split('-')[0];
 
     // Find the settings object, accounting for slide-specific settings
-    let settings;
-    if (uiSettings.isSlideSettings && storedSlides[currentAdIndex] && storedSlides[currentAdIndex].settings) {
-        settings = storedSlides[currentAdIndex].settings;
-    } else {
-        const bannerSetting = storedBannerSettings.find(setting => setting.size === size);
-        if (!bannerSetting || !bannerSetting.settings) {
-            console.error(`No settings found for banner size: ${size}`);
-            return;
-        }
-        settings = bannerSetting.settings;
-    }
+    let settings = getSlideSettings(size);
 
     // Ensure layout settings exist
     if (!settings.layout) {
@@ -1136,17 +1149,7 @@ function resizeElement(direction) {
     const elementType = selectedElement.id.split('-')[0];
 
     // Find the settings object, accounting for slide-specific settings
-    let settings;
-    if (uiSettings.isSlideSettings && storedSlides[currentAdIndex].settings) {
-        settings = storedSlides[currentAdIndex].settings;
-    } else {
-        const bannerSetting = storedBannerSettings.find(setting => setting.size === size);
-        if (!bannerSetting) {
-            console.error(`No settings found for banner size: ${size}`);
-            return;
-        }
-        settings = bannerSetting.settings;
-    }
+    let settings = getSlideSettings(size);
 
     // Ensure layout settings exist
     if (!settings.layout) {
@@ -1304,12 +1307,8 @@ function resetElement() {
 }
 
 function updateCheckboxStates(size) {
-    let settings;
-    if (uiSettings.isSlideSettings && storedSlides[currentAdIndex].settings) {
-        settings = storedSlides[currentAdIndex].settings.elements;
-    } else {
-        settings = storedBannerSettings.find(setting => setting.size === size).settings.elements;
-    }
+    let settings = getSlideSettings(size).elements;
+    
     const elements = {
         'logo-icon': 'logoIcon',
         'image': 'image',
@@ -1433,16 +1432,62 @@ function updateSliderValues(size) {
 
 function saveSettings() {
     const size = getSelectedBanner();
+    console.log('Saving settings for size:', size);
+
+    if (!size) {
+        console.error('No banner size selected. Cannot save settings.');
+        alert('Please select a banner size before saving.');
+        return;
+    }
+
     if (uiSettings.isSlideSettings) {
-        // Save settings to current slide
-        if (!storedSlides[currentAdIndex].settings) {
-            storedSlides[currentAdIndex].settings = JSON.parse(JSON.stringify(storedBannerSettings.find(setting => setting.size === size).settings));
+        if (!storedSlides[currentAdIndex]) {
+            console.error('Current slide index is invalid:', currentAdIndex);
+            return;
         }
+
+        if (!storedSlides[currentAdIndex].settings) {
+            storedSlides[currentAdIndex].settings = { size: {} };
+        }
+
+        if (!storedSlides[currentAdIndex].settings.size) {
+            storedSlides[currentAdIndex].settings.size = {};
+        }
+
+        if (!storedSlides[currentAdIndex].settings.size[size]) {
+            console.warn(`No settings found for size ${size}. Initializing with default settings.`);
+            const defaultSettings = {
+                elements: {},
+                layout: {}
+            };
+            storedSlides[currentAdIndex].settings.size[size] = defaultSettings;
+        }
+
         localStorage.setItem('slides', JSON.stringify(storedSlides));
     } else {
-        // Save banner-wide settings
+        let bannerSetting = storedBannerSettings.find(setting => setting.size === size);
+        if (!bannerSetting) {
+            console.warn(`No banner settings found for size ${size}. Adding default settings.`);
+            bannerSetting = {
+                size: size,
+                settings: {
+                    elements: {},
+                    layout: {}
+                }
+            };
+            storedBannerSettings.push(bannerSetting);
+        }
+
+        if (!bannerSetting.settings) {
+            bannerSetting.settings = {
+                elements: {},
+                layout: {}
+            };
+        }
+
         localStorage.setItem('bannerSettings', JSON.stringify(storedBannerSettings));
     }
+
     // Save other settings as before
     localStorage.setItem('images', JSON.stringify(storedImages));
     localStorage.setItem('filters', JSON.stringify(storedFilters));
@@ -1451,6 +1496,8 @@ function saveSettings() {
     localStorage.setItem('currentCampaignIndex', JSON.stringify(currentCampaignIndex));
     localStorage.setItem('currentAdIndex', JSON.stringify(currentAdIndex));
     localStorage.setItem('currentImageIndex', JSON.stringify(currentImageIndex));
+
+    console.log('Settings saved successfully');
 }
 
 function toggleElement(element) {
@@ -1465,15 +1512,7 @@ function toggleElement(element) {
     const isVisible = el.style.display !== 'none';
     el.style.display = isVisible ? 'none' : 'block';
 
-    let settings;
-    if (uiSettings.isSlideSettings) {
-        if (!storedSlides[currentAdIndex].settings) {
-            storedSlides[currentAdIndex].settings = JSON.parse(JSON.stringify(storedBannerSettings.find(setting => setting.size === size).settings));
-        }
-        settings = storedSlides[currentAdIndex].settings.elements;
-    } else {
-        settings = storedBannerSettings.find(setting => setting.size === size).settings.elements;
-    }
+    let settings=getSlideSettings(size).elements;
 
     const elementKey = {
         'logo-icon': 'logoIcon',
@@ -1509,9 +1548,7 @@ function updateSpecialElementVisibility(element, size) {
 }
 
 function updateVisibilityChecklist(size) {
-    const settings = uiSettings.isSlideSettings && storedSlides[currentAdIndex].settings
-        ? storedSlides[currentAdIndex].settings.elements
-        : storedBannerSettings.find(setting => setting.size === size).settings.elements;
+    const settings = getSlideSettings(size).elements;
 
     const elements = {
         'logo-icon': 'logoIcon',
@@ -3805,9 +3842,18 @@ function openEditModal() {
     if (!modal) {
         console.error('Edit slide modal not found');
         return;
-    } const form = document.getElementById('editSlideForm');
+    }
+
+    const form = document.getElementById('editSlideForm');
+    if (!form) {
+        console.error('Edit slide form not found');
+        return;
+    }
 
     const currentSlide = storedSlides[currentAdIndex];
+    const currentSize = getSelectedBanner();
+    console.log('Opening edit modal for size:', currentSize);
+
     const settingsTemplateSelect = document.getElementById('editSettingsTemplate');
 
     if (settingsTemplateSelect) {
@@ -3817,27 +3863,23 @@ function openEditModal() {
             settingsTemplateSelect.value = '';
         }
 
-        // Only call handleSettingsTemplateSelection if the select element exists
         handleSettingsTemplateSelection();
     } else {
         console.warn('Settings template select element not found');
     }
 
-    if (currentSlide.settingsTemplate) {
-        settingsTemplateSelect.value = currentSlide.settingsTemplate;
-    } else {
-        settingsTemplateSelect.value = '';
-    }
-    handleSettingsTemplateSelection();
-
-    if (!modal || !form) {
-        console.error('Modal or form not found');
-        return;
-    }
-
     // Load slide-specific settings if they exist
-    if (currentSlide.settings) {
-        applyAllSavedSettings(getSelectedBanner());
+    if (currentSlide.settings && currentSlide.settings.size && currentSlide.settings.size[currentSize]) {
+        console.log('Applying slide-specific settings for size:', currentSize);
+        applyAllSavedSettings(currentSize);
+    } else {
+        console.log('No slide-specific settings found for size:', currentSize, 'Using banner settings');
+        const bannerSetting = storedBannerSettings.find(setting => setting.size === currentSize);
+        if (bannerSetting) {
+            applySettings(bannerSetting.settings);
+        } else {
+            console.warn('No banner settings found for size:', currentSize);
+        }
     }
 
     // Helper function to safely set form field values
@@ -3873,7 +3915,7 @@ function openEditModal() {
     if (isLoopedToggle) isLoopedToggle.checked = currentSlide.animation?.isLooped ?? false;
     if (isExitAnimatedToggle) isExitAnimatedToggle.checked = currentSlide.animation?.isExitAnimated ?? true;
     if (isEntryAnimatedToggle) isEntryAnimatedToggle.checked = currentSlide.animation?.isEntryAnimated ?? true;
-
+    
     // Populate animation template
     const animationTemplateSelect = document.getElementById('editAnimationTemplate');
     const customAnimationFields = document.getElementById('customAnimationFields');
@@ -4109,7 +4151,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     settingsTemplateSelect.addEventListener('change', handleSettingsTemplateSelection);
     editTemplateBtn.addEventListener('click', editSelectedTemplate);
-    applySettingsTemplateBtn.addEventListener('click', applySettingsToSlide);
     updateSettingsTemplateBtn.addEventListener('click', updateCurrentTemplate);
     saveAsNewSettingsTemplateBtn.addEventListener('click', saveAsNewTemplate);
 });
@@ -4154,7 +4195,13 @@ function handleEditFormSubmit(event) {
     const currentSlide = storedSlides[currentAdIndex];
     const animationTemplateSelect = document.getElementById('editAnimationTemplate');
     const settingsTemplateSelect = document.getElementById('editSettingsTemplate');
-    const currentSize = getSelectedBanner(); // Assuming you have a function to get the current banner size
+    const currentSize = getSelectedBanner();
+
+    if (!currentSize) {
+        console.error('No banner size selected. Cannot save settings.');
+        alert('Please select a banner size before saving.');
+        return;
+    }
 
     const updatedSlide = {
         ...currentSlide,
@@ -4184,7 +4231,7 @@ function handleEditFormSubmit(event) {
         try {
             updatedSlide.animation.custom = JSON.parse(form.animations.value);
         } catch (error) {
-            console.error('Invalid JSON for custom animation');
+            console.error('Invalid JSON for custom animation:', error);
             alert('Invalid JSON for custom animation. Please check your input.');
             return;
         }
@@ -4195,16 +4242,24 @@ function handleEditFormSubmit(event) {
     // Handle settings template
     if (updatedSlide.settingsTemplate === 'custom') {
         try {
-            updatedSlide.settings = JSON.parse(document.getElementById('editSettings').value);
+            updatedSlide.settings = {
+                size: {
+                    [currentSize]: JSON.parse(document.getElementById('editSettings').value)
+                }
+            };
         } catch (error) {
-            console.error('Invalid JSON for custom settings');
+            console.error('Invalid JSON for custom settings:', error);
             alert('Invalid JSON for custom settings. Please check your input.');
             return;
         }
     } else if (updatedSlide.settingsTemplate) {
         const templateSettings = settingsTemplates[updatedSlide.settingsTemplate];
         if (templateSettings && templateSettings.size && templateSettings.size[currentSize]) {
-            updatedSlide.settings = JSON.parse(JSON.stringify(templateSettings.size[currentSize]));
+            updatedSlide.settings = {
+                size: {
+                    [currentSize]: JSON.parse(JSON.stringify(templateSettings.size[currentSize]))
+                }
+            };
         } else {
             console.error(`No settings found for template "${updatedSlide.settingsTemplate}" and size "${currentSize}"`);
             alert(`No settings found for the selected template and current banner size. Please check your selection.`);
@@ -4212,7 +4267,16 @@ function handleEditFormSubmit(event) {
         }
     } else {
         // If no template is selected, keep the existing settings or initialize with empty object
-        updatedSlide.settings = currentSlide.settings || {};
+        updatedSlide.settings = currentSlide.settings || { size: {} };
+        if (!updatedSlide.settings.size) {
+            updatedSlide.settings.size = {};
+        }
+        if (!updatedSlide.settings.size[currentSize]) {
+            updatedSlide.settings.size[currentSize] = {
+                elements: {},
+                layout: {}
+            };
+        }
     }
 
     // Update the current slide in storedSlides
