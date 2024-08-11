@@ -5,7 +5,7 @@ const path = require('path');
 const url = require('url');
 const crypto = require('crypto');
 
-const PORT = 4000;
+const PORT = 3001;
 const OPENAI_API_KEY = 'your_openai_api_key_here';
 const REMOVE_BG_API_KEY = 'your_remove_bg_api_key_here';
 

@@ -4651,8 +4651,8 @@ let settingsTemplates = {
                         "position": "static",
                         "top": "auto",
                         "left": "0px",
-                        "width": "129.656px",
-                        "height": "30.3984px",
+                        // "width": "129.656px",
+                        // "height": "30.3984px",
                         "fontSize": "17.6px",
                         "zIndex": "auto",
                         "opacity": "1",
@@ -5077,157 +5077,202 @@ let settingsTemplates = {
                 "height": 1280,
                 "img": "/img/default-template.gif",
                 "elements": {
-                    "logoIcon": true,
-                    "image": true,
-                    "headline": true,
-                    "text": true,
-                    "tags": true,
-                    "cta": true,
-                    "svgWave": true,
-                    "textContainer": true,
-                    "backdrop": true,
-                    "filter": true,
-                    "frontdrop": true,
-                    "backbanner": true,
-                    "pathOne": true,
-                    "pathTwo": true,
-                    "logo-title": true
+                  "logoIcon": true,
+                  "image": true,
+                  "headline": true,
+                  "text": true,
+                  "tags": true,
+                  "cta": true,
+                  "svgWave": true,
+                  "textContainer": true,
+                  "backdrop": true,
+                  "filter": true,
+                  "frontdrop": true,
+                  "backbanner": true,
+                  "pathOne": true,
+                  "pathTwo": true,
+                  "logo-title": true
                 },
                 "layout": {
-                    "logoLayout": "flex-row",
-                    "ctaStyle": "default",
-                    "imageOpacity": "1",
-                    "svgOneOpacity": "1",
-                    "svgTwoOpacity": "1",
-                    "logoRotation": 0,
-                    "backgroundImage": false,
-                    "imageSize": "27%",
-                    "titleSize": "1.2rem",
-                    "bodySize": "1rem",
-                    "switchPosition": false,
-                    "imageZIndex": 29,
-                    "textLength": 0,
-                    "zIndex": {
-                        "logoIcon": 10,
-                        "image": 20,
-                        "headline": 30,
-                        "text": 40,
-                        "tags": 50,
-                        "cta": 60,
-                        "svgWave": 5,
-                        "textContainer": 15,
-                        "backdrop": 1,
-                        "filter": 2,
-                        "frontdrop": 3,
-                        "backbanner": 0,
-                        "pathOne": 6,
-                        "pathTwo": 7,
-                        "logo-title": 11
+                  "logoLayout": "flex-row",
+                  "ctaStyle": "default",
+                  "imageOpacity": "1",
+                  "svgOneOpacity": "1",
+                  "svgTwoOpacity": "1",
+                  "logoRotation": 0,
+                  "backgroundImage": false,
+                  "imageSize": "27%",
+                  "titleSize": "1.2rem",
+                  "bodySize": "1rem",
+                  "switchPosition": false,
+                  "imageZIndex": 29,
+                  "textLength": 0,
+                  "zIndex": {
+                    "logoIcon": 10,
+                    "image": 20,
+                    "headline": 30,
+                    "text": 40,
+                    "tags": 50,
+                    "cta": 60,
+                    "svgWave": 5,
+                    "textContainer": 15,
+                    "backdrop": 1,
+                    "filter": 2,
+                    "frontdrop": 3,
+                    "backbanner": 0,
+                    "pathOne": 6,
+                    "pathTwo": 7,
+                    "logo-title": 11
+                  },
+                  "scales": {
+                    "logoIcon": 1,
+                    "image": 1,
+                    "headline": 1,
+                    "text": 1,
+                    "tags": 1,
+                    "cta": 1,
+                    "svgWave": 1,
+                    "textContainer": 1,
+                    "backdrop": 1,
+                    "filter": 1,
+                    "frontdrop": 1,
+                    "backbanner": 1,
+                    "pathOne": 1,
+                    "pathTwo": 1,
+                    "logo-title": 1
+                  },
+                  "positions": {
+                    "logoIcon": {
+                      "top": "0px",
+                      "left": "0px"
                     },
-                    "scales": {
-                        "logoIcon": 1,
-                        "image": 1,
-                        "headline": 1,
-                        "text": 1,
-                        "tags": 1,
-                        "cta": 1,
-                        "svgWave": 1,
-                        "textContainer": 1,
-                        "backdrop": 1,
-                        "filter": 1,
-                        "frontdrop": 1,
-                        "backbanner": 1,
-                        "pathOne": 1,
-                        "pathTwo": 1,
-                        "logo-title": 1
+                    "image": {
+                      "top": "0px",
+                      "left": "125px"
                     },
-                    "positions": {
-                        "logoIcon": { "top": "0px", "left": "0px" },
-                        "image": { "top": "0px", "left": "125px" },
-                        "headline": { "top": "30px", "left": "0px" },
-                        "text": { "top": "60px", "left": "0px" },
-                        "tags": { "top": "-25px", "left": "0px" },
-                        "cta": { "top": "-45px", "left": "230px" },
-                        "svgWave": { "top": "0px", "left": "0px" },
-                        "textContainer": { "top": "0px", "left": "0px" },
-                        "backdrop": { "top": "0px", "left": "0px" },
-                        "filter": { "top": "0px", "left": "0px" },
-                        "frontdrop": { "top": "0px", "left": "0px" },
-                        "backbanner": { "top": "0px", "left": "0px" },
-                        "pathOne": { "top": "0px", "left": "0px" },
-                        "pathTwo": { "top": "0px", "left": "0px" },
-                        "logo-title": { "top": "0px", "left": "0px" }
+                    "headline": {
+                      "top": "30px",
+                      "left": "0px"
                     },
-                    "colors": {
-                        "logoIcon": "#000000",
-                        "image": "#FFFFFF",
-                        "headline": "#000000",
-                        "text": "#000000",
-                        "tags": "#000000",
-                        "cta": "#FFFFFF",
-                        "svgWave": "#000000",
-                        "textContainer": "#FFFFFF",
-                        "backdrop": "#FFFFFF",
-                        "filter": "#FFFFFF",
-                        "frontdrop": "#FFFFFF",
-                        "backbanner": "#FFFFFF",
-                        "pathOne": "#000000",
-                        "pathTwo": "#000000",
-                        "logo-title": "#000000"
+                    "text": {
+                      "top": "60px",
+                      "left": "0px"
                     },
-                    "opacities": {
-                        "logoIcon": 1,
-                        "image": 1,
-                        "headline": 1,
-                        "text": 1,
-                        "tags": 1,
-                        "cta": 1,
-                        "svgWave": 1,
-                        "textContainer": 1,
-                        "backdrop": 1,
-                        "filter": 1,
-                        "frontdrop": 1,
-                        "backbanner": 1,
-                        "pathOne": 1,
-                        "pathTwo": 1,
-                        "logo-title": 1
+                    "tags": {
+                      "top": "-25px",
+                      "left": "0px"
                     },
-                    "rotations": {
-                        "logoIcon": 0,
-                        "image": 0,
-                        "headline": 0,
-                        "text": 0,
-                        "tags": 0,
-                        "cta": 0,
-                        "svgWave": 0,
-                        "textContainer": 0,
-                        "backdrop": 0,
-                        "filter": 0,
-                        "frontdrop": 0,
-                        "backbanner": 0,
-                        "pathOne": 0,
-                        "pathTwo": 0,
-                        "logo-title": 0
+                    "cta": {
+                      "top": "-45px",
+                      "left": "230px"
                     },
-                    "filters": {
-                        "logoIcon": "none",
-                        "image": "none",
-                        "headline": "none",
-                        "text": "none",
-                        "tags": "none",
-                        "cta": "none",
-                        "svgWave": "none",
-                        "textContainer": "none",
-                        "backdrop": "none",
-                        "filter": "none",
-                        "frontdrop": "none",
-                        "backbanner": "none",
-                        "pathOne": "none",
-                        "pathTwo": "none",
-                        "logo-title": "none"
+                    "svgWave": {
+                      "top": "0px",
+                      "left": "0px"
+                    },
+                    "textContainer": {
+                      "top": "0px",
+                      "left": "0px"
+                    },
+                    "backdrop": {
+                      "top": "0px",
+                      "left": "0px"
+                    },
+                    "filter": {
+                      "top": "0px",
+                      "left": "0px"
+                    },
+                    "frontdrop": {
+                      "top": "0px",
+                      "left": "0px"
+                    },
+                    "backbanner": {
+                      "top": "0px",
+                      "left": "0px"
+                    },
+                    "pathOne": {
+                      "top": "0px",
+                      "left": "0px"
+                    },
+                    "pathTwo": {
+                      "top": "0px",
+                      "left": "0px"
+                    },
+                    "logo-title": {
+                      "top": "0px",
+                      "left": "0px"
                     }
+                  },
+                  "colors": {
+                    "logoIcon": "#000000",
+                    "image": "#FFFFFF",
+                    "headline": "#000000",
+                    "text": "#000000",
+                    "tags": "#000000",
+                    "cta": "#FFFFFF",
+                    "svgWave": "#000000",
+                    "textContainer": "#FFFFFF",
+                    "backdrop": "#FFFFFF",
+                    "filter": "#FFFFFF",
+                    "frontdrop": "#FFFFFF",
+                    "backbanner": "#FFFFFF",
+                    "pathOne": "#000000",
+                    "pathTwo": "#000000",
+                    "logo-title": "#000000"
+                  },
+                  "opacities": {
+                    "logoIcon": 1,
+                    "image": 1,
+                    "headline": 1,
+                    "text": 1,
+                    "tags": 1,
+                    "cta": 1,
+                    "svgWave": 1,
+                    "textContainer": 1,
+                    "backdrop": 1,
+                    "filter": 1,
+                    "frontdrop": 1,
+                    "backbanner": 1,
+                    "pathOne": 1,
+                    "pathTwo": 1,
+                    "logo-title": 1
+                  },
+                  "rotations": {
+                    "logoIcon": 0,
+                    "image": 0,
+                    "headline": 0,
+                    "text": 0,
+                    "tags": 0,
+                    "cta": 0,
+                    "svgWave": 0,
+                    "textContainer": 0,
+                    "backdrop": 0,
+                    "filter": 0,
+                    "frontdrop": 0,
+                    "backbanner": 0,
+                    "pathOne": 0,
+                    "pathTwo": 0,
+                    "logo-title": 0
+                  },
+                  "filters": {
+                    "logoIcon": "none",
+                    "image": "none",
+                    "headline": "none",
+                    "text": "none",
+                    "tags": "none",
+                    "cta": "none",
+                    "svgWave": "none",
+                    "textContainer": "none",
+                    "backdrop": "none",
+                    "filter": "none",
+                    "frontdrop": "none",
+                    "backbanner": "none",
+                    "pathOne": "none",
+                    "pathTwo": "none",
+                    "logo-title": "none"
+                  }
                 }
-            }
+              }
         }
     }
 }

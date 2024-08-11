@@ -15,23 +15,11 @@ let isShiftKeyDown = false;
 let isDragging = false;
 let draggedMarker = null;
 let dragStartX = 0;
-let originalMarkerPosition = 0;
-
-// Important snapping issue:
-// bringing back moving slide to time line location 
-// fixing timeline length issue
-// time line zoom
-// zoom scroller
-
-
-
-let zoomLevel = 1;
+let originalMarkerPosition = 0; let zoomLevel = 1;
 const maxZoom = 5;
 const minZoom = 0.2;
 let zoomCenter = 0;
-
-// add scroller below the timeline
-let scrollContainerWidth = 0;
+let scrollContainerWidth = 0; // add scroller below the timeline
 
 // gapping scroll bar and moving it
 // enhancing gapping scroll bar accuracy
@@ -41,9 +29,6 @@ let originalCounterValue = '';
 // time line to jump to marker location when clicked
 // update slides object
 let currentCampaignIndex = 0;
-
-// fix jumbig issue
-// fix jumping issue
 let isAutoPlayActive = false;
 
 // update animationTemplates array object
@@ -83,28 +68,31 @@ delete campaign.slides;
 
 function getSlideSettings(size) {
     if (uiSettings.isSlideSettings) {
-      if (!storedSlides[currentAdIndex].settings) {
-        initializeSlideSettings();
-      }
-      if (storedSlides[currentAdIndex].settings && storedSlides[currentAdIndex].settings.size && storedSlides[currentAdIndex].settings.size[size]) {
-        return storedSlides[currentAdIndex].settings.size[size];
-      }
-      return initializeSlideSettings(size);
+        if (storedSlides[currentAdIndex].settingsTemplate && storedSlides[currentAdIndex].settingsTemplate !== 'default' && storedSlides[currentAdIndex].settingsTemplate !== '' && storedSlides[currentAdIndex].settingsTemplate !== 'custom') {
+            return settingsTemplates[storedSlides[currentAdIndex].settingsTemplate].size[size];
+        }
+        if (!storedSlides[currentAdIndex].settings) {
+            initializeSlideSettings();
+        }
+        if (storedSlides[currentAdIndex].settings && storedSlides[currentAdIndex].settings.size && storedSlides[currentAdIndex].settings.size[size]) {
+            return storedSlides[currentAdIndex].settings.size[size];
+        }
+        return initializeSlideSettings(size);
     } else {
-      return storedBannerSettings.find(setting => setting.size === size).settings;
+        return storedBannerSettings.find(setting => setting.size === size).settings;
     }
-  }
+}
 
-  function initializeSlideSettings(size) {
+function initializeSlideSettings(size) {
     if (!storedSlides[currentAdIndex].settings) {
-      storedSlides[currentAdIndex].settings = { size: {} };
+        storedSlides[currentAdIndex].settings = { size: {} };
     }
     if (!storedSlides[currentAdIndex].settings.size[size]) {
-      const globalSettings = storedBannerSettings.find(setting => setting.size === size).settings;
-      storedSlides[currentAdIndex].settings.size[size] = JSON.parse(JSON.stringify(globalSettings));
+        const globalSettings = storedBannerSettings.find(setting => setting.size === size).settings;
+        storedSlides[currentAdIndex].settings.size[size] = JSON.parse(JSON.stringify(globalSettings));
     }
     return storedSlides[currentAdIndex].settings.size[size];
-  }
+}
 
 // Load settings from local storage or use default
 const storedBannerSettings = JSON.parse(localStorage.getItem('bannerSettings')) || bannerSettings;
@@ -141,6 +129,13 @@ function toggleSlideSettings() {
     if (uiSettings.isSlideSettings) {
         // Entering slide settings mode
         storedSlides.forEach(slide => {
+            // Check if slide.settings template is set and equals everything except custom default or nothing, If so do nothing and exit the loop, else set slide.settings template to custom
+            if (slide.settingsTemplate && slide.settingsTemplate !== 'default' && slide.settingsTemplate !== '' && slide.settingsTemplate !== 'custom') {
+                return;
+            } else {
+                slide.settingsTemplate = 'custom';
+            }
+
             if (!slide.settings || !slide.settings.size) {
                 slide.settings = { size: {} };
             }
@@ -852,7 +847,7 @@ function updateSetting(size, category, subcategory, key, value) {
     if (!settings[category]) settings[category] = {};
     settings[category][key] = value;
     saveSettings();
-  }
+}
 
 function getSetting(size, category, subcategory, key) {
     const setting = storedBannerSettings.find(s => s.size === size);
@@ -1308,7 +1303,7 @@ function resetElement() {
 
 function updateCheckboxStates(size) {
     let settings = getSlideSettings(size).elements;
-    
+
     const elements = {
         'logo-icon': 'logoIcon',
         'image': 'image',
@@ -1367,7 +1362,7 @@ function selectBanner(size) {
     }
 
     applyAllSavedSettings(size);
-    updateSliderValues(size);
+    updateSlideValues(size);
     updateCheckboxStates(size);
     updateElementsList();
     updateVisibilityChecklist(size);
@@ -1379,7 +1374,7 @@ function selectBanner(size) {
 
 
 
-function updateSliderValues(size) {
+function updateSlideValues(size) {
     const settings = getSlideSettings(size).layout;
     if (settings) {
         if (settings.opacities) {
@@ -1426,6 +1421,7 @@ function updateSliderValues(size) {
                 logoIcon.style.transform = `rotate(${settings.logoRotation}deg)`;
             }
         }
+
     }
 }
 
@@ -1445,7 +1441,7 @@ function saveSettings() {
             console.error('Current slide index is invalid:', currentAdIndex);
             return;
         }
-
+       
         if (!storedSlides[currentAdIndex].settings) {
             storedSlides[currentAdIndex].settings = { size: {} };
         }
@@ -1512,7 +1508,7 @@ function toggleElement(element) {
     const isVisible = el.style.display !== 'none';
     el.style.display = isVisible ? 'none' : 'block';
 
-    let settings=getSlideSettings(size).elements;
+    let settings = getSlideSettings(size).elements;
 
     const elementKey = {
         'logo-icon': 'logoIcon',
@@ -2100,18 +2096,6 @@ function scheduleNextAd() {
     }
 }
 
-// function toggleMoveMarker() {
-//     const moveMarkerButton = document.getElementById('moveMarkerButton');
-//     isMoveMarkerActive = !isMoveMarkerActive;
-
-//     if (isMoveMarkerActive) {
-//         moveMarkerButton.classList.add('active', 'bg-blue-500', 'text-white');
-//         moveMarkerButton.classList.remove('bg-gray-300');
-//     } else {
-//         moveMarkerButton.classList.remove('active', 'bg-blue-500', 'text-white');
-//         moveMarkerButton.classList.add('bg-gray-300');
-//     }
-// }
 
 function toggleMoveMarker(index) {
     isMoveMarkerActive = !isMoveMarkerActive;
@@ -3349,7 +3333,7 @@ function highlightSelectedBanner() {
     const selectedBanner = document.getElementById(`ad-container-${size}`);
     if (selectedBanner) {
         selectedBanner.classList.add('border-blue-500', 'shadow-xl');
-        updateSliderValues(size);
+        updateSlideValues(size);
         updateCheckboxStates(size);
     }
 }
@@ -3581,7 +3565,7 @@ function applyUploadedSettings() {
     // Update UI elements
     const selectedBanner = getSelectedBanner();
     if (selectedBanner) {
-        updateSliderValues(selectedBanner);
+        updateSlideValues(selectedBanner);
         updateCheckboxStates(selectedBanner);
         updateVisibilityChecklist(selectedBanner);
     }
@@ -3915,7 +3899,7 @@ function openEditModal() {
     if (isLoopedToggle) isLoopedToggle.checked = currentSlide.animation?.isLooped ?? false;
     if (isExitAnimatedToggle) isExitAnimatedToggle.checked = currentSlide.animation?.isExitAnimated ?? true;
     if (isEntryAnimatedToggle) isEntryAnimatedToggle.checked = currentSlide.animation?.isEntryAnimated ?? true;
-    
+
     // Populate animation template
     const animationTemplateSelect = document.getElementById('editAnimationTemplate');
     const customAnimationFields = document.getElementById('customAnimationFields');
@@ -3965,7 +3949,12 @@ function openEditModal() {
             updateTemplateBtn.classList.add('hidden');
 
             if (isCustom && (!editAnimations.value || editAnimations.value === '{}')) {
-                const defaultTemplate = animationTemplates[0];
+                let defaultTemplate
+                if (isCustom && !currentSlide.animation.custom) {
+                    defaultTemplate = animationTemplates.filter(template => template.id === currentSlide.animation.template)[0]
+                } else {
+                    defaultTemplate = currentSlide.animation.custom
+                }
                 editAnimations.value = JSON.stringify(defaultTemplate, null, 2);
             }
         });
@@ -4745,7 +4734,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Apply settings for the initially selected banner
     const initialBanner = getSelectedBanner();
     if (initialBanner) {
-        updateSliderValues(initialBanner);
+        updateSlideValues(initialBanner);
         updateCheckboxStates(initialBanner);
         highlightSelectedBanner();
     }

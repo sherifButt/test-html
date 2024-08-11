@@ -56,7 +56,7 @@ cache:
   - images.js
 - favicon.ico
 img:
-  - 00_car3.png
+  - 00_car17s3.png
   - 01-banner_1200x628.jpg
   - 01x01.png
   - 18ct-yellow-gold-and-floating-diamond-solitaire-ring-810-1-p-transformed.png
@@ -77,6 +77,10 @@ img:
   - backdrop-car16.webp
   - backdrop-car17.png
   - backdrop-car18.jpg
+  - backdrop-ikea-Photoroom.png
+  - backdrop-ikea-Photoroom_02.png
+  - backdrop-ikea-Photoroom_03-Photoroom.png
+  - backdrop-ikea-Photoroom_03.png
   - backdrop-large-production-studio.webp
   - backdrop-podcast-studio-04.webp
   - backdrop-studio-inside-02.png
@@ -102,13 +106,16 @@ img:
   - car13.png
   - car14.png
   - car15.png
-  - car16 2.webp
-  - car17 2.png
+  - car162.webp
   - car17.png
   - car17.webp
+  - car172.png
+  - car17s.png
+  - car17s2.png
+  - car17s3.png
   - car18.webp
-  - car3 2.png
   - car3.jpg
+  - car3.png
   - clock.webp
   - common_obstacles.webp
   - energy_savings.jpg
@@ -143,6 +150,8 @@ img:
   - frontdrop-000-EMPTY.png
   - frontdrop-car17.jpg
   - frontdrop-car17.png
+  - frontdrop-ikea-Photoroom-2-removebg-preview.png
+  - frontdrop-ikea-Photoroom-3-removebg-preview.png
   - frontdrop-studio-inside_03.png
   - frontdrop-studio-inside_04_n.png
   - frontdrop-studio-inside_05_n.png
@@ -153,6 +162,8 @@ img:
     - transparent-background-animated-gif.gif
   - google-ads-responsive-ad-example.png.webp
   - guest_intro.webp
+  - ikea.png
+  - lamp.png
   - lead_generation.webp
   - leads.png
   - leads10.webp
@@ -198,6 +209,7 @@ js:
   - adsJson-ads_falid_transition_to_settingsTemplates.js
   - adsJson.js
   - adsJson_current.js
+  - adsJson_ideal_objects.js
   - ads_6am-3pm-not-working.js
   - ads_custom_slid_settings_trans.js
   - ads_falid_transition_to_settingsTemplates.js
